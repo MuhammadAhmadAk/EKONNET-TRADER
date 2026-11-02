@@ -32,7 +32,7 @@ export default function StaffPermissionMatrix() {
     <div className="space-y-6">
       
       {/* Header Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-[#111827] border border-[#1F293D]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10">
         <div>
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-2">
             <Lock className="w-3.5 h-3.5" />
@@ -61,11 +61,11 @@ export default function StaffPermissionMatrix() {
       )}
 
       {/* Permissions Table with Checkboxes */}
-      <div className="rounded-3xl bg-[#111827] border border-[#1F293D] overflow-hidden shadow-2xl">
+      <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#0B0F19] border-b border-[#1F293D] text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="bg-white/[0.02] dark:bg-black/20 border-b border-white/10 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
                 <th className="py-4 px-5">Staff Member & ID</th>
                 <th className="py-4 px-3 text-center">View Users</th>
                 <th className="py-4 px-3 text-center">Approve KYC</th>
@@ -80,7 +80,7 @@ export default function StaffPermissionMatrix() {
             </thead>
             <tbody className="divide-y divide-gray-800 text-gray-300 font-medium">
               {permissions.map((staff) => (
-                <tr key={staff.staffId} className="hover:bg-[#161F33]/60 transition-colors">
+                <tr key={staff.staffId} className="hover:bg-white/[0.04]/60 transition-colors">
                   
                   {/* Staff Info */}
                   <td className="py-4 px-5">

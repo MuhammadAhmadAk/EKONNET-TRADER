@@ -23,12 +23,12 @@ export default function TradesPage() {
   const [orderAmount, setOrderAmount] = useState<number>(500);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-gray-100 flex flex-col">
       
       {/* Top Navbar */}
-      <header className="h-20 bg-[#0E1424] border-b border-[#1F293D] px-6 sm:px-12 flex items-center justify-between">
+      <header className="h-20 bg-[#0E1424]/80 backdrop-blur-xl border-b border-[#1F293D] px-6 sm:px-12 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/" className="p-2 rounded-xl bg-[#161F33] text-gray-400 hover:text-white transition-colors">
+          <Link href="/" className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-gray-300 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -54,7 +54,7 @@ export default function TradesPage() {
       <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
         
         {/* Base Pairs Selector Bar (Section 23) */}
-        <div className="p-4 rounded-2xl bg-[#111827] border border-[#1F293D] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold text-gray-400">5 Main Trading Base Pairs (Section 23):</span>
             <div className="flex space-x-2">
@@ -65,7 +65,7 @@ export default function TradesPage() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                     selectedBasePair === pair 
                       ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" 
-                      : "bg-[#0B0F19] text-gray-400 hover:text-white border border-gray-800"
+                      : "bg-white/[0.03] dark:bg-black/25 text-gray-400 hover:text-white border border-white/10"
                   }`}
                 >
                   {pair} Markets
@@ -87,10 +87,10 @@ export default function TradesPage() {
           <div className="lg:col-span-8 space-y-6">
             
             {/* Chart Container */}
-            <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] shadow-2xl space-y-4">
+            <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl shadow-2xl space-y-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold font-mono">
+                  <div className="text-xl font-black font-mono text-cyan-400 mr-1">
                     BTC
                   </div>
                   <div>
@@ -106,7 +106,7 @@ export default function TradesPage() {
               </div>
 
               {/* Graphic Chart Display Canvas */}
-              <div className="h-64 rounded-2xl bg-[#0B0F19] border border-gray-800/80 p-4 flex flex-col justify-between relative overflow-hidden">
+              <div className="h-64 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 p-4 flex flex-col justify-between relative overflow-hidden">
                 <div className="flex space-x-2 text-[11px] font-mono text-gray-500">
                   <span className="px-2 py-0.5 rounded bg-gray-800 text-gray-200">1H</span>
                   <span className="px-2 py-0.5 rounded hover:bg-gray-800 cursor-pointer">4H</span>
@@ -138,7 +138,7 @@ export default function TradesPage() {
             </div>
 
             {/* Markets List */}
-            <div className="rounded-3xl bg-[#111827] border border-[#1F293D] overflow-hidden p-6 space-y-4">
+            <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden p-6 space-y-4">
               <h4 className="text-base font-bold text-white">Live Market Pairs Overview</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
@@ -153,7 +153,7 @@ export default function TradesPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-800/80 font-mono">
                     {INITIAL_MARKET_TICKERS.map(t => (
-                      <tr key={t.symbol} className="hover:bg-[#161F33] cursor-pointer">
+                      <tr key={t.symbol} className="hover:bg-white/[0.03] transition-colors cursor-pointer">
                         <td className="py-3 font-bold text-white">{t.symbol}</td>
                         <td className="py-3 text-gray-400">{t.category}</td>
                         <td className="py-3 text-gray-200">{formatCurrency(t.price, t.category === 'Forex' ? '' : 'USD')}</td>
@@ -171,14 +171,14 @@ export default function TradesPage() {
           </div>
 
           {/* Right 4 Columns: Buy/Sell Execution Form */}
-          <div className="lg:col-span-4 rounded-3xl bg-[#111827] border border-[#1F293D] p-6 space-y-6 shadow-2xl">
+          <div className="lg:col-span-4 rounded-3xl bg-white/[0.03] dark:bg-slate-900/25 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
             <div>
               <h3 className="text-base font-bold text-white">Order Execution Panel</h3>
               <p className="text-xs text-gray-400">Direct exchange settlement (Section 14.[1][A])</p>
             </div>
 
             {/* Buy / Sell switch */}
-            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-[#0B0F19] border border-gray-800">
+            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10">
               <button
                 onClick={() => setOrderType("buy")}
                 className={`py-2 rounded-lg text-xs font-bold transition-all ${
@@ -204,12 +204,12 @@ export default function TradesPage() {
                 type="number"
                 value={orderAmount}
                 onChange={(e) => setOrderAmount(Math.max(0, Number(e.target.value)))}
-                className="w-full bg-[#0B0F19] border border-[#1F293D] rounded-xl p-3 text-lg font-bold font-mono text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-white/[0.03] dark:bg-black/25 border border-white/10 rounded-xl p-3 text-lg font-bold font-mono text-white focus:outline-none focus:border-blue-500"
               />
             </div>
 
             {/* Order Summary */}
-            <div className="p-4 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-2 text-xs font-mono">
+            <div className="p-4 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 space-y-2 text-xs font-mono">
               <div className="flex justify-between text-gray-400">
                 <span>Estimated Crypto:</span>
                 <span className="text-emerald-400 font-bold">{(orderAmount / 67420.50).toFixed(6)} BTC</span>
@@ -218,7 +218,7 @@ export default function TradesPage() {
                 <span>Fee Deducted (0.15%):</span>
                 <span className="text-gray-300">-${(orderAmount * 0.0015).toFixed(2)} USD</span>
               </div>
-              <div className="flex justify-between text-gray-400 pt-1 border-t border-gray-800">
+              <div className="flex justify-between text-gray-400 pt-1 border-t border-white/10">
                 <span>Liquidity Mode:</span>
                 <span className="text-blue-400">Ekonnet Internal Pool</span>
               </div>

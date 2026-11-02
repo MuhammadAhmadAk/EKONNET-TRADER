@@ -29,11 +29,11 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0F19]">
+    <div className="min-h-screen flex flex-col bg-transparent">
       
       {/* Toast Notification */}
       {activeNotification && (
-        <div className="fixed top-24 right-6 z-50 p-4 rounded-2xl bg-[#111827] border border-emerald-500/40 text-emerald-300 text-xs shadow-2xl flex items-center space-x-3 glow-blue">
+        <div className="fixed top-24 right-6 z-50 p-4 rounded-2xl bg-slate-900/90 dark:bg-[#080c16]/90 backdrop-blur-xl border border-emerald-500/40 text-emerald-300 text-xs shadow-2xl flex items-center space-x-3 glow-blue">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           <span>{activeNotification}</span>
         </div>

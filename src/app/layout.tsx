@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import EnterpriseBackground from "@/components/common/EnterpriseBackground";
 
 export const metadata: Metadata = {
   title: "Ekonnet Trader — Global Multi-Asset Trades & Payments Platform",
@@ -14,7 +15,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#0B0F19] text-gray-100 min-h-screen antialiased selection:bg-blue-600 selection:text-white">
+      <body className="bg-transparent text-gray-100 min-h-screen antialiased selection:bg-blue-600 selection:text-white relative">
+        <EnterpriseBackground />
         {children}
       </body>
     </html>

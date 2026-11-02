@@ -28,7 +28,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   const [tradingDropdownOpen, setTradingDropdownOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 transition-all select-none">
+    <header className="sticky top-0 z-50 w-full bg-slate-950/60 backdrop-blur-2xl border-b border-white/10 transition-all select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           
@@ -131,7 +131,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             {/* Management Portal Shortcut */}
             <Link
               href="/admin"
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-blue-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
+              className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-[11px] text-blue-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
               title="Enterprise Admin Management Console"
             >
               <Lock className="w-3 h-3" />

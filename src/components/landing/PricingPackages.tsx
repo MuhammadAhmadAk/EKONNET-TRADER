@@ -12,13 +12,13 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   return (
-    <section id="pricing-packages" className="py-16 bg-slate-950 border-t border-slate-800/80">
+    <section id="pricing-packages" className="py-16 bg-transparent border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-semibold">
-            <span>SECTION 55 & 56 COMPLIANT: ACCOUNT FEES & DEALS PACKAGES</span>
+            <span>TRANSPARENT ACCOUNT TIERS & DEALS PACKAGES</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Flexible Account Tiers & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Deals Packages</span>
@@ -28,7 +28,7 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
           </p>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-2 p-1 rounded-xl bg-slate-900 border border-slate-800 mt-2">
+          <div className="inline-flex items-center gap-2 p-1 rounded-xl bg-white/[0.03] dark:bg-slate-900/40 border border-white/10 mt-2">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
@@ -63,8 +63,8 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
                 key={pkg.name}
                 className={`rounded-2xl p-6 transition flex flex-col justify-between ${
                   isPopular
-                    ? "bg-slate-900/90 border-2 border-blue-500 shadow-2xl relative"
-                    : "bg-slate-900/60 border border-slate-800 hover:border-slate-700"
+                    ? "bg-white/[0.03] dark:bg-slate-900/30 border-2 border-blue-500/80 shadow-2xl backdrop-blur-xl relative rounded-3xl"
+                    : "bg-white/[0.02] dark:bg-white/[0.02] border border-white/10 hover:border-blue-500/40 rounded-3xl backdrop-blur-xl transition-all"
                 }`}
               >
                 {isPopular && (
@@ -95,7 +95,7 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
                   </div>
 
                   {/* Features List */}
-                  <div className="space-y-2 pt-3 border-t border-slate-800">
+                  <div className="space-y-2 pt-3 border-t border-white/10">
                     {pkg.features.map((feat, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                         <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />

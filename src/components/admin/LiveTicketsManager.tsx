@@ -67,8 +67,8 @@ export default function LiveTicketsManager() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
       
       {/* Left Column: Tickets Directory */}
-      <div className="lg:col-span-5 rounded-3xl bg-[#111827] border border-[#1F293D] p-5 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#1F293D]">
+      <div className="lg:col-span-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 p-5 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div>
             <h3 className="text-sm font-bold text-white">Support Tickets & Inquiries</h3>
             <p className="text-[11px] text-gray-400">Sections 33 & 34 Gorelo Support Engine</p>
@@ -87,8 +87,8 @@ export default function LiveTicketsManager() {
                 onClick={() => setActiveTicket(ticket)}
                 className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                   isSelected 
-                    ? "bg-[#161F33] border-blue-500/50 shadow-md" 
-                    : "bg-[#0B0F19] border-gray-800 hover:border-gray-700"
+                    ? "bg-white/[0.04] border-blue-500/50 shadow-md" 
+                    : "bg-white/[0.02] dark:bg-black/20 border-gray-800 hover:border-gray-700"
                 }`}
               >
                 <div className="flex justify-between items-start mb-1.5">
@@ -112,12 +112,12 @@ export default function LiveTicketsManager() {
       </div>
 
       {/* Right Column: Active Conversation & AI Summarizer */}
-      <div className="lg:col-span-7 rounded-3xl bg-[#111827] border border-[#1F293D] p-6 flex flex-col justify-between space-y-5">
+      <div className="lg:col-span-7 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 p-6 flex flex-col justify-between space-y-5">
         
         <div className="space-y-4">
           
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#1F293D] gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
             <div>
               <div className="text-xs font-mono text-blue-400 font-bold">{activeTicket.ticketNumber} — {activeTicket.category}</div>
               <h3 className="text-base font-bold text-white mt-0.5">{activeTicket.subject}</h3>
@@ -159,7 +159,7 @@ export default function LiveTicketsManager() {
                   className={`p-3.5 rounded-2xl max-w-[85%] space-y-1 text-xs ${
                     isAdmin 
                       ? "ml-auto bg-blue-600/20 border border-blue-500/30 text-white" 
-                      : "mr-auto bg-[#0B0F19] border border-gray-800 text-gray-200"
+                      : "mr-auto bg-white/[0.02] dark:bg-black/20 border border-gray-800 text-gray-200"
                   }`}
                 >
                   <div className="flex justify-between items-center text-[10px] text-gray-400">
@@ -175,14 +175,14 @@ export default function LiveTicketsManager() {
         </div>
 
         {/* Reply Composer */}
-        <form onSubmit={handleSendReply} className="pt-3 border-t border-[#1F293D] flex space-x-2">
+        <form onSubmit={handleSendReply} className="pt-3 border-t border-white/10 flex space-x-2">
           <input
             type="text"
             required
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Type your official administrative reply (protected by Section 49 content scanner)..."
-            className="w-full bg-[#0B0F19] border border-[#1F293D] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-blue-500"
+            className="w-full bg-white/[0.02] dark:bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-blue-500"
           />
           <button
             type="submit"

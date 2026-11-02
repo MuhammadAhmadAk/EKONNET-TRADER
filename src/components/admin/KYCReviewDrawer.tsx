@@ -28,7 +28,7 @@ export default function KYCReviewDrawer({ user, onClose, onUpdateStatus }: KYCRe
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-[#111827] border border-[#1F293D] p-7 shadow-2xl glow-blue space-y-6 max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 p-7 shadow-2xl glow-blue space-y-6 max-h-[90vh] overflow-y-auto">
         
         {/* Close Button */}
         <button 
@@ -51,7 +51,7 @@ export default function KYCReviewDrawer({ user, onClose, onUpdateStatus }: KYCRe
         </div>
 
         {/* Document Inspection Card */}
-        <div className="p-4 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-3">
+        <div className="p-4 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-gray-800 space-y-3">
           <div className="flex justify-between items-center text-xs">
             <span className="font-bold text-gray-200">Mandatory Selfie with Handwritten Note:</span>
             <span className="text-[10px] text-gray-500 font-mono">Resolution: 1920x1080</span>
@@ -77,7 +77,7 @@ export default function KYCReviewDrawer({ user, onClose, onUpdateStatus }: KYCRe
           )}
 
           {/* Validation Checklist as mandated in Section 27 */}
-          <div className="p-3 bg-[#111827] rounded-xl space-y-1.5 text-xs text-gray-300 font-mono">
+          <div className="p-3 bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl rounded-xl space-y-1.5 text-xs text-gray-300 font-mono">
             <div className="flex items-center space-x-2">
               <Check className="w-3.5 h-3.5 text-emerald-400" />
               <span>Face and facial features clearly visible without glare</span>
@@ -95,19 +95,19 @@ export default function KYCReviewDrawer({ user, onClose, onUpdateStatus }: KYCRe
 
         {/* User Details Grid */}
         <div className="grid grid-cols-2 gap-3 text-xs">
-          <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800">
+          <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-gray-800">
             <span className="text-gray-500 block text-[10px]">Verified Age:</span>
             <span className="text-white font-bold">{user.age} Years (Born {user.dateOfBirth})</span>
           </div>
-          <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800">
+          <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-gray-800">
             <span className="text-gray-500 block text-[10px]">Location:</span>
             <span className="text-white font-bold">{user.city}, {user.country}</span>
           </div>
-          <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800">
+          <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-gray-800">
             <span className="text-gray-500 block text-[10px]">Primary Email:</span>
             <span className="text-white font-bold">{user.emails[0]}</span>
           </div>
-          <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800">
+          <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-gray-800">
             <span className="text-gray-500 block text-[10px]">Phone:</span>
             <span className="text-white font-bold">{user.phones[0]}</span>
           </div>

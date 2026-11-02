@@ -66,8 +66,8 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
     <div className="space-y-6">
       
       {/* Table Card */}
-      <div className="rounded-3xl bg-[#111827] border border-[#1F293D] overflow-hidden shadow-2xl">
-        <div className="p-6 border-b border-[#1F293D] flex items-center justify-between">
+      <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-white">Registered Users Directory</h3>
             <p className="text-xs text-gray-400">Total accounts matching filter: {filteredUsers.length}</p>
@@ -80,7 +80,7 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#0B0F19] border-b border-[#1F293D] text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
+              <tr className="bg-white/[0.02] dark:bg-black/20 border-b border-white/10 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
                 <th className="py-4 px-5">User ID & Profile</th>
                 <th className="py-4 px-4">Contact & Location</th>
                 <th className="py-4 px-3">Age (18+)</th>
@@ -92,12 +92,12 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
             </thead>
             <tbody className="divide-y divide-gray-800 text-gray-300">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-[#161F33]/60 transition-colors">
+                <tr key={user.id} className="hover:bg-white/[0.03] transition-colors border-b border-white/5">
                   
                   {/* ID & Profile */}
                   <td className="py-4 px-5">
                     <div className="flex items-center space-x-3">
-                      <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center font-bold font-mono text-blue-400 text-xs">
+                      <div className="w-8 h-8 flex items-center justify-center font-black font-mono text-cyan-400 text-xs">
                         {user.username.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
@@ -160,7 +160,7 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
                     {/* KYC Inspector Button */}
                     <button
                       onClick={() => onOpenKYC(user)}
-                      className="p-1.5 rounded-lg bg-[#161F33] hover:bg-[#1E2B47] text-blue-400 border border-gray-700 transition-colors"
+                      className="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors"
                       title="Inspect KYC Photo & Note"
                     >
                       <Eye className="w-4 h-4" />
@@ -169,7 +169,7 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
                     {/* Internal Staff Notes Button (Section 46) */}
                     <button
                       onClick={() => setSelectedUserForNote(user)}
-                      className="p-1.5 rounded-lg bg-[#161F33] hover:bg-[#1E2B47] text-purple-400 border border-gray-700 transition-colors"
+                      className="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 transition-colors"
                       title="View & Add Staff Internal Notes (Section 46)"
                     >
                       <FileText className="w-4 h-4" />
@@ -199,8 +199,8 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
 
       {/* Internal Staff Notes Drawer / Section (Section 46) */}
       {selectedUserForNote && (
-        <div className="p-6 rounded-3xl bg-[#111827] border-2 border-purple-500/40 shadow-2xl space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1F293D]">
+        <div className="p-6 rounded-3xl bg-white/[0.03] dark:bg-slate-900/30 border border-purple-500/30 backdrop-blur-xl shadow-2xl space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <div>
               <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-400 uppercase">
                 <FileText className="w-4 h-4" />
@@ -229,7 +229,7 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
               value={staffNoteInput}
               onChange={(e) => setStaffNoteInput(e.target.value)}
               placeholder="Record inquiry summary, risk investigation, or assistance provided..."
-              className="w-full bg-[#0B0F19] border border-[#1F293D] rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500"
+              className="w-full bg-white/[0.03] dark:bg-black/25 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500/50"
             />
             <div className="flex justify-end">
               <button
@@ -248,7 +248,7 @@ export default function UserManagementTable({ users, onToggleLock, onOpenKYC, se
             {notesList
               .filter(n => n.targetUserId === selectedUserForNote.id)
               .map(note => (
-                <div key={note.id} className="p-3.5 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-1.5 text-xs">
+                <div key={note.id} className="p-3.5 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 space-y-1.5 text-xs">
                   <div className="flex justify-between items-center text-gray-400 text-[11px] font-mono">
                     <span className="font-bold text-purple-400">{note.staffName} ({note.staffId})</span>
                     <span>{note.createdAt}</span>

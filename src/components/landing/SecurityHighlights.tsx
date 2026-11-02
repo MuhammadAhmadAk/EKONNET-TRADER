@@ -52,7 +52,7 @@ export default function SecurityHighlights() {
   ];
 
   return (
-    <section id="security-protocols" className="py-16 bg-slate-950 border-t border-slate-800/80">
+    <section id="security-protocols" className="py-16 bg-transparent border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -76,13 +76,11 @@ export default function SecurityHighlights() {
             return (
               <div 
                 key={idx} 
-                className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 hover:border-emerald-500/30 transition"
+                className="p-6 rounded-3xl bg-white/[0.02] dark:bg-white/[0.02] border border-white/5 hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all backdrop-blur-xs space-y-3"
               >
                 <div className="flex justify-between items-center">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                  <Icon className="w-5 h-5 text-emerald-400" />
+                  <span className="text-[11px] font-mono font-medium text-emerald-400/80">
                     {item.section}
                   </span>
                 </div>

@@ -33,7 +33,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
   const estimatedCrypto = Number((netAmount / btcPrice).toFixed(6));
 
   return (
-    <section className="relative pt-10 pb-16 overflow-hidden bg-slate-950">
+    <section className="relative pt-10 pb-16 overflow-hidden bg-transparent">
       {/* Background ambient decorative spheres */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-blue-600/15 via-indigo-600/15 to-cyan-500/15 blur-[120px] pointer-events-none -z-10" />
 
@@ -41,7 +41,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
         
         {/* Top Status Pill */}
         <div className="flex items-center justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-semibold text-slate-300 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-semibold text-blue-300 backdrop-blur-md shadow-sm">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
@@ -69,7 +69,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
 
             {/* Core Feature Badges */}
             <div className="grid grid-cols-3 gap-2.5 pt-1">
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-left">
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/[0.02] border border-white/5 text-left">
                 <Cpu className="w-4 h-4 text-blue-400 shrink-0" />
                 <div className="truncate">
                   <div className="text-[11px] font-bold text-white truncate">5 Base Pairs</div>
@@ -77,7 +77,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-left">
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/[0.02] border border-white/5 text-left">
                 <Globe2 className="w-4 h-4 text-purple-400 shrink-0" />
                 <div className="truncate">
                   <div className="text-[11px] font-bold text-white truncate">14 Payment Rails</div>
@@ -85,7 +85,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-left">
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/[0.02] border border-white/5 text-left">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                 <div className="truncate">
                   <div className="text-[11px] font-bold text-white truncate">Hardware 2FA</div>
@@ -106,7 +106,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
 
               <button
                 onClick={onOpenLogin}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-semibold text-xs transition flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200 font-semibold text-xs transition flex items-center justify-center gap-2"
               >
                 <span>Live Market Terminal</span>
               </button>
@@ -132,9 +132,9 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
 
           {/* Right Column: Sleek Quick Swap / Order Card */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl p-5 sm:p-6 backdrop-blur-xl">
+            <div className="relative rounded-3xl bg-white/[0.03] dark:bg-slate-900/20 border border-white/10 shadow-2xl p-6 backdrop-blur-2xl">
               
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -154,7 +154,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                     <span className="font-semibold">You Deposit / Send</span>
                     <span>Min: $50.00</span>
                   </div>
-                  <div className="flex items-center rounded-xl bg-slate-950 border border-slate-800 p-2.5 focus-within:border-blue-500 transition">
+                  <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 focus-within:border-blue-500 transition">
                     <input 
                       type="number"
                       value={payAmount}
@@ -165,7 +165,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                     <select
                       value={payCurrency}
                       onChange={(e) => setPayCurrency(e.target.value)}
-                      className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-slate-200 focus:outline-none ml-2"
+                      className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2 py-1 text-xs font-bold text-slate-200 focus:outline-none ml-2"
                     >
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
@@ -176,7 +176,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                 </div>
 
                 {/* Calculation breakdown */}
-                <div className="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-1 text-[10px] font-mono">
+                <div className="p-2.5 rounded-xl bg-transparent border border-white/10 space-y-1 text-[10px] font-mono">
                   <div className="flex justify-between text-slate-400">
                     <span>Base Amount:</span>
                     <span>${payAmount.toFixed(2)}</span>
@@ -185,7 +185,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                     <span>Platform Fee (0.15%):</span>
                     <span className="text-amber-400">-${feeAmount.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-200 font-bold border-t border-slate-800 pt-1">
+                  <div className="flex justify-between text-slate-200 font-bold border-t border-white/10 pt-1">
                     <span>Net Swapped Principal:</span>
                     <span className="text-emerald-400">${netAmount.toFixed(2)}</span>
                   </div>
@@ -197,7 +197,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                     <span className="font-semibold">You Receive</span>
                     <span>1 BTC = ${btcPrice.toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center rounded-xl bg-slate-950 border border-slate-800 p-2.5 focus-within:border-blue-500 transition">
+                  <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 focus-within:border-blue-500 transition">
                     <input 
                       type="text"
                       readOnly
@@ -207,7 +207,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
                     <select
                       value={receiveCurrency}
                       onChange={(e) => setReceiveCurrency(e.target.value)}
-                      className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-slate-200 focus:outline-none ml-2"
+                      className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2 py-1 text-xs font-bold text-slate-200 focus:outline-none ml-2"
                     >
                       <option value="BTC">BTC</option>
                       <option value="XRP">XRP</option>

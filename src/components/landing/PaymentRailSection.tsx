@@ -37,13 +37,13 @@ export default function PaymentRailSection() {
   const fee = (transferAmount * feeRate).toFixed(2);
 
   return (
-    <section id="payments-section" className="py-16 bg-slate-950 border-t border-slate-800/80">
+    <section id="payments-section" className="py-16 bg-transparent border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-semibold">
-            <span>SECTION 11.[B] SPECIFICATIONS: 14 PAYMENT PROCESSORS COMBINED</span>
+            <span>GLOBAL PAYMENT GATEWAY & 14 PROCESSORS COMBINED</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Comprehensive <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Payment Rails</span>
@@ -58,12 +58,12 @@ export default function PaymentRailSection() {
           {PAYMENT_RAILS.map((rail) => (
             <div 
               key={rail.name} 
-              className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-blue-500/40 transition text-center space-y-1.5"
+              className="p-3.5 rounded-2xl bg-white/[0.02] dark:bg-white/[0.02] border border-white/5 hover:border-blue-500/30 hover:bg-white/[0.04] transition-all text-center space-y-1.5 backdrop-blur-xs"
             >
               <div className="text-2xl">{rail.icon}</div>
               <div className="font-bold text-xs text-white">{rail.name}</div>
               <div className="text-[10px] text-slate-400 leading-tight">{rail.type}</div>
-              <div className="text-[9px] font-mono font-bold text-emerald-400 pt-1 border-t border-slate-800/80">
+              <div className="text-[9px] font-mono font-bold text-emerald-400 pt-1 border-t border-white/10">
                 {rail.speed}
               </div>
             </div>
@@ -71,8 +71,8 @@ export default function PaymentRailSection() {
         </div>
 
         {/* FX Transfer Calculator Widget */}
-        <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-6 max-w-3xl mx-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-800">
+        <div className="rounded-3xl bg-white/[0.03] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-2xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-white/10">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Globe2 className="w-4 h-4 text-blue-400" />
@@ -88,7 +88,7 @@ export default function PaymentRailSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <div>
               <label className="text-[11px] font-semibold text-slate-400 block mb-1">Send Amount</label>
-              <div className="flex items-center rounded-xl bg-slate-950 border border-slate-800 p-2 focus-within:border-blue-500">
+              <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 focus-within:border-blue-500">
                 <input
                   type="number"
                   value={transferAmount}
@@ -98,7 +98,7 @@ export default function PaymentRailSection() {
                 <select
                   value={sourceCurr}
                   onChange={(e) => setSourceCurr(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-xs font-bold text-slate-200"
+                  className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-200"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -109,7 +109,7 @@ export default function PaymentRailSection() {
 
             <div>
               <label className="text-[11px] font-semibold text-slate-400 block mb-1">Recipient Receives</label>
-              <div className="flex items-center rounded-xl bg-slate-950 border border-slate-800 p-2">
+              <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5">
                 <input
                   type="text"
                   readOnly
@@ -119,7 +119,7 @@ export default function PaymentRailSection() {
                 <select
                   value={destCurr}
                   onChange={(e) => setDestCurr(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-xs font-bold text-slate-200"
+                  className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-200"
                 >
                   <option value="EUR">EUR</option>
                   <option value="USD">USD</option>
@@ -129,7 +129,7 @@ export default function PaymentRailSection() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-slate-400">
+          <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center text-xs font-mono text-slate-400">
             <span>Estimated Fee (0.3%): <strong className="text-slate-200">${fee}</strong></span>
             <span className="text-emerald-400 font-bold">Guaranteed Delivery: &lt; 15 mins</span>
           </div>

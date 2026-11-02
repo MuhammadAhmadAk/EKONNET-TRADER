@@ -6,13 +6,99 @@
   --foreground-rgb: 243, 244, 246;
   --background-start-rgb: 11, 15, 25;
   --background-end-rgb: 15, 23, 42;
+  --theme-color-primary: #2563eb;
+  --theme-color-glow: rgba(37, 99, 235, 0.35);
+  --theme-bg-light: #F8FAFC;
+  --theme-bg-dark: #070A14;
+}
+
+/* ========================================================================= */
+/* DYNAMIC SYSTEM OS COLOR PRESETS                                           */
+/* ========================================================================= */
+
+[data-theme-color="blue"] {
+  --theme-color-primary: #2563eb;
+  --theme-color-glow: rgba(37, 99, 235, 0.40);
+  --theme-bg-light: #F0F7FF;
+  --theme-bg-dark: #070D1A;
+}
+
+[data-theme-color="cyan"] {
+  --theme-color-primary: #06b6d4;
+  --theme-color-glow: rgba(6, 182, 212, 0.40);
+  --theme-bg-light: #ECFEFF;
+  --theme-bg-dark: #061318;
+}
+
+[data-theme-color="purple"] {
+  --theme-color-primary: #9333ea;
+  --theme-color-glow: rgba(147, 51, 234, 0.40);
+  --theme-bg-light: #FAF5FF;
+  --theme-bg-dark: #0D061C;
+}
+
+[data-theme-color="green"] {
+  --theme-color-primary: #10b981;
+  --theme-color-glow: rgba(16, 185, 129, 0.40);
+  --theme-bg-light: #F0FDF4;
+  --theme-bg-dark: #05160D;
+}
+
+[data-theme-color="orange"] {
+  --theme-color-primary: #ea580c;
+  --theme-color-glow: rgba(234, 88, 12, 0.40);
+  --theme-bg-light: #FFF7ED;
+  --theme-bg-dark: #1A0B04;
+}
+
+html {
+  color-scheme: dark;
+  transition: background-color 0.4s ease;
+}
+
+html:not(.dark) {
+  color-scheme: light;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #0B0F19;
+  background-color: transparent !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ========================================================================= */
+/* UNIVERSAL INPUT & AUTOFILL THEME HARMONY                                  */
+/* ========================================================================= */
+
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover, 
+html.dark input:-webkit-autofill:focus, 
+html.dark input:-webkit-autofill:active,
+html.dark textarea:-webkit-autofill,
+html.dark select:-webkit-autofill {
+  -webkit-text-fill-color: #F8FAFC !important;
+  caret-color: #F8FAFC !important;
+  -webkit-box-shadow: 0 0 0 1000px #0E1322 inset !important;
+  box-shadow: 0 0 0 1000px #0E1322 inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html:not(.dark) input:-webkit-autofill,
+html:not(.dark) input:-webkit-autofill:hover, 
+html:not(.dark) input:-webkit-autofill:focus, 
+html:not(.dark) input:-webkit-autofill:active,
+html:not(.dark) textarea:-webkit-autofill,
+html:not(.dark) select:-webkit-autofill {
+  -webkit-text-fill-color: #0F172A !important;
+  caret-color: #0F172A !important;
+  -webkit-box-shadow: 0 0 0 1000px #F8FAFC inset !important;
+  box-shadow: 0 0 0 1000px #F8FAFC inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  border-color: #CBD5E1 !important;
 }
 
 /* Custom Scrollbar for High-Tech Fintech Dashboards */
@@ -22,7 +108,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0F19;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -54,4 +140,34 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ========================================================================= */
+/* FLOATING AMBIENT GLYPH ANIMATIONS                                         */
+/* ========================================================================= */
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(12px) rotate(-2deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 9s ease-in-out infinite;
 }

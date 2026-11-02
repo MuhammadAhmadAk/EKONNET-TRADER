@@ -6,9 +6,9 @@ import { ShieldCheck, MapPin, Laptop, Clock, Database } from "lucide-react";
 
 export default function AuditLogViewer() {
   return (
-    <div className="rounded-3xl bg-[#111827] border border-[#1F293D] overflow-hidden shadow-2xl space-y-4">
+    <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 overflow-hidden shadow-2xl space-y-4">
       
-      <div className="p-6 border-b border-[#1F293D] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-400 uppercase">
             <Database className="w-3.5 h-3.5" />
@@ -28,7 +28,7 @@ export default function AuditLogViewer() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-[#0B0F19] border-b border-[#1F293D] text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
+            <tr className="bg-white/[0.02] dark:bg-black/20 border-b border-white/10 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
               <th className="py-4 px-5">Event ID & Action</th>
               <th className="py-4 px-4">Originator (User / Staff)</th>
               <th className="py-4 px-5">Description</th>
@@ -39,7 +39,7 @@ export default function AuditLogViewer() {
           </thead>
           <tbody className="divide-y divide-gray-800 text-gray-300 font-medium">
             {MOCK_AUDIT_LOGS.map(log => (
-              <tr key={log.id} className="hover:bg-[#161F33]/60 transition-colors">
+              <tr key={log.id} className="hover:bg-white/[0.04]/60 transition-colors">
                 
                 {/* Event ID */}
                 <td className="py-4 px-5 font-mono text-[11px]">

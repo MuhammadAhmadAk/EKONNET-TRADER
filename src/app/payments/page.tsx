@@ -20,12 +20,12 @@ export default function PaymentsPage() {
   const [amount, setAmount] = useState(2500);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-gray-100 flex flex-col">
       
       {/* Header */}
-      <header className="h-20 bg-[#0E1424] border-b border-[#1F293D] px-6 sm:px-12 flex items-center justify-between">
+      <header className="h-20 bg-[#0E1424]/80 backdrop-blur-xl border-b border-[#1F293D] px-6 sm:px-12 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/" className="p-2 rounded-xl bg-[#161F33] text-gray-400 hover:text-white transition-colors">
+          <Link href="/" className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-gray-300 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -41,7 +41,7 @@ export default function PaymentsPage() {
 
         <Link
           href="/portal-mgmt-auth"
-          className="px-4 py-2 rounded-xl bg-[#161F33] border border-blue-500/20 text-xs text-blue-400 font-bold hover:bg-[#1E2B47] transition-all"
+          className="px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-xs text-blue-400 font-bold transition-all"
         >
           Management Console
         </Link>
@@ -52,19 +52,19 @@ export default function PaymentsPage() {
         
         {/* Top Wallet Balance Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-2">
+          <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
             <span className="text-xs text-gray-400 font-semibold">Available Fiat Balance:</span>
             <div className="text-3xl font-black text-white font-mono">$18,450.00 USD</div>
             <span className="text-[11px] text-emerald-400 font-bold">Ready for instant cross-border payout</span>
           </div>
 
-          <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-2">
+          <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
             <span className="text-xs text-gray-400 font-semibold">Crypto Treasury Balance:</span>
             <div className="text-3xl font-black text-white font-mono">1.4580 BTC</div>
             <span className="text-[11px] text-gray-400 font-mono">≈ $98,300.00 USD</span>
           </div>
 
-          <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-2">
+          <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
             <span className="text-xs text-gray-400 font-semibold">Security Level:</span>
             <div className="text-2xl font-black text-emerald-400 font-mono flex items-center space-x-2">
               <ShieldCheck className="w-6 h-6" />
@@ -77,7 +77,7 @@ export default function PaymentsPage() {
         {/* Transfer Action Center */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          <div className="lg:col-span-7 rounded-3xl bg-[#111827] border border-[#1F293D] p-7 space-y-6">
+          <div className="lg:col-span-7 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl p-7 space-y-6">
             <div>
               <h3 className="text-base font-bold text-white">Select Deposit / Payment Method</h3>
               <p className="text-xs text-gray-400">Consolidated rails from Section 11.[B]</p>
@@ -97,8 +97,8 @@ export default function PaymentsPage() {
                   onClick={() => setSelectedMethod(method.id)}
                   className={`p-3.5 rounded-2xl border text-left transition-all ${
                     selectedMethod === method.id 
-                      ? "bg-[#161F33] border-blue-500 shadow-md" 
-                      : "bg-[#0B0F19] border-gray-800 hover:border-gray-700"
+                      ? "bg-blue-600/20 border-blue-500/60 shadow-md" 
+                      : "bg-white/[0.02] dark:bg-black/20 border-white/10 hover:border-blue-500/30"
                   }`}
                 >
                   <span className="text-xl mb-1 block">{method.icon}</span>
@@ -115,7 +115,7 @@ export default function PaymentsPage() {
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
-                className="w-full bg-[#0B0F19] border border-[#1F293D] rounded-xl p-3 text-xl font-bold font-mono text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-white/[0.03] dark:bg-black/25 border border-white/10 rounded-xl p-3 text-xl font-bold font-mono text-white focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -128,14 +128,14 @@ export default function PaymentsPage() {
             </button>
           </div>
 
-          <div className="lg:col-span-5 rounded-3xl bg-[#111827] border border-[#1F293D] p-7 space-y-5">
+          <div className="lg:col-span-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl p-7 space-y-5">
             <h3 className="text-base font-bold text-white flex items-center space-x-2">
               <History className="w-4 h-4 text-gray-400" />
               <span>Recent Payment Transactions</span>
             </h3>
 
             <div className="space-y-3 font-mono text-xs">
-              <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800 space-y-1">
+              <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-white/10 space-y-1">
                 <div className="flex justify-between font-bold text-white">
                   <span>Wise Outbound (EUR)</span>
                   <span className="text-rose-400">-$1,250.00</span>
@@ -146,7 +146,7 @@ export default function PaymentsPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800 space-y-1">
+              <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-white/10 space-y-1">
                 <div className="flex justify-between font-bold text-white">
                   <span>Stripe Card Deposit</span>
                   <span className="text-emerald-400">+$5,000.00</span>
@@ -157,7 +157,7 @@ export default function PaymentsPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-[#0B0F19] rounded-xl border border-gray-800 space-y-1">
+              <div className="p-3 bg-white/[0.02] dark:bg-black/20 rounded-xl border border-white/10 space-y-1">
                 <div className="flex justify-between font-bold text-white">
                   <span>Bitcoin Settlement</span>
                   <span className="text-emerald-400">+0.25 BTC</span>

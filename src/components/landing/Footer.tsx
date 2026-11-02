@@ -6,7 +6,7 @@ import { Layers, ShieldCheck, Mail, Phone, Lock, Globe2 } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer id="support-desk" className="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs">
+    <footer id="support-desk" className="bg-transparent border-t border-white/5 text-slate-400 text-xs backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           
@@ -73,7 +73,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400">
+        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400">
           <div>
             &copy; {new Date().getFullYear()} Ekonnet Technologies. Hand-crafted proprietary architecture. All rights reserved.
           </div>

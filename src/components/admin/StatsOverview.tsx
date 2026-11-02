@@ -64,11 +64,11 @@ export default function StatsOverview() {
         </div>
 
         <div className="flex items-center space-x-3 shrink-0">
-          <div className="px-3.5 py-2 rounded-xl bg-[#111827] border border-gray-800 text-xs font-mono text-gray-300">
+          <div className="px-3.5 py-2 rounded-xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-gray-800 text-xs font-mono text-gray-300">
             <span className="text-gray-500">Latency: </span>
             <span className="text-emerald-400 font-bold">14ms</span>
           </div>
-          <div className="px-3.5 py-2 rounded-xl bg-[#111827] border border-gray-800 text-xs font-mono text-gray-300">
+          <div className="px-3.5 py-2 rounded-xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-gray-800 text-xs font-mono text-gray-300">
             <span className="text-gray-500">Threat Level: </span>
             <span className="text-emerald-400 font-bold">CLEAN</span>
           </div>
@@ -82,7 +82,7 @@ export default function StatsOverview() {
           return (
             <div 
               key={i}
-              className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] shadow-xl space-y-4 hover:border-gray-700 transition-all"
+              className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 shadow-xl space-y-4 hover:border-gray-700 transition-all"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xs font-semibold text-gray-400">{stat.title}</span>
@@ -111,7 +111,7 @@ export default function StatsOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Module 1: Base Pairs Liquidity */}
-        <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-4">
+        <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">5 Core Base Pairs Balance</h3>
             <span className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">Sec 23</span>
@@ -142,14 +142,14 @@ export default function StatsOverview() {
         </div>
 
         {/* Module 2: Security & Lockout Alerts */}
-        <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-4">
+        <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">Security & Lockout Engine</h3>
             <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 font-mono">Sec 25</span>
           </div>
 
           <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-1">
+            <div className="p-3 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-gray-800 space-y-1">
               <div className="flex items-center justify-between text-gray-300 font-semibold">
                 <span>Active 30-Min Lockout</span>
                 <span className="text-rose-400 font-mono font-bold">1 Account</span>
@@ -159,7 +159,7 @@ export default function StatsOverview() {
               </p>
             </div>
 
-            <div className="p-3 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-1">
+            <div className="p-3 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-gray-800 space-y-1">
               <div className="flex items-center justify-between text-gray-300 font-semibold">
                 <span>Proton 2FA Enforced</span>
                 <span className="text-emerald-400 font-mono font-bold">98.4%</span>
@@ -172,14 +172,14 @@ export default function StatsOverview() {
         </div>
 
         {/* Module 3: Secondary Server Backup Sync */}
-        <div className="p-6 rounded-3xl bg-[#111827] border border-[#1F293D] space-y-4">
+        <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-white">Dual-Server Geo Backup</h3>
             <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">Sec 32</span>
           </div>
 
           <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#0B0F19] border border-gray-800 space-y-1">
+            <div className="p-3 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-gray-800 space-y-1">
               <div className="flex items-center justify-between text-gray-300 font-semibold">
                 <span>Primary Hosting Node:</span>
                 <span className="text-blue-400 font-mono">VPS-Root-01</span>
@@ -195,7 +195,7 @@ export default function StatsOverview() {
 
             <button 
               onClick={() => alert("Manual snapshot initiated: Syncing database to 2nd server in accordance with Section 32.")}
-              className="w-full py-2.5 rounded-xl bg-[#161F33] hover:bg-[#1E2B47] text-gray-200 text-xs font-bold border border-gray-700 transition-colors flex items-center justify-center space-x-2"
+              className="w-full py-2.5 rounded-xl bg-white/[0.04] hover:bg-[#1E2B47] text-gray-200 text-xs font-bold border border-gray-700 transition-colors flex items-center justify-center space-x-2"
             >
               <Server className="w-3.5 h-3.5 text-blue-400" />
               <span>Trigger Manual Backup Sync</span>

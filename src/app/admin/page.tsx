@@ -171,7 +171,7 @@ export default function AdminPortalPage() {
   const openTicketsCount = tickets.filter((t) => t.status.toLowerCase() === "open").length;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-slate-950 text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="flex h-screen w-full overflow-hidden bg-transparent text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-bottom-4">
@@ -186,11 +186,11 @@ export default function AdminPortalPage() {
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } transition-all duration-300 ease-in-out shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col justify-between z-40 select-none`}
+        } transition-all duration-300 ease-in-out shrink-0 bg-slate-950/60 backdrop-blur-2xl border-r border-white/10 flex flex-col justify-between z-40 select-none`}
       >
         {/* Sidebar Header & Brand */}
         <div>
-          <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80">
+          <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
             <Link href="/" className="flex items-center gap-3 overflow-hidden">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
                 EK
@@ -382,8 +382,8 @@ export default function AdminPortalPage() {
         </div>
 
         {/* Sidebar Footer User Card */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-900/50">
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-900 border border-slate-800">
+        <div className="p-3 border-t border-white/10 bg-transparent">
+          <div className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.03] border border-white/10">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
               MA
             </div>
@@ -408,10 +408,10 @@ export default function AdminPortalPage() {
       {/* ========================================================================= */}
       {/* 2. MAIN ADMIN CONTENT WORKSPACE */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-900/40">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-transparent">
         
         {/* Top App Bar */}
-        <header className="h-16 border-b border-slate-800 bg-slate-950/80 backdrop-blur px-6 flex items-center justify-between shrink-0 z-30">
+        <header className="h-16 border-b border-white/10 bg-slate-950/40 backdrop-blur-xl px-6 flex items-center justify-between shrink-0 z-30">
           {/* Breadcrumb Trail */}
           <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
             <Link href="/" className="hover:text-white transition">Platform Root</Link>
@@ -423,7 +423,7 @@ export default function AdminPortalPage() {
 
           {/* Quick Actions & Telemetry Badges */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-300">
               <Zap className="w-3.5 h-3.5 text-amber-400" />
               <span>Base Liquidity: <strong className="text-emerald-400 font-mono">$1,280,450</strong></span>
             </div>
@@ -444,7 +444,7 @@ export default function AdminPortalPage() {
 
             <button
               onClick={() => showToast("Cache flushed & secondary database mirror synchronized.")}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition"
+              className="px-3 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition"
             >
               <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
               Flush Cache
@@ -494,7 +494,7 @@ export default function AdminPortalPage() {
             <div className="space-y-6 max-w-7xl mx-auto">
               {/* Stat Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>Total Registered Users</span>
                     <Users className="w-4 h-4 text-blue-400" />
@@ -505,7 +505,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>24h Platform Volume</span>
                     <BarChart3 className="w-4 h-4 text-purple-400" />
@@ -516,7 +516,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>Pending KYC Verifications</span>
                     <FileCheck className="w-4 h-4 text-amber-400" />
@@ -527,7 +527,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>System Health & Node Status</span>
                     <Server className="w-4 h-4 text-emerald-400" />
@@ -540,7 +540,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Service Cluster Health Matrix */}
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+              <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Activity className="w-4 h-4 text-blue-400" />
@@ -551,7 +551,7 @@ export default function AdminPortalPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {services.map((svc) => (
-                    <div key={svc.name} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div key={svc.name} className="p-4 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-xs font-bold text-white">{svc.name}</div>
@@ -571,7 +571,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Recent Audit Stream */}
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+              <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
@@ -587,7 +587,7 @@ export default function AdminPortalPage() {
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-slate-950 text-slate-400 uppercase text-[10px]">
+                    <thead className="bg-white/[0.02] dark:bg-black/20 text-slate-400 uppercase text-[10px] border-b border-white/10">
                       <tr>
                         <th className="py-2.5 px-3">Event ID</th>
                         <th className="py-2.5 px-3">Timestamp</th>
@@ -597,9 +597,9 @@ export default function AdminPortalPage() {
                         <th className="py-2.5 px-3">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800">
+                    <tbody className="divide-y divide-white/5">
                       {auditLogs.slice(0, 5).map((log) => (
-                        <tr key={log.id} className="hover:bg-slate-800/40 transition">
+                        <tr key={log.id} className="hover:bg-white/[0.03] transition">
                           <td className="py-2 px-3 text-blue-400 font-bold">{log.id}</td>
                           <td className="py-2 px-3 text-slate-400">{log.timestamp.split("T")[1]?.slice(0, 8)}</td>
                           <td className="py-2 px-3 text-white font-bold">{log.userId}</td>
@@ -638,7 +638,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-white">Primary Node: VPS-Plesk-EU #01</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE MASTER</span>
@@ -651,7 +651,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-white">Secondary Backup Node: VPS-Plesk-US #02</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">STANDBY REPLICA</span>
@@ -722,13 +722,13 @@ export default function AdminPortalPage() {
                       placeholder="Search EKON-ID, name, email..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64"
+                      className="pl-8 pr-3 py-1.5 rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 w-64"
                     />
                   </div>
                   <select
                     value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
-                    className="py-1.5 px-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none"
+                    className="py-1.5 px-3 rounded-xl bg-white/[0.04] dark:bg-black/25 border border-white/10 text-xs text-slate-200 focus:outline-none"
                   >
                     <option value="all">All Tiers</option>
                     <option value="free">Free</option>
@@ -739,10 +739,10 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Users Table */}
-              <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] font-mono border-b border-slate-800">
+                    <thead className="bg-white/[0.02] dark:bg-black/20 text-slate-400 uppercase text-[10px] font-mono border-b border-white/10">
                       <tr>
                         <th className="py-3 px-4">User ID & Username</th>
                         <th className="py-3 px-4">Full Name & Age (18+)</th>
@@ -753,9 +753,9 @@ export default function AdminPortalPage() {
                         <th className="py-3 px-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800">
+                    <tbody className="divide-y divide-white/5">
                       {filteredUsers.map((u) => (
-                        <tr key={u.id} className="hover:bg-slate-800/40 transition">
+                        <tr key={u.id} className="hover:bg-white/[0.03] transition">
                           <td className="py-3 px-4 font-mono">
                             <span className="text-emerald-400 font-bold">{u.id}</span>
                             <div className="text-[11px] text-slate-400">@{u.username}</div>
@@ -789,7 +789,7 @@ export default function AdminPortalPage() {
                           <td className="py-3 px-4 text-right space-x-2">
                             <button
                               onClick={() => setSelectedNoteUser(u)}
-                              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-blue-400 transition"
+                              className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-[11px] text-blue-400 border border-blue-500/20 transition"
                             >
                               Notes
                             </button>
@@ -889,7 +889,7 @@ export default function AdminPortalPage() {
                 </button>
               </div>
 
-              <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
                     <tr>
@@ -902,9 +902,9 @@ export default function AdminPortalPage() {
                       <th className="py-3 px-2 text-center">Refunds</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-white/5">
                     {permissions.map((p, idx) => (
-                      <tr key={p.staffId} className="hover:bg-slate-800/40 transition">
+                      <tr key={p.staffId} className="hover:bg-white/[0.03] transition">
                         <td className="py-3 px-4 font-bold text-white font-sans">
                           {p.staffName}
                           <div className="text-[10px] text-slate-400 font-mono">{p.staffId}</div>
@@ -972,7 +972,7 @@ export default function AdminPortalPage() {
                 </div>
 
                 {activeTicket && (
-                  <div className="lg:col-span-7 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                  <div className="lg:col-span-7 p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                     <div className="flex justify-between items-start pb-3 border-b border-slate-800">
                       <div>
                         <div className="text-sm font-bold text-white">{activeTicket.subject}</div>
@@ -1002,7 +1002,7 @@ export default function AdminPortalPage() {
                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                       {activeTicket.messages.map((m, idx) => (
                         <div key={idx} className={`p-3 rounded-xl text-xs space-y-1 ${
-                          m.senderRole === "user" ? "bg-slate-950 border border-slate-800" : "bg-blue-950/30 border border-blue-800/40"
+                          m.senderRole === "user" ? "bg-white/[0.02] dark:bg-black/20 border border-white/10" : "bg-blue-950/30 border border-blue-800/40"
                         }`}>
                           <div className="flex justify-between text-[10px] font-mono text-slate-400">
                             <span className="font-bold text-slate-300">{m.senderName} ({m.senderRole})</span>
@@ -1028,7 +1028,7 @@ export default function AdminPortalPage() {
                 <p className="text-xs text-slate-400">Cryptographically verifiable log of all administrative actions, logins, and trades.</p>
               </div>
 
-              <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
                     <tr>
@@ -1040,9 +1040,9 @@ export default function AdminPortalPage() {
                       <th className="py-3 px-4">IP & Location</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-white/5">
                     {auditLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-800/40 transition">
+                      <tr key={log.id} className="hover:bg-white/[0.03] transition">
                         <td className="py-2.5 px-4 text-blue-400 font-bold">{log.id}</td>
                         <td className="py-2.5 px-4 text-slate-400">{log.timestamp.replace("T", " ").slice(0, 19)}</td>
                         <td className="py-2.5 px-4 text-white font-bold">{log.userId}</td>
@@ -1068,7 +1068,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <ShieldAlert className="w-4 h-4 text-rose-400" />
                     <span>Emergency Master Killswitch (Section 45)</span>
@@ -1088,7 +1088,7 @@ export default function AdminPortalPage() {
                   </button>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <Lock className="w-4 h-4 text-blue-400" />
                     <span>Security & 2FA Enforcement (Section 25)</span>
@@ -1125,7 +1125,7 @@ export default function AdminPortalPage() {
               value={internalNoteText}
               onChange={(e) => setInternalNoteText(e.target.value)}
               placeholder="Record confidential staff observation (Section 46)..."
-              className="w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-xl bg-white/[0.02] dark:bg-black/20 border border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
             <div className="flex justify-end gap-2">
               <button

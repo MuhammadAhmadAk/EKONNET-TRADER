@@ -19,7 +19,7 @@ interface AdminHeaderProps {
 
 export default function AdminHeader({ onTriggerEmergencyLock, searchQuery, setSearchQuery }: AdminHeaderProps) {
   return (
-    <header className="h-20 bg-[#0E1424] border-b border-[#1F293D] px-8 flex items-center justify-between shrink-0">
+    <header className="h-20 bg-[#0E1424] border-b border-white/10 px-8 flex items-center justify-between shrink-0">
       
       {/* Search Bar with Multi-Filter Support (Section 50) */}
       <div className="relative w-full max-w-md">
@@ -29,7 +29,7 @@ export default function AdminHeader({ onTriggerEmergencyLock, searchQuery, setSe
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search user ID, username, staff ID, transaction hash..."
-          className="w-full bg-[#111827] border border-[#1F293D] rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full bg-white/[0.02] dark:bg-slate-900/20 backdrop-blur-xl border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
         />
       </div>
 
