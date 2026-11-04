@@ -65,7 +65,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             </div>
             <div className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-base sm:text-lg font-extrabold tracking-tight text-white">
-                EKONNET<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">TRADER</span>
+                Ekonnet<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Trader</span>
               </span>
               <span className="text-[9px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
                 PRO
