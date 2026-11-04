@@ -7,6 +7,7 @@ import HeroSection from "@/components/landing/HeroSection";
 import TradingPillars from "@/components/landing/TradingPillars";
 import PaymentRailSection from "@/components/landing/PaymentRailSection";
 import PricingPackages from "@/components/landing/PricingPackages";
+import BigFeatureAdvertisements from "@/components/landing/BigFeatureAdvertisements";
 import InteractiveTradingTerminal from "@/components/landing/InteractiveTradingTerminal";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
@@ -61,6 +62,11 @@ export default function LandingPage() {
         
         <PricingPackages 
           onSelectPackage={() => setIsRegisterOpen(true)}
+        />
+        
+        <BigFeatureAdvertisements 
+          onOpenRegister={() => setIsRegisterOpen(true)}
+          onOpenLogin={() => setIsLoginOpen(true)}
         />
         
         <InteractiveTradingTerminal 
