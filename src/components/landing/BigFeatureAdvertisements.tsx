@@ -78,7 +78,7 @@ export default function BigFeatureAdvertisements({
   ];
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-950/60 via-slate-900/40 to-slate-950/80 border-t border-b border-white/5">
+    <section id="features-advertisements" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-950/60 via-slate-900/40 to-slate-950/80 border-t border-b border-white/5">
       {/* Background Glow Accents */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none -z-10" />

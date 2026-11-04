@@ -26,6 +26,30 @@ interface NavbarProps {
 export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tradingDropdownOpen, setTradingDropdownOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<'home' | 'features' | 'pricing' | 'terminal'>('home');
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 200;
+      const terminalEl = document.getElementById('web-terminal');
+      const pricingEl = document.getElementById('pricing-packages');
+      const featuresEl = document.getElementById('features-advertisements');
+
+      if (terminalEl && scrollPos >= terminalEl.offsetTop - 60) {
+        setActiveSection('terminal');
+      } else if (pricingEl && scrollPos >= pricingEl.offsetTop - 60) {
+        setActiveSection('pricing');
+      } else if (featuresEl && scrollPos >= featuresEl.offsetTop - 60) {
+        setActiveSection('features');
+      } else {
+        setActiveSection('home');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-slate-950/60 backdrop-blur-2xl border-b border-white/10 transition-all select-none">
@@ -50,8 +74,58 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation Links (Strictly Single Line, never wraps) */}
-          <nav className="hidden xl:flex items-center gap-6 text-xs font-semibold text-slate-300 shrink-0">
-            
+          <nav className="hidden xl:flex items-center gap-2 text-xs font-semibold text-slate-300 shrink-0">
+            <a 
+              href="#"
+              onClick={() => {
+                setActiveSection('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`px-3 py-1.5 rounded-full transition-all duration-300 ${
+                activeSection === 'home'
+                  ? 'bg-blue-500/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              Home
+            </a>
+
+            <a 
+              href="#features-advertisements"
+              onClick={() => setActiveSection('features')}
+              className={`px-3 py-1.5 rounded-full transition-all duration-300 ${
+                activeSection === 'features'
+                  ? 'bg-blue-500/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              Innovations
+            </a>
+
+            <a 
+              href="#pricing-packages"
+              onClick={() => setActiveSection('pricing')}
+              className={`px-3 py-1.5 rounded-full transition-all duration-300 ${
+                activeSection === 'pricing'
+                  ? 'bg-blue-500/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              Pricing & Tiers
+            </a>
+
+            <a 
+              href="#web-terminal"
+              onClick={() => setActiveSection('terminal')}
+              className={`px-3 py-1.5 rounded-full transition-all duration-300 ${
+                activeSection === 'terminal'
+                  ? 'bg-blue-500/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              Live Terminal
+            </a>
+
             {/* Trading Markets Dropdown */}
             <div 
               className="relative"
@@ -60,7 +134,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             >
               <button 
                 onClick={() => setTradingDropdownOpen(!tradingDropdownOpen)}
-                className="flex items-center gap-1 py-2 hover:text-white transition whitespace-nowrap"
+                className="flex items-center gap-1 py-1.5 px-3 rounded-full hover:text-white hover:bg-white/5 transition whitespace-nowrap"
               >
                 <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
                 <span>Markets</span>
@@ -105,24 +179,15 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               )}
             </div>
 
-            <Link href="/payments" className="hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+            <Link href="/payments" className="hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 whitespace-nowrap">
               <CreditCard className="w-3.5 h-3.5 text-indigo-400" />
               <span>Payments</span>
             </Link>
 
-            <a href="#pricing-packages" className="hover:text-white transition whitespace-nowrap">
-              Pricing & Tiers
-            </a>
-
-            <Link href="/security" className="hover:text-white transition flex items-center gap-1 whitespace-nowrap">
+            <Link href="/security" className="hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-full transition flex items-center gap-1 whitespace-nowrap">
               <Lock className="w-3 h-3 text-purple-400" />
               <span>Security</span>
             </Link>
-
-            <a href="#support-desk" className="hover:text-white transition flex items-center gap-1 whitespace-nowrap">
-              <HelpCircle className="w-3 h-3 text-slate-400" />
-              <span>Support</span>
-            </a>
           </nav>
 
           {/* Right Action Bar (Compact & Sleek) */}
