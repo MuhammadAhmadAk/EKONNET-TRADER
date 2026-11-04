@@ -236,7 +236,7 @@ export default function TradesPage() {
             </button>
 
             <p className="text-[11px] text-gray-500 text-center font-mono">
-              Protected by TLS 1.3 & Multi-Sig Escrow
+              Protected by TLS 1.3 & Multi-Sig Smart Settlement
             </p>
           </div>
 

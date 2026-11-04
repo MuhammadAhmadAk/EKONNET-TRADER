@@ -5,7 +5,7 @@ import EnterpriseBackground from "@/components/common/EnterpriseBackground";
 export const metadata: Metadata = {
   title: "Ekonnet Trader — Global Multi-Asset Trades & Payments Platform",
   description: "Enterprise trading and funds transfer platform combining Crypto (5 Base Pairs), 168+ Forex currencies, global shares, and 14 integrated payment processors.",
-  keywords: "Ekonnet, Crypto Trading, P2P Escrow, Forex, Shares, Payments, Wise, Binance, Bitfinex, Multi-Asset Trading",
+  keywords: "Ekonnet, Crypto Trading, P2P Trading Rails, Forex, Shares, Payments, Wise, Binance, Bitfinex, Multi-Asset Trading",
 };
 
 export default function RootLayout({

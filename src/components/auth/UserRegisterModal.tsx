@@ -157,7 +157,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
             </h2>
 
             <p className="text-xs text-slate-400 leading-relaxed mb-5">
-              Access 168+ fiat currencies, 5 crypto base pairs, and direct P2P escrow settlement with strict bank-grade isolation.
+              Access 168+ fiat currencies, 5 crypto base pairs, and direct P2P settlement with strict bank-grade isolation.
             </p>
 
             <div className="space-y-2 pt-2 border-t border-white/10 text-xs text-slate-300">

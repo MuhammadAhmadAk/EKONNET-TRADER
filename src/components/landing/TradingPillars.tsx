@@ -28,7 +28,7 @@ export default function TradingPillars() {
             Multi-Asset <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Trading Engine</span>
           </h2>
           <p className="text-slate-400 text-xs sm:text-sm">
-            Ekonnet unifies Direct Liquidity, Peer-to-Peer Escrow Settlement, and 3rd-Party CEX Order Routing under one high-speed interface.
+            Ekonnet unifies Direct Liquidity, Peer-to-Peer Direct Settlement, and 3rd-Party CEX Order Routing under one high-speed interface.
           </p>
 
           {/* Asset Category Tabs */}
@@ -96,14 +96,14 @@ export default function TradingPillars() {
             </div>
           </div>
 
-          {/* Pillar 2: Remitano-Style P2P Escrow */}
+          {/* Pillar 2: Direct P2P Settlement Protocol */}
           <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-white/[0.02] border border-white/5 space-y-4 hover:border-purple-500/40 hover:bg-white/[0.04] transition-all backdrop-blur-xs">
             <Users className="w-6 h-6 text-purple-400" />
             <div>
-              <div className="text-[10px] text-purple-400 font-mono font-bold uppercase">Mode 02 &bull; Escrow Protection</div>
-              <h3 className="text-base font-bold text-white mt-1">Peer-to-Peer (P2P) Escrow</h3>
+              <div className="text-[10px] text-purple-400 font-mono font-bold uppercase">Mode 02 &bull; Protected Settlement</div>
+              <h3 className="text-base font-bold text-white mt-1">Peer-to-Peer (P2P) Direct Exchange</h3>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Remitano-modeled automated smart escrow locks seller crypto until buyer fiat transfer confirmation is cryptographically verified.
+                Automated smart settlement protocol locks seller crypto until buyer fiat transfer confirmation is cryptographically verified.
               </p>
             </div>
             <div className="pt-3 border-t border-white/10 space-y-1.5 text-xs text-slate-300">

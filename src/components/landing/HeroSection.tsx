@@ -64,7 +64,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
-              Unified power of <strong className="text-slate-200">Direct Liquidity</strong>, <strong className="text-slate-200">P2P Escrow Exchange</strong>, and <strong className="text-slate-200">168+ Global Currency Transfers</strong>. Built on hand-crafted high-security architecture with isolated modular resilience.
+              Unified power of <strong className="text-slate-200">Direct Liquidity</strong>, <strong className="text-slate-200">Direct P2P Trading Rails</strong>, and <strong className="text-slate-200">168+ Global Currency Transfers</strong>. Built on hand-crafted high-security architecture with isolated modular resilience.
             </p>
 
             {/* Core Feature Badges */}

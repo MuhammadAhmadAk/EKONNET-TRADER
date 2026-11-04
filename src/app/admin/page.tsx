@@ -97,7 +97,7 @@ export default function AdminPortalPage() {
   const services: SystemService[] = [
     { name: "FastAPI Core Microservice", type: "Python 3.11", port: 8000, status: "Healthy", latency: "12ms", uptime: "99.98%" },
     { name: "Matching & Routing Engine", type: "Next.js Edge API", port: 3000, status: "Healthy", latency: "4ms", uptime: "99.99%" },
-    { name: "P2P Escrow Settlement Vault", type: "Remitano Architecture", port: 5432, status: "Healthy", latency: "2ms", uptime: "100%" },
+    { name: "P2P Settlement Vault", type: "Direct P2P Architecture", port: 5432, status: "Healthy", latency: "2ms", uptime: "100%" },
     { name: "Primary Database Cluster", type: "PostgreSQL 16", port: 5432, status: "Healthy", latency: "1.2ms", uptime: "100%" },
     { name: "Secondary Failover Node", type: "Plesk VPS Mirror", port: 8443, status: "Healthy", latency: "22ms", uptime: "99.95%" },
     { name: "In-Memory Session Broker", type: "Redis 7 Alpine", port: 6379, status: "Healthy", latency: "0.6ms", uptime: "100%" },

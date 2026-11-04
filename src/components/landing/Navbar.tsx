@@ -76,7 +76,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
                     <Coins className="w-4 h-4 text-blue-400 shrink-0" />
                     <div>
                       <div className="text-xs font-bold text-white">Crypto Trading</div>
-                      <div className="text-[10px] text-slate-400">Direct & P2P Escrow (5 Base Pairs)</div>
+                      <div className="text-[10px] text-slate-400">Direct & P2P Trading (5 Base Pairs)</div>
                     </div>
                   </Link>
 
@@ -114,10 +114,10 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               Pricing & Tiers
             </a>
 
-            <a href="#security-protocols" className="hover:text-white transition flex items-center gap-1 whitespace-nowrap">
+            <Link href="/security" className="hover:text-white transition flex items-center gap-1 whitespace-nowrap">
               <Lock className="w-3 h-3 text-purple-400" />
               <span>Security</span>
-            </a>
+            </Link>
 
             <a href="#support-desk" className="hover:text-white transition flex items-center gap-1 whitespace-nowrap">
               <HelpCircle className="w-3 h-3 text-slate-400" />

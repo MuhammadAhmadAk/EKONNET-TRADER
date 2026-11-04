@@ -161,7 +161,7 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
             </div>
             <h3 className="text-2xl font-black text-white">Sign In to Ekonnet</h3>
             <p className="text-xs text-slate-400">
-              Access your spot wallets, P2P escrow trading desk, and cross-border payment gateway.
+              Access your spot wallets, P2P direct trading desk, and cross-border payment gateway.
             </p>
           </div>
 

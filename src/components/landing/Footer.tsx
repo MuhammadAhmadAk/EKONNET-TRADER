@@ -19,7 +19,7 @@ export default function Footer() {
               <span className="text-base font-extrabold text-white tracking-tight">EKONNET TRADER</span>
             </Link>
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              Global multi-asset trading, P2P escrow settlement, and 14-processor payments infrastructure. Engineered with isolated modular resilience.
+              Global multi-asset trading, direct P2P settlement, and 14-processor payments infrastructure. Engineered with isolated modular resilience.
             </p>
             <div className="pt-2 flex items-center gap-3 text-[11px] text-slate-400 font-mono">
               <span className="flex items-center gap-1">
@@ -39,7 +39,7 @@ export default function Footer() {
             <h4 className="text-xs font-bold text-white uppercase tracking-wider">Trading Ecosystem</h4>
             <ul className="space-y-1.5 text-slate-400 text-xs">
               <li><Link href="/trades" className="hover:text-white transition">Direct Crypto Trading</Link></li>
-              <li><Link href="/trades" className="hover:text-white transition">P2P Escrow Exchange</Link></li>
+              <li><Link href="/trades" className="hover:text-white transition">P2P Direct Exchange</Link></li>
               <li><Link href="/trades" className="hover:text-white transition">10 CEX Order Router</Link></li>
               <li><Link href="/trades" className="hover:text-white transition">Forex (168 Currencies)</Link></li>
               <li><Link href="/trades" className="hover:text-white transition">Shares & Indices</Link></li>
