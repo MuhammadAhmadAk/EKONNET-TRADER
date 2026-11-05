@@ -109,6 +109,23 @@
 
 ---
 
+---
+
+### 🚨 Critical Client Directive (November 5, 2026 - Evening Directive 2 - Transcribed Verbatim):
+> *"For Example In The Green Section in The Images 'IMEZIN BACK END 2' These Staffs Accounts Needs to Be Automatically Created By Separate Account Holders, By The Imezin Platforms System, when The Staffs Sign up for An Account within The Imezin Platform System.
+> 
+> And These Staffs Accounts, Which The Master Management Account Holders and The Management Accounts [Many Management Accounts Holders], Can Open Up To Many Different Staffs Accounts, And They Can Tick Boxes, which would Allow Different Staffs Members to Work in Separate Sections of The Imezin Platforms with Certain Specific Assign Tasks That The Master Management Account Holder and The Management Accounts Holders have Given Them Permissions by Ticking The Specific Boxes of Assign Task In The Staffs Specific Accounts.
+> 
+> Right Now, When I Tried To Click into The Staffs Accounts, it Does Not Works, it Does Not Open Up into Their Individual Accounts. Please Fix This Up. Each Staffs Accounts Should be Able To Be Open By Master Management and Management, within Their Own Accounts So That When Master Management and Management Login into Their Accounts, They Can Click onto These Staffs Accounts and Then Tick Boxes, To Assign Different Jobs and Task for Each Individual Staffs Members Separately !!!
+> 
+> Please Create These Accounts Early Because Right Now, There is Hardly Any Accounts With The Back Ends. And The Front End Works is Done With So Many Mistakes. Please All Do The Same Thing for Manager Accounts like Staffs Accounts.
+> 
+> Which The Master Management Can Tick Boxes to Assign Many Types of Jobs and Task for Each Separate Managers Accounts Holders. And Remember To Add All Types of Trading Tools Which I have Shown To You 2 Days into My Ekonnet Platform System.
+> 
+> And Please Write Down Everything I that I have Mention to You here today and 2 Days Ago and Put it in a Safe Place and Label it The Date, So That You Can Refer Back To Them if You Need it. And Please Write Down Everything that I have Mention to You here today and 2 Days Ago and Put it in a Safe Place and Label it The Date, So That You Can Refer Back To Them if You Need it. And Every Times That I Have Mention Something Important, Here or on The Other Accounts, Please Write Them Down, Label it with Dates and Store Them Safely So That You Can Refer Back To Them if You Need it."*
+
+---
+
 ## 📌 Comprehensive Client Demands & Technical Implementation Matrix
 
 ### ❓ Client Demand 1: "Homepage se security boxes aur login/signup warnings hatao!"
@@ -244,6 +261,34 @@
   * Auditing sample platforms: Binance/MT4 (FinTech), ProtonMail (Encrypted Mail), Zillow/Zoom/Upwork (Real Estate, Video, Settlement), Dropbox/Google Drive (NVMe Storage), Google/Perplexity (BM25 Search & RAG).
   * Establishing a secure local credential vault for all sample platform logins.
   * Building fully independent, sovereign backend services without 3rd-party vendor lock-in.
+
+---
+
+### ❓ Client Demand 16: "Interactive Clickable Staff and Manager Directory with Individual Account Dossier and Checkbox Task Assignment"
+* **Client Feedback and Screenshots Reference (IMEZIN BACK END 2):**
+  * *Observed Issue:* In `https://imezin.com/admin` under *Staff RBAC and Roles (Section 50)*, clicking on staff members (*Alex Morgan, Marcus Bell, Elena Rostova, Dr. Sarah Chen*) does nothing.
+  * *Exact Requirement:* When Master Management or Management logs in, they must be able to click on any Staff Account or Manager Account to open their individual account dossier. Inside, they must have individual checkboxes to assign specific jobs, tasks, and access to separate platform sections for that specific individual.
+  * *Manager Hierarchy:* Master Management must also be able to open Manager accounts and tick checkboxes to assign management-level jobs and tasks.
+  * *Automated Account Creation:* Staff and Management accounts must be capable of automatic self-signup and provisioning by the platform system.
+  * *Trading Tools Mandate:* All types of trading tools shown 2 days ago must be incorporated into Ekonnet's backend terminal.
+  * *Audit and Documentation Mandate:* Every directive and message from the client must be archived with exact timestamps in a persistent, safe place (`PROJECT_HISTORY.md`).
+* **Implemented Engineering and Operational Compliance:**
+  * Updated `SuperAdminPortal.jsx` to make every staff and manager row fully interactive and clickable (`cursor-pointer`).
+  * Engineered the **Individual Account Task Delegation Drawer/Modal**:
+    * Displays staff member details (Name, ID Token, Department, Role, Live Status, Account Type).
+    * Provides an interactive checkbox matrix of 10 granular platform sections and tasks:
+      1. View and Answer Customer Support Tickets (Section 14)
+      2. Create Hidden Internal Customer Notes (Section 52)
+      3. Inspect Security Audit Trails and Immutable Logs (Section 48)
+      4. Authorize Emergency 2FA and TOTP Reset (Section 26)
+      5. Access Billing, Subscriptions and Invoicing Dossier (Section 32)
+      6. Manage Corporate Domains and DNS Records (Section 31)
+      7. Monitor Mail Gateway and TLS 1.3 Relay Queues (Section 18)
+      8. Supervise Threat Defense and Firewall Blocklists (Section 22)
+      9. Node Telemetry and Cluster Operations (Section 39)
+      10. Execute Cryptographic Account Burn (Section 60 - Master Only)
+    * Real-time checkbox state toggling per individual with persistent save and toast feedback.
+    * Added "+ Provision New Staff / Manager Account" modal for instant automatic system creation.
 
 ---
 
