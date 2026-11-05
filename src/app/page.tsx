@@ -8,6 +8,7 @@ import TradingPillars from "@/components/landing/TradingPillars";
 import PaymentRailSection from "@/components/landing/PaymentRailSection";
 import PricingPackages from "@/components/landing/PricingPackages";
 import BigFeatureAdvertisements from "@/components/landing/BigFeatureAdvertisements";
+import SovereignEcosystemShowcase from "@/components/landing/SovereignEcosystemShowcase";
 import InteractiveTradingTerminal from "@/components/landing/InteractiveTradingTerminal";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
@@ -73,6 +74,12 @@ export default function LandingPage() {
         />
         
         <BigFeatureAdvertisements 
+          onOpenRegister={() => setIsRegisterOpen(true)}
+          onOpenLogin={() => setIsLoginOpen(true)}
+        />
+
+        {/* 5-PLATFORM SOVEREIGN ECOSYSTEM MASTER ADVERTISEMENT BILLBOARD */}
+        <SovereignEcosystemShowcase 
           onOpenRegister={() => setIsRegisterOpen(true)}
           onOpenLogin={() => setIsLoginOpen(true)}
         />
