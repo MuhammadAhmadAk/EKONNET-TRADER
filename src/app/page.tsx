@@ -9,6 +9,7 @@ import PaymentRailSection from "@/components/landing/PaymentRailSection";
 import PricingPackages from "@/components/landing/PricingPackages";
 import BigFeatureAdvertisements from "@/components/landing/BigFeatureAdvertisements";
 import SovereignEcosystemShowcase from "@/components/landing/SovereignEcosystemShowcase";
+import FloatingEcosystemDock from "@/components/landing/FloatingEcosystemDock";
 import InteractiveTradingTerminal from "@/components/landing/InteractiveTradingTerminal";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
@@ -40,6 +41,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       {isPageLoading && <LoadingScreen />}
+      <FloatingEcosystemDock currentPlatformId="ekonnet" />
       
       {/* Toast Notification */}
       {activeNotification && (
