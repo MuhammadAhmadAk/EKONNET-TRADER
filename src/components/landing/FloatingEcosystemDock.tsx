@@ -107,7 +107,7 @@ export default function FloatingEcosystemDock({ currentPlatformId = "ekonnet" }:
   return (
     <aside 
       aria-label="Sovereign Ecosystem Floating Dock"
-      className="fixed right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-50 select-none hidden xs:flex flex-col items-center"
+      className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 z-[99999] select-none flex flex-col items-center pointer-events-auto"
     >
       <div className="relative p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl bg-slate-900/90 dark:bg-[#070b14]/90 backdrop-blur-2xl border border-white/10 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex flex-col items-center gap-1.5 sm:gap-2">
         
