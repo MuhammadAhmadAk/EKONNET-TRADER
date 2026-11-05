@@ -73,7 +73,7 @@ export default function BigFeatureAdvertisements({
       binance: true,
       bitfinex: false,
       traditional: false,
-      note: "Transparent peer-to-peer settlement without third-party escrow withholding.",
+      note: "Transparent peer-to-peer settlement without intermediary delays.",
     },
   ];
 

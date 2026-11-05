@@ -45,7 +45,7 @@ export default function EnterpriseBackground() {
     resize();
     window.addEventListener("resize", resize);
 
-    // Multi-harmonic liquidity stream waves (Fintech / P2P Escrow / Multi-Asset)
+    // Multi-harmonic liquidity stream waves (Fintech / Direct P2P / Multi-Asset)
     let step = 0;
     const waveCount = 5;
 
@@ -148,7 +148,7 @@ export default function EnterpriseBackground() {
         className="absolute inset-0 w-full h-full opacity-90 dark:opacity-100"
       />
 
-      {/* 6. Ambient Floating Fintech Icons (Multi-Asset Trading, Escrow & Payment Rail Glyphs) */}
+      {/* 6. Ambient Floating Fintech Icons (Multi-Asset Trading, Settlement & Payment Rail Glyphs) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         
         {/* Top-Right Ambient Crypto Node */}
