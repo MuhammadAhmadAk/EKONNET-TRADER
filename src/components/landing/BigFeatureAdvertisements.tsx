@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Zap,
   Globe,
@@ -19,7 +20,12 @@ import {
   Sliders,
   DollarSign,
   HelpCircle,
-  ExternalLink
+  ExternalLink,
+  BookOpen,
+  Scale,
+  Radar,
+  ArrowDownUp,
+  CreditCard
 } from "lucide-react";
 
 interface BigFeatureAdvertisementsProps {
@@ -32,7 +38,6 @@ export default function BigFeatureAdvertisements({
   onOpenLogin,
 }: BigFeatureAdvertisementsProps) {
   const [activeStep, setActiveStep] = useState(1);
-  const [activeTab, setActiveTab] = useState<"speed" | "demo" | "unified">("speed");
 
   const comparisonData = [
     {
@@ -52,20 +57,28 @@ export default function BigFeatureAdvertisements({
       note: "Practice with zero deposit and zero KYC friction before committing real capital.",
     },
     {
-      feature: "Unified Multi-Asset Liquidity (Crypto + Forex + Equities)",
+      feature: "Bitfinex 9 Order Routing Types (Scaled, Trailing, OCO)",
       ekonnet: true,
       binance: false,
-      bitfinex: false,
+      bitfinex: true,
       traditional: false,
-      note: "Trade Bitcoin, EUR/USD and Apple from one single balance ledger.",
+      note: "Algorithmic scaled ladder orders and trailing profit-locking stops.",
     },
     {
-      feature: "Low-Bandwidth Adaptive Protocol (Works on Weak Internet)",
+      feature: "CMC Markets Guaranteed Stop-Loss (GSLO Zero Slippage)",
       ekonnet: true,
       binance: false,
       bitfinex: false,
       traditional: false,
-      note: "Engineered specifically for unreliable internet connections without connection drops.",
+      note: "Guaranteed strike price execution immune to extreme weekend gap-downs.",
+    },
+    {
+      feature: "Bitpanda Multi-Asset Single Collateral (Crypto + Stocks + Metals)",
+      ekonnet: true,
+      binance: false,
+      bitfinex: false,
+      traditional: false,
+      note: "Trade Bitcoin, EUR/USD, Apple, and Physical Gold from one central wallet.",
     },
     {
       feature: "Direct Non-Custodial P2P Smart Settlement",
@@ -77,13 +90,112 @@ export default function BigFeatureAdvertisements({
     },
   ];
 
+  const institutionalFeatures = [
+    {
+      id: "bitfinex-orders",
+      badge: "Bitfinex Trading Core",
+      badgeColor: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+      icon: Sliders,
+      iconColor: "text-emerald-400",
+      title: "9 Institutional Order Types & Scaled Routing",
+      desc: "Full order routing parity with Bitfinex: Limit, Market, Stop, Stop-Limit, Trailing Stop, Fill or Kill (FOK), Immediate or Cancel (IOC), Interactive Book, and Scaled accumulation.",
+      benefits: [
+        "Eliminate slippage: Post-Only and Hidden orders stay off the public order book.",
+        "Lock in rally gains automatically with dynamic Trailing Stops.",
+        "Scaled orders break large positions into laddered price tranches effortlessly."
+      ],
+      link: "/tutorials#bitfinex-orders",
+      linkText: "Read Order Routing Guide"
+    },
+    {
+      id: "bitfinex-lending",
+      badge: "Bitfinex Services",
+      badgeColor: "text-blue-400 bg-blue-500/10 border-blue-500/30",
+      icon: Coins,
+      iconColor: "text-blue-400",
+      title: "P2P Liquidity Funding & Margin Lending",
+      desc: "Lend idle USD, EUR, or crypto assets to leveraged traders through our transparent, non-custodial peer-to-peer liquidity order book.",
+      benefits: [
+        "Earn safe daily compound yield with automated auto-renew rules.",
+        "100% over-collateralized loans with automated liquidation safeguards.",
+        "Choose custom lending durations from 2 days to 120 days."
+      ],
+      link: "/tutorials#bitfinex-orders",
+      linkText: "Explore P2P Lending Guide"
+    },
+    {
+      id: "cmc-gslo",
+      badge: "CMC Markets Precision",
+      badgeColor: "text-purple-400 bg-purple-500/10 border-purple-500/30",
+      icon: ShieldCheck,
+      iconColor: "text-purple-400",
+      title: "Guaranteed Stop-Loss Orders (GSLO)",
+      desc: "Engineered from CMC Markets' gold-standard risk engine. GSLO guarantees your stop level is honored byte-for-byte, even through weekend market gaps and violent news events.",
+      benefits: [
+        "Zero slippage guarantee: your exit executes at the exact strike price set.",
+        "100% risk premium refunded in full if your stop level is never triggered.",
+        "Capital protection vital for trading high-beta crypto and volatile forex."
+      ],
+      link: "/tutorials#cmc-gslo",
+      linkText: "How GSLO Protects Capital"
+    },
+    {
+      id: "cmc-sentiment",
+      badge: "CMC Markets Intelligence",
+      badgeColor: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
+      icon: Radar,
+      iconColor: "text-cyan-400",
+      title: "Live Client Sentiment Radar",
+      desc: "Access proprietary crowd psychology analytics showing the live percentage of buyers versus sellers across tens of thousands of real institutional accounts.",
+      benefits: [
+        "Identify extreme crowd greed or fear to spot contrarian pivot opportunities.",
+        "Separate retail positioning from institutional top-tier trader flow.",
+        "Updated every 500ms directly from WebSocket trade streams."
+      ],
+      link: "/tutorials#cmc-gslo",
+      linkText: "Learn Sentiment Trading"
+    },
+    {
+      id: "bitpanda-assets",
+      badge: "Bitpanda Innovation",
+      badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+      icon: Layers,
+      iconColor: "text-amber-400",
+      title: "Unified Cross-Asset Multi-Collateral",
+      desc: "One single account wallet to trade Crypto (BTC, SOL), 168+ Forex pairs (EUR/USD, GBP/JPY), Fractional US Stocks (AAPL, TSLA), and physical vault-backed Gold.",
+      benefits: [
+        "Invest from as low as $10 in high-priced Wall Street blue-chip shares.",
+        "Never transfer capital between three separate brokerages again.",
+        "Transparent real-time swaps with zero hidden markups or spreads."
+      ],
+      link: "/tutorials#bitpanda-assets",
+      linkText: "Explore Multi-Asset System"
+    },
+    {
+      id: "p2p-settlement",
+      badge: "Direct Settlement",
+      badgeColor: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
+      icon: CreditCard,
+      iconColor: "text-emerald-400",
+      title: "Instant 14-Rail Fiat & P2P On-Ramp",
+      desc: "Deposit and withdraw across 14 payment rails including Debit/Credit cards, SEPA, Bank Wire, Wise, and direct peer-to-peer crypto settlement without intermediate delays.",
+      benefits: [
+        "Direct buyer-seller settlement without platform middleman lockouts.",
+        "Zero deposit fees on global card and digital banking rails.",
+        "Full support for local payment methods across 120+ sovereign nations."
+      ],
+      link: "/tutorials#p2p-settlement",
+      linkText: "View 14 Payment Rails"
+    }
+  ];
+
   return (
     <section id="features-advertisements" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-950/60 via-slate-900/40 to-slate-950/80 border-t border-b border-white/5">
       {/* Background Glow Accents */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none -z-10" />
 
-      <div className="max-w-7xl mx-auto space-y-20">
+      <div className="max-w-7xl mx-auto space-y-24">
         
         {/* =====================================================================
             TOP BADGE & MAIN ADVERTISEMENT BILLBOARD HEADLINE
@@ -108,7 +220,7 @@ export default function BigFeatureAdvertisements({
         </div>
 
         {/* =====================================================================
-            3 MASSIVE ADVERTISEMENT BILLBOARDS (INTERACTIVE SPOTLIGHT)
+            3 MASSIVE HERO BILLBOARDS (IN-BROWSER • DEMO • SINGLE WALLET)
         ===================================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -143,9 +255,9 @@ export default function BigFeatureAdvertisements({
             </div>
             <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
               <span className="text-xs text-slate-400">Tested across 120+ countries</span>
-              <span className="inline-flex items-center text-xs text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">
-                Read Spec <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </span>
+              <a href="#web-terminal" className="inline-flex items-center text-xs text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">
+                Launch Live Terminal <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </a>
             </div>
           </div>
 
@@ -180,12 +292,9 @@ export default function BigFeatureAdvertisements({
             </div>
             <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
               <span className="text-xs text-slate-400">Zero deposit required</span>
-              <button 
-                onClick={onOpenRegister}
-                className="inline-flex items-center text-xs text-emerald-400 font-semibold group-hover:translate-x-1 transition-transform"
-              >
-                Try Demo <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </button>
+              <a href="#web-terminal" className="inline-flex items-center text-xs text-emerald-400 font-semibold group-hover:translate-x-1 transition-transform">
+                Try Free Terminal Demo <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </a>
             </div>
           </div>
 
@@ -220,12 +329,86 @@ export default function BigFeatureAdvertisements({
             </div>
             <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
               <span className="text-xs text-slate-400">Universal Liquidity Engine</span>
-              <span className="inline-flex items-center text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition-transform">
-                Explore Markets <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </span>
+              <Link href="/tutorials#bitpanda-assets" className="inline-flex items-center text-xs text-purple-400 font-semibold group-hover:translate-x-1 transition-transform">
+                Explore Multi-Asset <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
             </div>
           </div>
 
+        </div>
+
+        {/* =====================================================================
+            BIG INSTITUTIONAL TRADING TOOLS & FEATURES SHOWCASE
+            (BITFINEX • BITPANDA • CMC MARKETS INTEGRATION WITH CUSTOMER BENEFITS)
+        ===================================================================== */}
+        <div className="space-y-10">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+              Institutional Tool Suite • Bitfinex, Bitpanda & CMC Markets Parity
+            </span>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-white">
+              Every Advanced Tool & Technique Built Right In
+            </h3>
+            <p className="text-sm text-slate-300">
+              Discover the full arsenal of pro features designed to give traders institutional advantages, maximum risk protection, and multi-asset freedom.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {institutionalFeatures.map((feat) => {
+              const IconComponent = feat.icon;
+              return (
+                <div 
+                  key={feat.id}
+                  className="rounded-3xl p-7 bg-slate-900/70 border border-white/10 hover:border-blue-500/40 backdrop-blur-xl flex flex-col justify-between transition-all hover:shadow-2xl hover:shadow-blue-500/10 group"
+                >
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                        <IconComponent className={`w-6 h-6 ${feat.iconColor}`} />
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold uppercase px-3 py-1 rounded-full border ${feat.badgeColor}`}>
+                        {feat.badge}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
+                        {feat.title}
+                      </h4>
+                      <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                        {feat.desc}
+                      </p>
+                    </div>
+
+                    {/* Customer Benefits Box */}
+                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-white/5 space-y-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                        Customer & User Benefits:
+                      </span>
+                      {feat.benefits.map((benefit, bIdx) => (
+                        <div key={bIdx} className="flex items-start gap-2 text-[11px] text-slate-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400">Documented in Academy</span>
+                    <Link
+                      href={feat.link}
+                      className="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-cyan-300 group-hover:translate-x-1 transition-all"
+                    >
+                      <span>{feat.linkText}</span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* =====================================================================
@@ -309,7 +492,7 @@ export default function BigFeatureAdvertisements({
         </div>
 
         {/* =====================================================================
-            BENCHMARK COMPARISON TABLE (DEMAND 4 SAMPLE SITE PARITY)
+            BENCHMARK COMPARISON TABLE
         ===================================================================== */}
         <div className="rounded-3xl p-8 sm:p-10 bg-slate-900/40 border border-white/10 overflow-hidden space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

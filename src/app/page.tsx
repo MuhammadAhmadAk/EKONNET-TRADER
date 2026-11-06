@@ -11,6 +11,7 @@ import BigFeatureAdvertisements from "@/components/landing/BigFeatureAdvertiseme
 import SovereignEcosystemShowcase from "@/components/landing/SovereignEcosystemShowcase";
 import FloatingEcosystemDock from "@/components/landing/FloatingEcosystemDock";
 import InteractiveTradingTerminal from "@/components/landing/InteractiveTradingTerminal";
+import TutorialVideoShowcase from "@/components/landing/TutorialVideoShowcase";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
 import UserRegisterModal from "@/components/auth/UserRegisterModal";
@@ -86,7 +87,13 @@ export default function LandingPage() {
           onOpenLogin={() => setIsLoginOpen(true)}
         />
         
+        {/* BITFINEX-STYLE ADVANCED WEB TRADING TERMINAL */}
         <InteractiveTradingTerminal 
+          onOpenRegister={() => setIsRegisterOpen(true)} 
+        />
+
+        {/* BITFINEX 2-STYLE VIDEO TUTORIAL SHOWCASE & ACADEMY */}
+        <TutorialVideoShowcase 
           onOpenRegister={() => setIsRegisterOpen(true)} 
         />
       </main>

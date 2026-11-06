@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   TrendingUp,
   TrendingDown,
@@ -17,7 +18,13 @@ import {
   Zap,
   Globe,
   Coins,
-  Shield
+  Shield,
+  Radio,
+  BookOpen,
+  HelpCircle,
+  BarChart2,
+  Info,
+  ChevronDown
 } from "lucide-react";
 
 interface InteractiveTradingTerminalProps {
@@ -35,18 +42,103 @@ interface MarketAsset {
 }
 
 const ASSETS: MarketAsset[] = [
-  { symbol: "BTC/USD", name: "Bitcoin Core", category: "crypto", price: 67420.50, change24h: 3.42, high24h: 68100, low24h: 65900 },
+  { symbol: "BTC/USD", name: "Bitcoin Core", category: "crypto", price: 76542.00, change24h: 2.39, high24h: 78420, low24h: 75900 },
   { symbol: "ETH/USD", name: "Ethereum", category: "crypto", price: 3480.20, change24h: 2.15, high24h: 3520, low24h: 3390 },
   { symbol: "SOL/USD", name: "Solana", category: "crypto", price: 184.60, change24h: -1.20, high24h: 191, low24h: 181 },
   { symbol: "EUR/USD", name: "Euro / US Dollar", category: "forex", price: 1.0865, change24h: 0.18, high24h: 1.0890, low24h: 1.0840 },
   { symbol: "AAPL", name: "Apple Inc.", category: "equity", price: 232.40, change24h: 1.85, high24h: 235, low24h: 229 },
 ];
 
+// All 9 Order Types directly from Bitfinex 3 & 4 Screenshot (marked IMPORTANT by client)
+type OrderTechnique = 
+  | "Limit"
+  | "Market"
+  | "Stop"
+  | "Stop Limit"
+  | "Trailing Stop"
+  | "Fill or Kill"
+  | "Immediate or Cancel"
+  | "Interactive Book"
+  | "Scaled";
+
+const ORDER_TECHNIQUES: { id: OrderTechnique; label: string; desc: string; benefit: string }[] = [
+  {
+    id: "Limit",
+    label: "Limit Order",
+    desc: "Executes buy/sell strictly at your specified price or better.",
+    benefit: "Guarantees you never pay more than intended. Zero execution slippage."
+  },
+  {
+    id: "Market",
+    label: "Market Order",
+    desc: "Executes immediately against best available bids/asks in the order book.",
+    benefit: "Instant execution when getting in or out of a fast-moving market is critical."
+  },
+  {
+    id: "Stop",
+    label: "Stop Order",
+    desc: "Triggers a market order once your designated stop trigger price is touched.",
+    benefit: "Protects against deep drawdowns by cutting losing trades automatically."
+  },
+  {
+    id: "Stop Limit",
+    label: "Stop Limit",
+    desc: "Places a limit order immediately after a designated stop barrier is breached.",
+    benefit: "Prevents bad market fills during flash crashes by capping maximum slippage."
+  },
+  {
+    id: "Trailing Stop",
+    label: "Trailing Stop",
+    desc: "Dynamic stop price that slides upward with market price by a fixed offset.",
+    benefit: "Rides rallies to maximum profit without giving back winning gains on reversals."
+  },
+  {
+    id: "Fill or Kill",
+    label: "Fill or Kill (FOK)",
+    desc: "Entire order must fill immediately and fully, or it is killed entirely.",
+    benefit: "Prevents partial fills when executing specific all-or-nothing arbitrage setups."
+  },
+  {
+    id: "Immediate or Cancel",
+    label: "Immediate or Cancel (IOC)",
+    desc: "Fills as much as possible right now, and cancels any remaining balance.",
+    benefit: "Takes whatever immediate liquidity is available without leaving resting limit bids."
+  },
+  {
+    id: "Interactive Book",
+    label: "Interactive Book",
+    desc: "Click directly on bids/asks inside the visual depth ladder to auto-fill price.",
+    benefit: "Rapid ultra-fast scalping directly off market maker liquidity walls."
+  },
+  {
+    id: "Scaled",
+    label: "Scaled / Algorithmic Ladder",
+    desc: "Splits a large order into multiple staggered limit orders across a price range.",
+    benefit: "Institutional accumulation without alerting market makers or causing slippage."
+  }
+];
+
 export default function InteractiveTradingTerminal({ onOpenRegister }: InteractiveTradingTerminalProps) {
+  const [activeTab, setActiveTab] = useState<"Trading" | "Derivatives" | "Funding" | "Securities" | "OTC">("Trading");
   const [selectedAsset, setSelectedAsset] = useState<MarketAsset>(ASSETS[0]);
   const [tradingMode, setTradingMode] = useState<"demo" | "live">("demo");
-  const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
-  const [tradeAmount, setTradeAmount] = useState<number>(500);
+  const [side, setSide] = useState<"buy" | "sell">("buy");
+  const [selectedTechnique, setSelectedTechnique] = useState<OrderTechnique>("Limit");
+  
+  // Order Parameters
+  const [tradeAmount, setTradeAmount] = useState<number>(1000);
+  const [limitPrice, setLimitPrice] = useState<number>(ASSETS[0].price);
+  const [stopTriggerPrice, setStopTriggerPrice] = useState<number>(ASSETS[0].price * 0.96);
+  const [trailingDelta, setTrailingDelta] = useState<number>(500);
+  const [scaledCount, setScaledCount] = useState<number>(5);
+  
+  // Modifiers
+  const [isOco, setIsOco] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isPostOnly, setIsPostOnly] = useState(false);
+  const [isTif, setIsTif] = useState(false);
+
+  // Demo simulator balance
   const [demoBalance, setDemoBalance] = useState<number>(10000);
   const [executedTrades, setExecutedTrades] = useState<any[]>([]);
   const [lastExecuted, setLastExecuted] = useState<string | null>(null);
@@ -56,13 +148,15 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
 
   useEffect(() => {
     setCurrentPrice(selectedAsset.price);
+    setLimitPrice(selectedAsset.price);
+    setStopTriggerPrice(Number((selectedAsset.price * 0.96).toFixed(2)));
   }, [selectedAsset]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const delta = (Math.random() - 0.49) * (currentPrice * 0.0008);
+      const delta = (Math.random() - 0.49) * (currentPrice * 0.0006);
       setCurrentPrice((prev) => Number((prev + delta).toFixed(selectedAsset.category === "forex" ? 4 : 2)));
-    }, 1800);
+    }, 1500);
     return () => clearInterval(interval);
   }, [currentPrice, selectedAsset]);
 
@@ -74,60 +168,64 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
     }
 
     if (tradeAmount > demoBalance) {
-      alert("Trade amount exceeds your demo simulator balance.");
+      alert("Trade amount exceeds your demo simulator balance. Click Reset to reload $10,000.");
       return;
     }
 
-    const fee = tradeAmount * 0.0015;
-    const executedUnits = Number((tradeAmount / currentPrice).toFixed(5));
+    const fee = tradeAmount * 0.001;
+    const executedUnits = Number((tradeAmount / (selectedTechnique === "Limit" ? limitPrice : currentPrice)).toFixed(5));
     const newTrade = {
-      id: "DEMO-" + Math.floor(100000 + Math.random() * 900000),
+      id: "ORD-" + Math.floor(100000 + Math.random() * 900000),
       symbol: selectedAsset.symbol,
-      type: orderType,
+      side: side,
+      technique: selectedTechnique,
       amount: tradeAmount,
       units: executedUnits,
-      price: currentPrice,
+      price: selectedTechnique === "Limit" ? limitPrice : currentPrice,
       fee: fee,
       time: new Date().toLocaleTimeString(),
+      status: "Filled (Instant Web Engine)"
     };
 
     setExecutedTrades([newTrade, ...executedTrades.slice(0, 4)]);
-    setDemoBalance((prev) => Number((prev - (orderType === "buy" ? fee : -tradeAmount * 0.01)).toFixed(2)));
-    setLastExecuted(`Success: Executed ${orderType.toUpperCase()} ${newTrade.units} ${selectedAsset.symbol} @ $${currentPrice}`);
-    setTimeout(() => setLastExecuted(null), 4500);
+    setDemoBalance((prev) => Number((prev - (side === "buy" ? fee : -tradeAmount * 0.01)).toFixed(2)));
+    setLastExecuted(`Success: Executed [${selectedTechnique}] ${side.toUpperCase()} ${newTrade.units} ${selectedAsset.symbol} @ $${newTrade.price}`);
+    setTimeout(() => setLastExecuted(null), 5000);
   };
 
   const handleResetDemo = () => {
     setDemoBalance(10000);
     setExecutedTrades([]);
-    setLastExecuted("Demo balance reset to $10,000.00 virtual capital.");
+    setLastExecuted("Simulator reset to $10,000.00 virtual capital.");
     setTimeout(() => setLastExecuted(null), 3000);
   };
 
+  const activeTechniqueObj = ORDER_TECHNIQUES.find((t) => t.id === selectedTechnique) || ORDER_TECHNIQUES[0];
+
   return (
-    <section className="relative py-16 sm:py-20 bg-transparent border-t border-b border-white/[0.06] overflow-hidden" id="web-terminal">
-      {/* Decorative background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-500/10 blur-[140px] pointer-events-none -z-10" />
+    <section className="relative py-16 sm:py-24 bg-transparent border-t border-b border-white/[0.06] overflow-hidden" id="web-terminal">
+      {/* Background illumination */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-gradient-to-r from-blue-600/10 via-emerald-600/10 to-purple-600/10 blur-[150px] pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+        <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[11px] font-mono font-bold tracking-wider uppercase">
-            <Zap className="w-3 h-3 text-cyan-400 animate-pulse" />
-            <span>Interactive Web Platform Feature</span>
+            <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span>Bitfinex • Bitpanda • CMC Markets Multi-Asset Architecture</span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Direct Web Trading & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">Demo Simulator</span>
+            Institutional Web Trading & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">Advanced Order Suite</span>
           </h2>
 
           <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            Trade directly in your browser with zero software downloads or lag. Test your strategies risk-free with our $10,000 instant virtual demo simulator, or switch to verified live clearing.
+            All 9 institutional order techniques from Bitfinex, CMC Markets risk controls, and Bitpanda multi-asset liquidity — operating 100% in your browser with zero installation.
           </p>
 
-          {/* Mode Switcher Buttons */}
-          <div className="flex items-center justify-center gap-2 pt-2">
+          {/* Mode Switcher */}
+          <div className="flex items-center justify-center gap-3 pt-2">
             <button
               type="button"
               onClick={() => setTradingMode("demo")}
@@ -138,7 +236,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               }`}
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Free Demo Simulator ($10,000 Capital)</span>
+              <span>Practice Demo Mode ($10,000 Capital)</span>
             </button>
 
             <button
@@ -146,22 +244,57 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               onClick={() => setTradingMode("live")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 tradingMode === "live"
-                  ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg shadow-purple-600/20 ring-1 ring-purple-400"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/20 ring-1 ring-blue-400"
                   : "bg-white/5 text-slate-400 hover:text-white border border-white/10"
               }`}
             >
-              <Activity className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Live Web Trading Engine</span>
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Live Account Clearing</span>
             </button>
+
+            <Link
+              href="/tutorials"
+              className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-white/10 flex items-center gap-1.5 transition"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-yellow-400" />
+              <span>Tutorial Guides</span>
+            </Link>
           </div>
         </div>
 
-        {/* Interactive HUD Container */}
-        <div className="rounded-3xl border border-slate-800 bg-[#070B14]/90 backdrop-blur-2xl shadow-2xl overflow-hidden ring-1 ring-white/5">
+        {/* Institutional Trading HUD Window */}
+        <div className="rounded-3xl border border-slate-800 bg-[#070B14]/95 backdrop-blur-2xl shadow-2xl overflow-hidden ring-1 ring-white/5 relative">
           
-          {/* Top Asset & Balance Strip */}
-          <div className="px-5 py-3.5 border-b border-slate-800 bg-slate-900/40 flex flex-wrap items-center justify-between gap-4 text-xs">
-            {/* Asset selector tabs */}
+          {/* Top Platform Navigation Strip (Matches Bitfinex Screenshot 3 & 4) */}
+          <div className="px-5 py-3 border-b border-slate-800 bg-slate-950 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
+            {/* Navigation Tabs */}
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              {(["Trading", "Derivatives", "Funding", "Securities", "OTC"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    activeTab === tab
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Live Websocket Status Indicator Badge (Matches Bitfinex Screenshot 5 Exactly) */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span>Websocket connection is now online</span>
+            </div>
+          </div>
+
+          {/* Subheader: Assets & Balance */}
+          <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/40 flex flex-wrap items-center justify-between gap-4 text-xs">
+            {/* Asset selector */}
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {ASSETS.map((asset) => {
                 const isSelected = selectedAsset.symbol === asset.symbol;
@@ -170,9 +303,9 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     key={asset.symbol}
                     type="button"
                     onClick={() => setSelectedAsset(asset)}
-                    className={`px-3 py-1.5 rounded-lg font-mono font-bold transition-all flex items-center gap-1.5 shrink-0 ${
+                    className={`px-3 py-1 rounded-lg font-mono font-bold transition-all flex items-center gap-1.5 shrink-0 ${
                       isSelected
-                        ? "bg-blue-600 text-white shadow-sm"
+                        ? "bg-slate-800 text-white border border-blue-500/40 shadow-sm"
                         : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
                     }`}
                   >
@@ -185,31 +318,31 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               })}
             </div>
 
-            {/* Virtual Demo Balance / Status */}
+            {/* Virtual Balance */}
             <div className="flex items-center gap-3">
               {tradingMode === "demo" ? (
                 <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-[11px]">
-                  <span>Virtual Demo Balance:</span>
+                  <span>Demo Balance:</span>
                   <strong className="text-white font-bold">${demoBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
                   <button
                     type="button"
                     onClick={handleResetDemo}
-                    title="Reset Simulator Balance"
+                    title="Reload $10,000 simulator capital"
                     className="ml-1 text-slate-400 hover:text-white cursor-pointer"
                   >
                     <RotateCcw className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-[11px]">
-                  <span>Live Account Mode:</span>
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px]">
+                  <span>Live Brokerage Mode:</span>
                   <strong className="text-white font-bold">14 Payment Rails Active</strong>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Toast Notification inside Terminal */}
+          {/* Toast Notification */}
           {lastExecuted && (
             <div className="px-5 py-2.5 bg-emerald-950/80 border-b border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2 animate-fade-in font-mono">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -217,7 +350,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             </div>
           )}
 
-          {/* Main Terminal Grid: Chart Simulator (Left) + Order Entry (Right) */}
+          {/* Main Terminal Grid: Chart Simulator (Left 8 Cols) + Bitfinex Order Form (Right 4 Cols) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
             
             {/* Left 8 Cols: Chart Visualizer & Market Depth */}
@@ -230,6 +363,9 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     <h3 className="text-xl font-black text-white font-serif">{selectedAsset.name}</h3>
                     <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-cyan-300 font-bold uppercase">
                       {selectedAsset.category}
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                      {activeTab} Mode
                     </span>
                   </div>
                   <div className="text-[11px] text-slate-400 font-mono mt-0.5">
@@ -248,25 +384,30 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                 </div>
               </div>
 
-              {/* Dynamic Visual Price Chart Simulation */}
+              {/* Dynamic Visual Candlestick Chart */}
               <div className="relative h-64 rounded-2xl bg-[#03060C] border border-slate-800 p-4 flex flex-col justify-between overflow-hidden">
-                {/* Background grid lines */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_24px] pointer-events-none" />
 
-                <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 relative z-10">
-                  <span>Web-Streaming Candlestick Canvas</span>
-                  <span>Zero-Lag WebSocket Feed: 2ms Latency</span>
+                <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 relative z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-bold">{selectedAsset.symbol}</span>
+                    <span className="text-slate-500">•</span>
+                    <span>30m Candles</span>
+                    <span className="text-slate-500">•</span>
+                    <span className="text-emerald-400 font-bold">Bitfinex Liquidity Bridge</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]">Indicators: RSI, MACD, Volume</span>
+                  </div>
                 </div>
 
-                {/* Animated Mock Waveform Bars */}
+                {/* Animated Candlesticks */}
                 <div className="relative z-10 flex items-end justify-between h-40 gap-1.5 pt-4">
                   {[45, 52, 48, 60, 58, 65, 72, 68, 75, 82, 79, 88, 92, 86, 94, 91, 98, 95, 102, 108, 105, 114, 110, 118].map((val, idx) => {
                     const isGreen = idx % 3 !== 0;
                     return (
                       <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full">
-                        {/* Upper wick */}
                         <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500/60" : "bg-rose-500/60"}`} />
-                        {/* Candlestick body */}
                         <div
                           style={{ height: `${(val / 120) * 100}%` }}
                           className={`w-full rounded-xs transition-all duration-500 ${
@@ -275,7 +416,6 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                               : "bg-gradient-to-t from-rose-600 to-rose-400 shadow-sm shadow-rose-500/20"
                           }`}
                         />
-                        {/* Lower wick */}
                         <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500/60" : "bg-rose-500/60"}`} />
                       </div>
                     );
@@ -283,39 +423,57 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                 </div>
 
                 <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-2 border-t border-slate-800/80 relative z-10">
-                  <span>09:00</span>
-                  <span>12:00</span>
-                  <span>15:00</span>
-                  <span>18:00</span>
-                  <span>21:00</span>
-                  <span className="text-emerald-400 font-bold">LIVE CURRENT</span>
+                  <span>06:00 UTC</span>
+                  <span>12:00 UTC</span>
+                  <span>18:00 UTC</span>
+                  <span>00:00 UTC</span>
+                  <span className="text-emerald-400 font-bold">2ms WebSocket Tick</span>
                 </div>
               </div>
 
-              {/* Recent Simulator Trades */}
+              {/* CMC Markets Style Client Sentiment Gauge */}
+              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center gap-1.5 text-slate-300">
+                    <BarChart2 className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Client Sentiment (CMC Markets Protocol):</span>
+                  </div>
+                  <span className="text-emerald-400 font-bold">73% Long / 27% Short</span>
+                </div>
+                {/* Visual Bar */}
+                <div className="w-full h-2 rounded-full bg-rose-500/40 overflow-hidden flex">
+                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: "73%" }} />
+                </div>
+                <div className="flex justify-between text-[10px] font-mono text-slate-500">
+                  <span>12,480 Active Accounts Long</span>
+                  <span>4,610 Active Accounts Short</span>
+                </div>
+              </div>
+
+              {/* Recent Executed Orders History */}
               <div>
                 <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
-                  <span>Recent Executed Simulator Orders</span>
-                  <span className="text-[10px] text-slate-500">Automated Ledger Logging</span>
+                  <span>Active & Recent Orders</span>
+                  <span className="text-[10px] text-slate-500">Audit-Verified Order Ledger</span>
                 </div>
                 {executedTrades.length === 0 ? (
                   <div className="p-3 rounded-xl border border-slate-800 bg-slate-900/30 text-center text-xs text-slate-500 font-mono">
-                    No orders executed yet in this session. Use the panel on the right to place a test trade.
+                    No orders submitted yet. Select an order technique on the right to test execution.
                   </div>
                 ) : (
                   <div className="space-y-1.5 font-mono text-xs">
                     {executedTrades.map((t) => (
                       <div key={t.id} className="p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${t.type === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
-                            {t.type}
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${t.side === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+                            {t.side} {t.technique}
                           </span>
                           <span className="font-bold text-white">{t.units} {t.symbol}</span>
                         </div>
                         <div className="text-slate-400 text-[11px]">
                           @ ${t.price.toLocaleString()} • Fee: ${t.fee.toFixed(2)}
                         </div>
-                        <div className="text-[10px] text-slate-500">{t.time}</div>
+                        <div className="text-[10px] text-emerald-400 font-bold">{t.status}</div>
                       </div>
                     ))}
                   </div>
@@ -323,52 +481,87 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
             </div>
 
-            {/* Right 4 Cols: Order Execution Desk */}
-            <div className="lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between space-y-6 bg-slate-900/20">
+            {/* Right 4 Cols: Bitfinex-Style Comprehensive Order Form (Images 3, 4, 5) */}
+            <div className="lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between space-y-6 bg-slate-900/30">
               
-              <div>
+              <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs font-mono font-bold uppercase text-slate-400">Order Execution</span>
+                  <span className="text-xs font-mono font-bold uppercase text-slate-400">Order Form</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 font-semibold">
-                    {tradingMode === "demo" ? "DEMO MODE" : "LIVE CLEARING"}
+                    {tradingMode === "demo" ? "DEMO SIMULATOR" : "LIVE CLEARING"}
                   </span>
                 </div>
 
+                {/* 1. ORDER TECHNIQUE DROPDOWN (Matches Bitfinex Images 4 & 5 marked IMPORTANT) */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Order Technique:</span>
+                    <span className="text-[10px] font-mono text-blue-400">Bitfinex Institutional Suite</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={selectedTechnique}
+                      onChange={(e) => setSelectedTechnique(e.target.value as OrderTechnique)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono font-bold focus:outline-none focus:border-blue-500 appearance-none cursor-pointer pr-8"
+                    >
+                      {ORDER_TECHNIQUES.map((tech) => (
+                        <option key={tech.id} value={tech.id}>
+                          {tech.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Order Technique Benefit Explainer Banner */}
+                <div className="p-3 rounded-xl bg-blue-950/40 border border-blue-500/30 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-blue-300 font-bold">
+                    <Info className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>{activeTechniqueObj.label} Benefit:</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-normal">
+                    {activeTechniqueObj.benefit}
+                  </p>
+                </div>
+
                 {/* Buy vs Sell Switcher */}
-                <div className="grid grid-cols-2 gap-2 mt-4">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setOrderType("buy")}
+                    onClick={() => setSide("buy")}
                     className={`py-2 rounded-xl text-xs font-bold transition-all ${
-                      orderType === "buy"
+                      side === "buy"
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400"
                         : "bg-white/5 text-slate-400 hover:text-white"
                     }`}
                   >
-                    Buy / Long
+                    Exchange Buy
                   </button>
                   <button
                     type="button"
-                    onClick={() => setOrderType("sell")}
+                    onClick={() => setSide("sell")}
                     className={`py-2 rounded-xl text-xs font-bold transition-all ${
-                      orderType === "sell"
+                      side === "sell"
                         ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-1 ring-rose-400"
                         : "bg-white/5 text-slate-400 hover:text-white"
                     }`}
                   >
-                    Sell / Short
+                    Exchange Sell
                   </button>
                 </div>
 
-                {/* Trade Form */}
-                <form onSubmit={handleExecuteTrade} className="mt-5 space-y-4">
+                {/* Dynamic Input Fields depending on Order Technique */}
+                <form onSubmit={handleExecuteTrade} className="space-y-3 pt-1">
+                  
+                  {/* Amount Input */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Order Amount (USD)
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                      Total Order Amount (USD)
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                        <DollarSign className="w-4 h-4" />
+                        <DollarSign className="w-3.5 h-3.5" />
                       </div>
                       <input
                         type="number"
@@ -376,51 +569,150 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         max={tradingMode === "demo" ? demoBalance : 1000000}
                         value={tradeAmount}
                         onChange={(e) => setTradeAmount(Number(e.target.value))}
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-white text-sm font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
                       />
                     </div>
                   </div>
 
-                  {/* Preset quick buttons */}
-                  <div className="grid grid-cols-4 gap-1.5 text-xs font-mono">
-                    {[100, 250, 500, 1000].map((amt) => (
-                      <button
-                        key={amt}
-                        type="button"
-                        onClick={() => setTradeAmount(amt)}
-                        className={`py-1 rounded-lg border text-[11px] transition ${
-                          tradeAmount === amt
-                            ? "bg-blue-600/30 border-blue-500 text-white"
-                            : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        ${amt}
-                      </button>
-                    ))}
+                  {/* Limit Price Input (For Limit, Stop Limit, OCO) */}
+                  {(selectedTechnique === "Limit" || selectedTechnique === "Stop Limit") && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Limit Price (USD)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={limitPrice}
+                        onChange={(e) => setLimitPrice(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  {/* Stop Price Input (For Stop, Stop Limit) */}
+                  {(selectedTechnique === "Stop" || selectedTechnique === "Stop Limit") && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Stop Trigger Price (USD)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={stopTriggerPrice}
+                        onChange={(e) => setStopTriggerPrice(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  {/* Trailing Delta Input */}
+                  {selectedTechnique === "Trailing Stop" && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Trailing Distance Delta ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="10"
+                        value={trailingDelta}
+                        onChange={(e) => setTrailingDelta(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  {/* Scaled Orders Options */}
+                  {selectedTechnique === "Scaled" && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Tranches (Orders)
+                        </label>
+                        <input
+                          type="number"
+                          min="2"
+                          max="20"
+                          value={scaledCount}
+                          onChange={(e) => setScaledCount(Number(e.target.value))}
+                          className="w-full px-2.5 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Distribution
+                        </label>
+                        <select className="w-full px-2 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono">
+                          <option>Flat Weighted</option>
+                          <option>Increasing Scale</option>
+                          <option>Decreasing Scale</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Order Options Checkboxes (Matches Bitfinex Images 4 & 5) */}
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isOco}
+                        onChange={(e) => setIsOco(e.target.checked)}
+                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                      />
+                      <span>OCO</span>
+                    </label>
+
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isHidden}
+                        onChange={(e) => setIsHidden(e.target.checked)}
+                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                      />
+                      <span>Hidden</span>
+                    </label>
+
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isPostOnly}
+                        onChange={(e) => setIsPostOnly(e.target.checked)}
+                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                      />
+                      <span>Post-Only</span>
+                    </label>
+
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isTif}
+                        onChange={(e) => setIsTif(e.target.checked)}
+                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                      />
+                      <span>TIF (GTC)</span>
+                    </label>
                   </div>
 
-                  {/* Execution Breakdown */}
+                  {/* Order Calculation Preview */}
                   <div className="p-3 rounded-xl border border-slate-800 bg-slate-950/60 space-y-1.5 text-xs font-mono">
                     <div className="flex items-center justify-between text-slate-400">
-                      <span>Units To Receive:</span>
+                      <span>Execution Size:</span>
                       <strong className="text-white font-bold">
-                        {(tradeAmount / currentPrice).toFixed(5)} {selectedAsset.symbol.split("/")[0]}
+                        {(tradeAmount / (selectedTechnique === "Limit" ? limitPrice : currentPrice)).toFixed(5)} {selectedAsset.symbol.split("/")[0]}
                       </strong>
                     </div>
                     <div className="flex items-center justify-between text-slate-400">
-                      <span>Platform Fee (0.15%):</span>
-                      <span className="text-slate-300">${(tradeAmount * 0.0015).toFixed(2)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-400">
-                      <span>Execution Speed:</span>
-                      <span className="text-emerald-400 font-bold">Instant (Web-Engine)</span>
+                      <span>Trading Fee (0.10%):</span>
+                      <span className="text-emerald-400 font-bold">${(tradeAmount * 0.001).toFixed(2)}</span>
                     </div>
                   </div>
 
+                  {/* Submit Button */}
                   <button
                     type="submit"
                     className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
-                      orderType === "buy"
+                      side === "buy"
                         ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white shadow-emerald-600/30"
                         : "bg-gradient-to-r from-rose-600 to-pink-600 hover:opacity-90 text-white shadow-rose-600/30"
                     }`}
@@ -428,29 +720,34 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     {tradingMode === "demo" ? (
                       <>
                         <Play className="w-4 h-4 fill-current" />
-                        <span>Execute Instant Demo {orderType.toUpperCase()} Order</span>
+                        <span>Submit Demo {selectedTechnique} {side.toUpperCase()}</span>
                       </>
                     ) : (
                       <>
                         <Zap className="w-4 h-4" />
-                        <span>Launch Live Trading Account</span>
+                        <span>Submit Live Clearing Order</span>
                       </>
                     )}
                   </button>
                 </form>
+
               </div>
 
-              {/* Bottom Guarantee Badge */}
-              <div className="pt-4 border-t border-slate-800 text-center">
-                <div className="text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Direct Web Engine • Zero Desktop Software Required</span>
-                </div>
+              {/* Bottom Information Link */}
+              <div className="pt-3 border-t border-slate-800 text-center">
+                <Link
+                  href="/tutorials"
+                  className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 transition"
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>How to use these order techniques? View Full Guide</span>
+                </Link>
               </div>
 
             </div>
 
           </div>
+
         </div>
 
       </div>

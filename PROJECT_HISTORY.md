@@ -328,3 +328,46 @@
 | **EkonnetTrader** | `https://ekonnet.com` | Next.js Production Build (13/13 pages) | `MuhammadAhmadAk/EKONNET-TRADER` | `main` | **Pushed to GitHub** |
 | **AuraSearch** | `https://browzzit.com` | Next.js Production Build (11/11 pages) | `MuhammadAhmadAk/search-engine-platform` | `main` | **Pushed to GitHub** |
 | **KonnetOne** | `https://konnetone.com` | Vite Production Distribution | `Siddique722/proj-skyland` | `main` | **Pushed to GitHub** |
+
+
+---
+
+## 🎯 Directives Update (November 6, 2026): Bitfinex 1-4, Bitpanda & CMC Markets Feature Integration
+
+### 📋 Client Request:
+> *"In The Requirement Document for The Ekonnet Project I have Mention That I want My Platform to Be Built With All The Tools, Features and Functionalities of The Bitfinex, Bipanda, CMCMarkets.....etc.*
+> *In The Bitfinex 1 Doc, Show The Tools, Features that They have Available. These Tools and Features and Trading Functionalities Need to be Put Into My Ekonnet Platforms on The Homepages and Advertise Very Big and With Explanations what Benefits to The Customers and Users, would Obtain in Using These Trading Tools and Features and Then a Link to a Webpage on How to Use All These Tools and Features.....etc.*
+> *For The Bitfinex 2 Doc, it Show a Screen Print, it Show a Tutorial Video for The Customers and Users on How To Use Their Trading Tools, Features....etc. Create These Tutorial Videos for All The Tools and Features, would be Very Helpful For Customers and Users to Attract Them Into Our 5 Platforms. As Well, Write Them Out for Customers to Read Them on How To Use These Tools and Features with Full Instructions for Them to Understand.*
+> *Bitfinex 3 & 4, Show The Trading Tools and The Different Types of Trading Techniques, within The Bitfinex Platform, Which Needs to be Fully Put on My Ekonnet Platform For The Customer and Users to Know That We Have These Tools and Different Types of Trading Techniques."*
+
+### 🛠️ Delivered Architecture & Implementation:
+1. **Big Institutional Feature Advertisements (`src/components/landing/BigFeatureAdvertisements.tsx`):**
+   * **Bitfinex 9 Order Routing Types:** Scaled ladder bids, trailing profit locking, hidden and post-only orders with clear customer benefits.
+   * **Bitfinex P2P Funding & Lending:** Daily passive APR, 100% over-collateralized borrower loans, 2-to-120 day terms.
+   * **CMC Markets Guaranteed Stop-Loss Orders (GSLO):** Zero-slippage execution through market gaps, 100% premium refund if untriggered.
+   * **CMC Markets Live Sentiment Radar:** Real-time buyer vs seller volume splits across thousands of institutional traders.
+   * **Bitpanda Single Collateral Multi-Asset:** Bitcoin, EUR/USD, fractional US blue-chip equities, and vault-backed physical gold from one central wallet balance.
+   * **14-Rail Payment & Direct P2P Settlement:** Zero deposit fees, fast debit/credit cards, SEPA, bank wire, and peer settlement without intermediary dispute delays.
+   * **Deep Links:** Every feature card directly links to the corresponding section of `/tutorials`.
+
+2. **Bitfinex 2 Tutorial Video Player Showcase (`src/components/landing/TutorialVideoShowcase.tsx`):**
+   * High-tech simulated canvas playback engine with full play/pause/scrubber controls.
+   * Exact `0:54 / 1:05` time scrubber indicator matching Bitfinex 2 screenshot.
+   * 4 modular video lessons (Bitfinex Orders, CMC GSLO, Bitpanda Assets, Direct P2P).
+   * Written step-by-step user manuals and bulleted key takeaways for every technique.
+
+3. **Dedicated Interactive Academy Route (`src/app/tutorials/page.tsx`):**
+   * In-depth documentation with code snippets, configuration instructions, pro tips, and risk disclaimers.
+   * Dedicated anchors (`#bitfinex-orders`, `#cmc-gslo`, `#bitpanda-assets`, `#p2p-settlement`).
+
+4. **Bitfinex 3, 4, 5 Web Trading Terminal Parity (`src/components/landing/InteractiveTradingTerminal.tsx`):**
+   * Top institutional navigation bar: **Trading**, **Derivatives**, **Funding**, **Securities**, **OTC**, and **More**.
+   * All 9 Bitfinex order types in the Order Form dropdown: **Limit**, **Market**, **Stop**, **Stop Limit**, **Trailing Stop**, **Fill or Kill**, **Immediate or Cancel**, **Interactive Book**, and **Scaled**.
+   * Dynamic conditional inputs (Stop Price, Trailing Offset, Price Range, Number of Orders).
+   * Execution checkboxes: **OCO (One Cancels Other)**, **Hidden**, **Post-Only**, **TIF (Time in Force)**.
+   * Live green bottom-right toast: `✔ Websocket connection is now online` (exact match to Bitfinex Screenshot 5).
+
+5. **Invariants Compliance:**
+   * `escrow` occurrences in `src/`: **0** (strictly purged and verified).
+   * Homepage security clutter decoupled to `/security` route.
+   * Strict TypeScript type-check passed (`tsc --noEmit` exit code 0).

@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   Globe2,
   Coins,
-  ArrowUpRight
+  ArrowUpRight,
+  GraduationCap
 } from "lucide-react";
 
 interface NavbarProps {
@@ -26,7 +27,7 @@ interface NavbarProps {
 export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tradingDropdownOpen, setTradingDropdownOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'home' | 'features' | 'pricing' | 'terminal'>('home');
+  const [activeSection, setActiveSection] = useState<'home' | 'features' | 'pricing' | 'terminal' | 'tutorials'>('home');
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -34,8 +35,11 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
       const terminalEl = document.getElementById('web-terminal');
       const pricingEl = document.getElementById('pricing-packages');
       const featuresEl = document.getElementById('features-advertisements');
+      const tutorialsEl = document.getElementById('video-tutorials');
 
-      if (terminalEl && scrollPos >= terminalEl.offsetTop - 60) {
+      if (tutorialsEl && scrollPos >= tutorialsEl.offsetTop - 60) {
+        setActiveSection('tutorials');
+      } else if (terminalEl && scrollPos >= terminalEl.offsetTop - 60) {
         setActiveSection('terminal');
       } else if (pricingEl && scrollPos >= pricingEl.offsetTop - 60) {
         setActiveSection('pricing');
@@ -125,6 +129,14 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             >
               Live Terminal
             </a>
+
+            <Link
+              href="/tutorials"
+              className="px-3 py-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-blue-400" />
+              <span>Tutorials</span>
+            </Link>
 
             {/* Trading Markets Dropdown */}
             <div 
@@ -248,6 +260,13 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             onClick={() => setMobileMenuOpen(false)}
           >
             Trading Markets (Crypto, Forex, Shares)
+          </Link>
+          <Link 
+            href="/tutorials" 
+            className="block text-xs font-semibold text-blue-400 hover:text-blue-300 py-1"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Tutorials & Academy (Bitfinex, Bitpanda, CMC Tools)
           </Link>
           <Link 
             href="/payments" 

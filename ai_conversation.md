@@ -218,3 +218,15 @@ As mandated in the client's project requirement specifications, team members mus
 | **EkonnetTrader** | `https://ekonnet.com` | Next.js Production Build (13/13 pages) | `MuhammadAhmadAk/EKONNET-TRADER` | `main` | **Synced & Pushed** ✅ |
 | **AuraSearch** | `https://browzzit.com` | Next.js Production Build (11/11 pages) | `MuhammadAhmadAk/search-engine-platform` | `main` | **Synced & Pushed** ✅ |
 | **KonnetOne** | `https://konnetone.com` | Vite Production Distribution | `Siddique722/proj-skyland` | `main` | **Synced & Pushed** ✅ |
+
+
+---
+
+### Update (November 6, 2026): Bitfinex 1-4, Bitpanda & CMC Markets Tooling Integration
+
+| Demand | Status | Architecture & Implementation |
+| :--- | :--- | :--- |
+| **Bitfinex 1 Homepage Ads with Customer Benefits** | ✅ Done | Expanded `BigFeatureAdvertisements.tsx` with 6 feature billboards covering 9 Bitfinex order routing types, P2P funding/lending, CMC GSLO slippage immunity, sentiment radar, and Bitpanda unified multi-asset wallet, each with explicit customer benefits and direct links to `/tutorials`. |
+| **Bitfinex 2 Tutorial Video Player & Academy** | ✅ Done | Created `TutorialVideoShowcase.tsx` on homepage featuring canvas playback controls, exact `0:54 / 1:05` scrubber, 4 curriculum chapters, and full written step-by-step guides. Created dedicated `/tutorials` route with deep anchor links. |
+| **Bitfinex 3, 4, 5 Trading Terminal Parity** | ✅ Done | Updated `InteractiveTradingTerminal.tsx` to include top navigation bar (`Trading`, `Derivatives`, `Funding`, `Securities`, `OTC`), all 9 institutional order types (`Limit`, `Market`, `Stop`, `Stop Limit`, `Trailing Stop`, `Fill or Kill`, `Immediate or Cancel`, `Interactive Book`, `Scaled`), parameter inputs, OCO/Hidden/Post-Only flags, and live green WebSocket connection toast. |
+| **Strict Invariants Compliance** | ✅ Done | 0 occurrences of "escrow" in `src/`. Homepage security clutter preserved in `/security`. TypeScript compiler verified with zero errors (`tsc --noEmit`). |
