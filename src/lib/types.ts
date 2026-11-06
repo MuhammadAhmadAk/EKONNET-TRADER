@@ -96,12 +96,23 @@ export interface InternalStaffNote {
   createdAt: string;
 }
 
+export type AuditActionType = 
+  | 'LOGIN' 
+  | 'TRADE_EXEC' 
+  | 'KYC_REVIEW' 
+  | 'WALLET_TRANSFER' 
+  | 'PERM_CHANGE' 
+  | 'ACCOUNT_LOCK'
+  | 'INTERNAL_NOTE'
+  | 'SECURITY_ALERT'
+  | 'SETTLEMENT';
+
 export interface AuditLogItem {
   id: string;
   userId: string;
   userName: string;
   role: UserRole;
-  actionType: 'LOGIN' | 'TRADE_EXEC' | 'KYC_REVIEW' | 'WALLET_TRANSFER' | 'PERM_CHANGE' | 'ACCOUNT_LOCK';
+  actionType: AuditActionType;
   description: string;
   ipAddress: string;
   location: string;
