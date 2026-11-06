@@ -230,3 +230,16 @@ As mandated in the client's project requirement specifications, team members mus
 | **Bitfinex 2 Tutorial Video Player & Academy** | ✅ Done | Created `TutorialVideoShowcase.tsx` on homepage featuring canvas playback controls, exact `0:54 / 1:05` scrubber, 4 curriculum chapters, and full written step-by-step guides. Created dedicated `/tutorials` route with deep anchor links. |
 | **Bitfinex 3, 4, 5 Trading Terminal Parity** | ✅ Done | Updated `InteractiveTradingTerminal.tsx` to include top navigation bar (`Trading`, `Derivatives`, `Funding`, `Securities`, `OTC`), all 9 institutional order types (`Limit`, `Market`, `Stop`, `Stop Limit`, `Trailing Stop`, `Fill or Kill`, `Immediate or Cancel`, `Interactive Book`, `Scaled`), parameter inputs, OCO/Hidden/Post-Only flags, and live green WebSocket connection toast. |
 | **Strict Invariants Compliance** | ✅ Done | 0 occurrences of "escrow" in `src/`. Homepage security clutter preserved in `/security`. TypeScript compiler verified with zero errors (`tsc --noEmit`). |
+
+
+---
+
+### Update (November 6, 2026 - Part 2): Navbar Submenus, UI Section Purge, & 5 Independent Trading Platforms
+
+| Demand | Status | Architecture & Implementation |
+| :--- | :--- | :--- |
+| **Navbar Clearness & Submenu Consolidation** | ✅ Done | Replaced translucent header with high-opacity `bg-[#070b14]/95 backdrop-blur-xl`. Grouped all navigation into 3 spacious submenus: `Ways to Invest` (CMC Markets style), `Platforms & Tools`, and `Academy & Security`. |
+| **Point 2: Complete Purge of Document Section Numbers & Back Buttons** | ✅ Done | Purged all `Section 11, 14, 23, 45, etc.` codes from public page titles, badges, and API payloads. Replaced mobile `< ArrowLeft` icons with clean web breadcrumbs. |
+| **5 Independent Fault-Tolerant Trading Webpages (Screenshot 1)** | ✅ Done | Built `/trades/crypto/direct`, `/trades/crypto/p2p`, `/trades/crypto/third-party`, `/trades/forex`, and `/trades/shares` as decoupled sub-systems. |
+| **Admin Maintenance On/Off Toggles** | ✅ Done | Integrated 5 live maintenance switches in `/admin` with `MaintenanceScreen.tsx` fallback for paused sectors. |
+| **Escrow Purge Invariant** | ✅ Done | 0 occurrences of "escrow" verified across `src/`. |

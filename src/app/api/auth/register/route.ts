@@ -10,19 +10,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required registration fields." }, { status: 400 });
     }
 
-    // Section 63: Strict 18+ validation
+    // Strict 18+ validation
     const age = calculateAge(dob);
     if (age < 18) {
       return NextResponse.json(
-        { error: "Section 63 Regulatory Notice: Registration strictly prohibited for persons under 18." },
+        { error: "Regulatory Notice: Registration strictly prohibited for persons under 18." },
         { status: 403 }
       );
     }
 
-    // Section 35: Mandatory agreement
+    // Mandatory terms agreement
     if (!agreedTerms) {
       return NextResponse.json(
-        { error: "Section 35 Notice: Terms & conditions agreement checkbox is mandatory." },
+        { error: "Please accept the Terms of Service and Privacy Policy to proceed." },
         { status: 400 }
       );
     }

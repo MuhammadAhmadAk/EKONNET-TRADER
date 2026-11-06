@@ -35,7 +35,6 @@ export default function ManagementAuthGate() {
 
     setIsAuthorizing(true);
     setTimeout(() => {
-      // Simulate credential check
       setIsAuthorizing(false);
       router.push("/admin");
     }, 900);
@@ -92,28 +91,28 @@ export default function ManagementAuthGate() {
             </h1>
 
             <p className="text-xs text-slate-400 leading-relaxed mb-6">
-              Accessible exclusively by platform engineers and root operations. Direct command interface over PostgreSQL 16 clusters, secondary failover mirrors, and KYC authorization queues.
+              Accessible exclusively by platform engineers and root operations. Direct command interface over PostgreSQL clusters, secondary failover mirrors, and KYC authorization queues.
             </p>
 
             <div className="space-y-2.5 pt-2 border-t border-white/10 text-xs text-slate-300 font-mono">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Section 27.[1] Isolation Layer</span>
+                <span>Isolated Sandbox Network Layer</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Plesk Node VPS Direct Binding</span>
+                <span>Direct Host Gateway Binding</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Section 45 Emergency Master Killswitch</span>
+                <span>Emergency Platform Master Killswitch</span>
               </div>
             </div>
           </div>
 
           {/* Bottom Security Info */}
           <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>Actor IP Logged to Sec 60 Ledger</span>
+            <span>Actor IP Logged to Immutable Ledger</span>
             <span className="text-blue-400">Node #01 Synced</span>
           </div>
 
@@ -127,7 +126,7 @@ export default function ManagementAuthGate() {
               <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
               <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-              <span className="text-[10px] font-mono text-slate-500 ml-2">PLESK HOST GATEWAY</span>
+              <span className="text-[10px] font-mono text-slate-500 ml-2">HOST GATEWAY</span>
             </div>
             <h2 className="text-2xl font-black text-white tracking-tight">Master Admin Access</h2>
             <p className="text-xs text-slate-400">
@@ -146,7 +145,7 @@ export default function ManagementAuthGate() {
             
             <div>
               <label className="text-xs font-mono font-semibold text-slate-300 block mb-1.5">
-                Root Management ID (Section 48):
+                Root Management Identifier:
               </label>
               <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-3 focus-within:border-blue-500 transition">
                 <Server className="w-4 h-4 text-slate-400 mr-2.5" />
@@ -180,7 +179,7 @@ export default function ManagementAuthGate() {
 
             <div>
               <label className="text-xs font-mono font-semibold text-slate-300 block mb-1.5">
-                Proton / TOTP 2FA Token (Optional in Dev):
+                Hardware 2FA TOTP Token (Optional in Dev):
               </label>
               <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-3 focus-within:border-blue-500 transition">
                 <Terminal className="w-4 h-4 text-slate-400 mr-2.5" />
@@ -217,7 +216,7 @@ export default function ManagementAuthGate() {
               href="/"
               className="text-xs text-slate-400 hover:text-white transition"
             >
-              &larr; Return to Public Exchange Platform
+              Return to Public Platform Home
             </Link>
           </div>
 

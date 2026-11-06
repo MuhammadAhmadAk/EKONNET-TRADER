@@ -13,7 +13,7 @@ export async function PUT(request: Request) {
     const updatedMatrix = await request.json();
     return NextResponse.json({
       success: true,
-      message: "Staff permissions successfully updated in accordance with Section 27.2.",
+      message: "Staff permissions successfully updated.",
       data: updatedMatrix
     });
   } catch (error) {

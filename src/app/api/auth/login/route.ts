@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     if (user.isLocked) {
       return NextResponse.json(
-        { error: "Account temporarily locked for 30 minutes in accordance with Section 25." },
+        { error: "Account temporarily locked for 30 minutes due to security lockout policy." },
         { status: 403 }
       );
     }

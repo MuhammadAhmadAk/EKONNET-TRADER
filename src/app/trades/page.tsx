@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { 
-  ArrowLeft, 
   TrendingUp, 
   Coins, 
   Globe, 
@@ -12,7 +11,9 @@ import {
   ArrowDownRight,
   ShieldCheck,
   Zap,
-  BarChart2
+  BarChart2,
+  ChevronRight,
+  Layers
 } from "lucide-react";
 import { INITIAL_MARKET_TICKERS, BASE_PAIRS } from "@/lib/mockData";
 import { formatCurrency, formatPercent } from "@/lib/utils";
@@ -23,40 +24,57 @@ export default function TradesPage() {
   const [orderAmount, setOrderAmount] = useState<number>(500);
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-[#060913] text-gray-100 flex flex-col">
       
-      {/* Top Navbar */}
-      <header className="h-20 bg-[#0E1424]/80 backdrop-blur-xl border-b border-[#1F293D] px-6 sm:px-12 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link href="/" className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-gray-300 hover:text-white transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+      {/* Top Professional Header */}
+      <header className="h-20 bg-[#090e1a]/90 backdrop-blur-xl border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
+        <div className="flex items-center space-x-6">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1px] shadow-md shadow-blue-500/20">
+              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
+                <Layers className="w-4 h-4 text-cyan-400" />
+              </div>
+            </div>
+            <span className="text-base font-extrabold tracking-tight text-white hidden sm:inline">
+              Ekonnet<span className="text-cyan-400">Trader</span>
+            </span>
           </Link>
-          <div>
-            <h1 className="text-xl font-black text-white flex items-center space-x-2">
-              <span>Ekonnet Trading Terminal</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
-                SECTION 12 & 14 MODULAR ROUTE
-              </span>
-            </h1>
-            <p className="text-xs text-gray-400">Independent fault-tolerant sub-page architecture</p>
-          </div>
+
+          <div className="h-5 w-px bg-white/10 hidden sm:block" />
+
+          {/* Clean Web Breadcrumbs */}
+          <nav className="flex items-center space-x-2 text-xs font-mono text-slate-400">
+            <Link href="/" className="hover:text-white transition">Home</Link>
+            <ChevronRight className="w-3 h-3 text-slate-600" />
+            <Link href="/trades" className="hover:text-white transition">Markets</Link>
+            <ChevronRight className="w-3 h-3 text-slate-600" />
+            <span className="text-blue-400 font-bold">Multi-Asset Terminal</span>
+          </nav>
         </div>
 
-        <Link
-          href="/portal-mgmt-auth"
-          className="px-4 py-2 rounded-xl bg-[#161F33] border border-blue-500/20 text-xs text-blue-400 font-bold hover:bg-[#1E2B47] transition-all"
-        >
-          Management Console
-        </Link>
+        <div className="flex items-center space-x-3">
+          <Link
+            href="/trades/crypto/direct"
+            className="hidden md:inline-flex px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-xs text-blue-400 font-semibold transition"
+          >
+            Direct Crypto Orderbook
+          </Link>
+          <Link
+            href="/admin"
+            className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 font-bold transition-all"
+          >
+            Admin Console
+          </Link>
+        </div>
       </header>
 
       {/* Main Terminal View */}
       <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
         
-        {/* Base Pairs Selector Bar (Section 23) */}
-        <div className="p-4 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-bold text-gray-400">5 Main Trading Base Pairs (Section 23):</span>
+        {/* Base Pairs Selector Bar */}
+        <div className="p-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+          <div className="flex items-center space-x-3">
+            <span className="text-xs font-bold text-slate-400">Institutional Base Currencies:</span>
             <div className="flex space-x-2">
               {BASE_PAIRS.map(pair => (
                 <button
@@ -65,7 +83,7 @@ export default function TradesPage() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                     selectedBasePair === pair 
                       ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" 
-                      : "bg-white/[0.03] dark:bg-black/25 text-gray-400 hover:text-white border border-white/10"
+                      : "bg-white/[0.03] text-gray-400 hover:text-white border border-white/10"
                   }`}
                 >
                   {pair} Markets
@@ -87,7 +105,7 @@ export default function TradesPage() {
           <div className="lg:col-span-8 space-y-6">
             
             {/* Chart Container */}
-            <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl shadow-2xl space-y-4">
+            <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl shadow-2xl space-y-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <div className="text-xl font-black font-mono text-cyan-400 mr-1">
@@ -106,7 +124,7 @@ export default function TradesPage() {
               </div>
 
               {/* Graphic Chart Display Canvas */}
-              <div className="h-64 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 p-4 flex flex-col justify-between relative overflow-hidden">
+              <div className="h-64 rounded-2xl bg-black/30 border border-white/10 p-4 flex flex-col justify-between relative overflow-hidden">
                 <div className="flex space-x-2 text-[11px] font-mono text-gray-500">
                   <span className="px-2 py-0.5 rounded bg-gray-800 text-gray-200">1H</span>
                   <span className="px-2 py-0.5 rounded hover:bg-gray-800 cursor-pointer">4H</span>
@@ -138,7 +156,7 @@ export default function TradesPage() {
             </div>
 
             {/* Markets List */}
-            <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden p-6 space-y-4">
+            <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl overflow-hidden p-6 space-y-4 shadow-xl">
               <h4 className="text-base font-bold text-white">Live Market Pairs Overview</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
@@ -171,14 +189,14 @@ export default function TradesPage() {
           </div>
 
           {/* Right 4 Columns: Buy/Sell Execution Form */}
-          <div className="lg:col-span-4 rounded-3xl bg-white/[0.03] dark:bg-slate-900/25 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
+          <div className="lg:col-span-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
             <div>
               <h3 className="text-base font-bold text-white">Order Execution Panel</h3>
-              <p className="text-xs text-gray-400">Direct exchange settlement (Section 14.[1][A])</p>
+              <p className="text-xs text-slate-400">Direct High-Speed Liquidity Execution</p>
             </div>
 
             {/* Buy / Sell switch */}
-            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10">
+            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-black/30 border border-white/10">
               <button
                 onClick={() => setOrderType("buy")}
                 className={`py-2 rounded-lg text-xs font-bold transition-all ${
@@ -204,12 +222,12 @@ export default function TradesPage() {
                 type="number"
                 value={orderAmount}
                 onChange={(e) => setOrderAmount(Math.max(0, Number(e.target.value)))}
-                className="w-full bg-white/[0.03] dark:bg-black/25 border border-white/10 rounded-xl p-3 text-lg font-bold font-mono text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-lg font-bold font-mono text-white focus:outline-none focus:border-blue-500"
               />
             </div>
 
             {/* Order Summary */}
-            <div className="p-4 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 space-y-2 text-xs font-mono">
+            <div className="p-4 rounded-2xl bg-black/20 border border-white/10 space-y-2 text-xs font-mono">
               <div className="flex justify-between text-gray-400">
                 <span>Estimated Crypto:</span>
                 <span className="text-emerald-400 font-bold">{(orderAmount / 67420.50).toFixed(6)} BTC</span>

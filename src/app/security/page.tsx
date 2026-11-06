@@ -6,7 +6,7 @@ import SecurityHighlights from "@/components/landing/SecurityHighlights";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
 import UserRegisterModal from "@/components/auth/UserRegisterModal";
-import { Shield, Lock, FileCheck, Server, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Shield, Lock, FileCheck, Server, AlertTriangle, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function SecurityPage() {
@@ -24,16 +24,12 @@ export default function SecurityPage() {
       <main className="flex-grow pt-8 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Breadcrumb / Back Link */}
-          <div className="mb-6">
-            <Link 
-              href="/"
-              className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-white transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Home Overview</span>
-            </Link>
-          </div>
+          {/* Clean Web Breadcrumbs */}
+          <nav className="mb-8 flex items-center space-x-2 text-xs font-mono text-slate-400">
+            <Link href="/" className="hover:text-white transition">Home</Link>
+            <ChevronRight className="w-3 h-3 text-slate-600" />
+            <span className="text-emerald-400 font-bold">Security & Compliance Portal</span>
+          </nav>
 
           {/* Dedicated Page Header */}
           <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">

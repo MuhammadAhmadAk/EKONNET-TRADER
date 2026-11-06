@@ -371,3 +371,38 @@
    * `escrow` occurrences in `src/`: **0** (strictly purged and verified).
    * Homepage security clutter decoupled to `/security` route.
    * Strict TypeScript type-check passed (`tsc --noEmit` exit code 0).
+
+
+---
+
+## 🎯 Directives Update (November 6, 2026 - Part 2): Navbar Submenus Consolidation, UI Section Purge, & 5 Independent Trading Platforms
+
+### 📋 Client Request:
+> *"navbar cleaness means bhot sary pages agaye tu bhot bhar gya jo same functionality waly hai wo submenus banao navbar pr na direct dal doo is tarha cleaness hogi ...point 2 ko complete set kroo"*
+> *(Requirements Document Page 14 & CMC Markets "Ways to Invest" Screenshots Parity)*
+
+### 🛠️ Delivered Architecture & Implementation:
+1. **Navbar Streamlining & Submenu Grouping (`src/components/landing/Navbar.tsx`):**
+   * **Solid Opacity & Sharp Clearness:** Replaced translucent header with luxury `bg-[#070b14]/95 backdrop-blur-xl border-b border-white/10 shadow-2xl`, eliminating scroll bleed-through.
+   * **3 High-Level Submenus:**
+     * **Ways to Invest (CMC Markets Style):** Direct Crypto Exchange, P2P Settlement, 3rd-Party Liquidity Hub, Forex Currency Markets, Shares & Portfolios.
+     * **Platforms & Tools:** Live Web Terminal, Innovations Showcase, Pricing Tiers, 14 Payment Rails.
+     * **Academy & Security:** Video Tutorials Walkthrough, Written Academy Guides, Security & 2FA Protocols.
+   * Completely eliminated navbar wrapping, horizontal scrolling, and visual clutter.
+
+2. **Complete Purge of Section Numbers & Clunky Back Arrows (Point 2):**
+   * Removed internal document references (`Section 11.[B]`, `Section 12 & 14`, `Section 23`, `Section 25`, `Section 27`, `Section 45`, `Section 48`, `Section 50`, `Section 60`, `Section 63`) across all web pages and API error payloads.
+   * Replaced mobile-style `< ArrowLeft` icons with clean web breadcrumbs (`Home / Ways to Invest / Direct Crypto`, etc.).
+
+3. **5 Independent Fault-Tolerant Trading Webpages (Screenshot 1 - Section 14 Parity):**
+   * `/trades/crypto/direct` — Proprietary in-browser direct order book matching engine.
+   * `/trades/crypto/p2p` — Direct buyer-seller peer-to-peer fiat settlement across 14 rails.
+   * `/trades/crypto/third-party` — Multi-venue institutional liquidity aggregator.
+   * `/trades/forex` — 168+ sovereign currency pairs with tight raw spreads.
+   * `/trades/shares` — International Wall Street equities, fractional shares, and ETFs.
+   * **Fault Isolation:** Failure or pause in any one webpage does not affect the rest of Ekonnet.
+
+4. **Main Admin Account Maintenance Toggles (`src/app/admin/page.tsx`):**
+   * Added live maintenance toggle switches for all 5 trading platforms in `/admin`.
+   * Management can pause any sector for repairs/upgrades with instant toast feedback.
+   * Paused platforms gracefully render [`MaintenanceScreen.tsx`](file:///d:/Abubakar/EKONNET-TRADER/src/components/common/MaintenanceScreen.tsx) while others continue running online.

@@ -52,6 +52,7 @@ import {
 } from "lucide-react";
 import { MOCK_USERS, MOCK_SUPPORT_TICKETS, MOCK_AUDIT_LOGS, MOCK_STAFF_PERMISSIONS } from "@/lib/mockData";
 import { User, SupportTicket, AuditLogItem, StaffPermission } from "@/lib/types";
+import { TradingPlatformStatus, INITIAL_PLATFORM_STATUSES, getPlatformStatus, setPlatformStatus } from "@/lib/systemStatus";
 
 // Navigation Item Keys matching enterprise SE-Platform design
 type NavKey = 
@@ -83,6 +84,26 @@ export default function AdminPortalPage() {
   
   // Platform state
   const [emergencyLockActive, setEmergencyLockActive] = useState(false);
+  const [platformStatuses, setPlatformStatuses] = useState<TradingPlatformStatus[]>(INITIAL_PLATFORM_STATUSES);
+
+  React.useEffect(() => {
+    setPlatformStatuses(INITIAL_PLATFORM_STATUSES.map(p => ({
+      ...p,
+      status: getPlatformStatus(p.id)
+    })));
+  }, []);
+
+  const handleTogglePlatformStatus = (platformId: string) => {
+    setPlatformStatuses(prev => prev.map(p => {
+      if (p.id === platformId) {
+        const nextStatus = p.status === "Online" ? "Maintenance" : "Online";
+        setPlatformStatus(platformId, nextStatus);
+        showToast(`${p.name} switched to ${nextStatus.toUpperCase()}.`);
+        return { ...p, status: nextStatus };
+      }
+      return p;
+    }));
+  };
   const [users, setUsers] = useState<User[]>(MOCK_USERS);
   const [tickets, setTickets] = useState<SupportTicket[]>(MOCK_SUPPORT_TICKETS);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>(MOCK_AUDIT_LOGS);
@@ -113,7 +134,7 @@ export default function AdminPortalPage() {
       prev.map((u) => {
         if (u.id === userId) {
           const nextState = !u.isLocked;
-          showToast(`Account ${u.username} (${u.id}) has been ${nextState ? "SUSPENDED" : "REACTIVATED"} (Section 59).`);
+          showToast(`Account ${u.username} (${u.id}) has been ${nextState ? "SUSPENDED" : "REACTIVATED"} .`);
           return { ...u, isLocked: nextState };
         }
         return u;
@@ -125,7 +146,7 @@ export default function AdminPortalPage() {
     setUsers((prev) =>
       prev.map((u) => {
         if (u.id === userId) {
-          showToast(`KYC for ${u.fullName} marked as ${status.toUpperCase()} (Section 27).`);
+          showToast(`KYC for ${u.fullName} marked as ${status.toUpperCase()} .`);
           return { ...u, kycStatus: status };
         }
         return u;
@@ -138,7 +159,7 @@ export default function AdminPortalPage() {
     const nextState = !emergencyLockActive;
     setEmergencyLockActive(nextState);
     if (nextState) {
-      showToast("SECTION 45 EMERGENCY FREEZE ENGAGED: Withdrawals & Outbound Trades Locked.");
+      showToast("EMERGENCY FREEZE ENGAGED: Withdrawals & Outbound Trades Locked.");
     } else {
       showToast("Emergency freeze lifted by Master Admin.");
     }
@@ -146,12 +167,12 @@ export default function AdminPortalPage() {
 
   const handleSummarizeTicket = (ticketId: string) => {
     setSummarizedTicketId(ticketId);
-    showToast("Gorelo AI conversation summary generated successfully (Section 34).");
+    showToast("Gorelo AI conversation summary generated successfully .");
   };
 
   const handleSaveInternalNote = () => {
     if (!selectedNoteUser || !internalNoteText.trim()) return;
-    showToast(`Internal staff note logged for ${selectedNoteUser.username} (Section 46).`);
+    showToast(`Internal staff note logged for ${selectedNoteUser.username} .`);
     setSelectedNoteUser(null);
     setInternalNoteText("");
   };
@@ -436,7 +457,7 @@ export default function AdminPortalPage() {
                   ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse" 
                   : "bg-slate-800 hover:bg-rose-950 hover:text-rose-400 text-slate-300 border border-slate-700"
               }`}
-              title="Section 45 Emergency Platform Freeze"
+              title="EMERGENCY Platform Freeze"
             >
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>{emergencyLockActive ? "LIFT FREEZE" : "EMERGENCY FREEZE"}</span>
@@ -473,7 +494,7 @@ export default function AdminPortalPage() {
           <div className="bg-rose-600 text-white py-2.5 px-6 text-xs font-black tracking-wider flex items-center justify-between shrink-0 shadow-lg">
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 animate-pulse" />
-              <span>SECTION 45 EMERGENCY FREEZE ACTIVE — ALL OUTBOUND TRADING & TRANSFERS QUARANTINED</span>
+              <span>EMERGENCY FREEZE ACTIVE — ALL OUTBOUND TRADING & TRANSFERS QUARANTINED</span>
             </div>
             <button
               onClick={handleEmergencyFreezeToggle}
@@ -544,7 +565,7 @@ export default function AdminPortalPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Activity className="w-4 h-4 text-blue-400" />
-                    <span>Microservice Cluster & Secondary Node Status (Section 32)</span>
+                    <span>Microservice Cluster & Secondary Node Status </span>
                   </h3>
                   <span className="text-xs text-slate-400 font-mono">Autoscaling Active</span>
                 </div>
@@ -575,7 +596,7 @@ export default function AdminPortalPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
-                    <span>Recent Immutable Audit Events (Section 60)</span>
+                    <span>Recent Immutable Audit Events </span>
                   </h3>
                   <button 
                     onClick={() => setActiveNav("audit")}
@@ -627,7 +648,7 @@ export default function AdminPortalPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-base font-bold text-white">Live Cluster Telemetry & Failover Mirror</h2>
-                  <p className="text-xs text-slate-400">Section 32 compliance: High-availability secondary backup server synchronization.</p>
+                  <p className="text-xs text-slate-400">High-availability secondary backup server synchronization.</p>
                 </div>
                 <button
                   onClick={() => showToast("Health heartbeat ping dispatched to all 6 nodes.")}
@@ -668,13 +689,13 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 3: 5 BASE PAIRS RESERVES (SECTION 19) */}
+          {/* TAB 3: 5 BASE PAIRS RESERVES  */}
           {/* ========================================================================= */}
           {activeNav === "reserves" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
                 <h2 className="text-base font-bold text-white">5 Core Base Pairs Liquidity Reserves</h2>
-                <p className="text-xs text-slate-400">Section 19: All trades execute strictly across USD, BTC, XRP, ETH, and BCH liquidity pools.</p>
+                <p className="text-xs text-slate-400">All trades execute strictly across USD, BTC, XRP, ETH, and BCH liquidity pools.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -705,14 +726,14 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 4: USERS & RBAC (SECTION 50) */}
+          {/* TAB 4: USERS & RBAC  */}
           {/* ========================================================================= */}
           {activeNav === "users" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h2 className="text-base font-bold text-white">User Accounts Directory & RBAC</h2>
-                  <p className="text-xs text-slate-400">Section 50 & 59: Search by User ID, verify age 18+, freeze accounts, or view internal staff notes.</p>
+                  <p className="text-xs text-slate-400">Search by User ID, verify age 18+, freeze accounts, or view internal staff notes.</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="relative">
@@ -814,13 +835,13 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 5: KYC DOSSIER REVIEW (SECTION 27 & 63) */}
+          {/* TAB 5: KYC DOSSIER REVIEW  */}
           {/* ========================================================================= */}
           {activeNav === "kyc" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
                 <h2 className="text-base font-bold text-white">Mandatory KYC Verification Queue</h2>
-                <p className="text-xs text-slate-400">Strict compliance with Section 27 & 63: Verification of official photo holding handwritten note (&quot;Full Name, Ekonnet, Date&quot;) and strict age 18+ enforcement.</p>
+                <p className="text-xs text-slate-400">Strict compliance with Verification of official photo holding handwritten note (&quot;Full Name, Ekonnet, Date&quot;) and strict age 18+ enforcement.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -872,14 +893,14 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 6: STAFF PERMISSION MATRIX (SECTION 27.2) */}
+          {/* TAB 6: STAFF PERMISSION MATRIX  */}
           {/* ========================================================================= */}
           {activeNav === "permissions" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-base font-bold text-white">Staff Operational Permissions Matrix</h2>
-                  <p className="text-xs text-slate-400">Section 27.2: Granular delegation of platform tasks to staff members via checkbox matrix.</p>
+                  <p className="text-xs text-slate-400">.2: Granular delegation of platform tasks to staff members via checkbox matrix.</p>
                 </div>
                 <button
                   onClick={() => showToast("Permissions matrix saved to immutable cluster database.")}
@@ -936,13 +957,13 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 7: SUPPORT TICKETS & GORELO AI (SECTION 34) */}
+          {/* TAB 7: SUPPORT TICKETS & GORELO AI  */}
           {/* ========================================================================= */}
           {activeNav === "tickets" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
                 <h2 className="text-base font-bold text-white">Gorelo-Style AI Support Desk</h2>
-                <p className="text-xs text-slate-400">Section 34: Support ticketing system with Gorelo-style AI conversation summarization.</p>
+                <p className="text-xs text-slate-400">Support ticketing system with Gorelo-style AI conversation summarization.</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -991,7 +1012,7 @@ export default function AdminPortalPage() {
                       <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/40 text-xs text-purple-200 space-y-1">
                         <div className="font-bold flex items-center gap-1.5 text-purple-300">
                           <Sparkles className="w-3.5 h-3.5" />
-                          Gorelo AI Summary (Section 34):
+                          Gorelo AI Summary :
                         </div>
                         <p className="text-[11px] leading-relaxed">
                           {activeTicket.aiSummary || "User submitted proof of Wire payment ($5,000 USD). Sender bank confirmed transit. Transaction verified against Wise API rail. Ready for manual approval or automated clearing."}
@@ -1019,12 +1040,12 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 8: AUDIT TRAIL (SECTION 60) */}
+          {/* TAB 8: AUDIT TRAIL  */}
           {/* ========================================================================= */}
           {activeNav === "audit" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">Section 60 Immutable Audit Trail</h2>
+                <h2 className="text-base font-bold text-white">Immutable Audit Trail</h2>
                 <p className="text-xs text-slate-400">Cryptographically verifiable log of all administrative actions, logins, and trades.</p>
               </div>
 
@@ -1058,20 +1079,20 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 9: SETTINGS & EMERGENCY CONTROLS (SECTION 45) */}
+          {/* TAB 9: SETTINGS & EMERGENCY CONTROLS  */}
           {/* ========================================================================= */}
           {activeNav === "settings" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
                 <h2 className="text-base font-bold text-white">Platform Settings & Emergency Lockdown Controls</h2>
-                <p className="text-xs text-slate-400">Section 45 emergency killswitches, 2FA hardware policies, and Plesk server failovers.</p>
+                <p className="text-xs text-slate-400">EMERGENCY killswitches, 2FA hardware policies, and Plesk server failovers.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <ShieldAlert className="w-4 h-4 text-rose-400" />
-                    <span>Emergency Master Killswitch (Section 45)</span>
+                    <span>Emergency Master Killswitch </span>
                   </div>
                   <p className="text-xs text-slate-400">
                     Immediately suspends all outbound funds withdrawal requests, P2P releases, and external CEX order routing.
@@ -1091,7 +1112,7 @@ export default function AdminPortalPage() {
                 <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <Lock className="w-4 h-4 text-blue-400" />
-                    <span>Security & 2FA Enforcement (Section 25)</span>
+                    <span>Security & 2FA Enforcement </span>
                   </div>
                   <p className="text-xs text-slate-400">
                     Enforces 30-minute lockout after 3 failed login attempts and mandates TOTP hardware authenticator for all staff.
@@ -1110,7 +1131,7 @@ export default function AdminPortalPage() {
         </main>
       </div>
 
-      {/* Internal Staff Notes Modal (Section 46) */}
+      {/* Internal Staff Notes Modal  */}
       {selectedNoteUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-2xl">
@@ -1124,7 +1145,7 @@ export default function AdminPortalPage() {
               rows={4}
               value={internalNoteText}
               onChange={(e) => setInternalNoteText(e.target.value)}
-              placeholder="Record confidential staff observation (Section 46)..."
+              placeholder="Record confidential staff observation ..."
               className="w-full rounded-xl bg-white/[0.02] dark:bg-black/20 border border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
             <div className="flex justify-end gap-2">
