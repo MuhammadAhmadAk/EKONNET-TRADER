@@ -20,6 +20,7 @@ import Footer from "@/components/landing/Footer";
 import { getPlatformStatus } from "@/lib/systemStatus";
 import MaintenanceScreen from "@/components/common/MaintenanceScreen";
 import P2PTradingViewWidgets from "@/components/trading/P2PTradingViewWidgets";
+import TradingViewCryptoScreener from "@/components/trading/TradingViewCryptoScreener";
 
 interface P2POffer {
   advNo: string;
@@ -44,6 +45,7 @@ export default function P2PCryptoTradingPage() {
   const [tradeType, setTradeType] = useState<"BUY" | "SELL">("BUY");
   const [loading, setLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"offers" | "screener" | "both">("both");
 
   // Maintenance check
   useEffect(() => {
@@ -199,16 +201,53 @@ export default function P2PCryptoTradingPage() {
             </div>
           </div>
 
-          <div className="text-slate-500 dark:text-slate-400 text-[11px] font-sans flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>100% Non-Custodial Multi-Sig Protection</span>
+          {/* View Mode Switcher */}
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-black/40 p-1 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold">
+            <button
+              onClick={() => setViewMode("both")}
+              className={`px-3 py-1 rounded-lg transition-all ${
+                viewMode === "both" 
+                  ? "bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-xs" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              All Views
+            </button>
+            <button
+              onClick={() => setViewMode("offers")}
+              className={`px-3 py-1 rounded-lg transition-all ${
+                viewMode === "offers" 
+                  ? "bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-xs" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              P2P Deals
+            </button>
+            <button
+              onClick={() => setViewMode("screener")}
+              className={`px-3 py-1 rounded-lg transition-all ${
+                viewMode === "screener" 
+                  ? "bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-xs" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              TradingView Screener
+            </button>
           </div>
         </div>
 
         {/* TradingView Market Intelligence Bar (Syncs with selected asset) */}
-        <P2PTradingViewWidgets asset={asset} />
+        {(viewMode === "both" || viewMode === "offers") && (
+          <P2PTradingViewWidgets asset={asset} />
+        )}
+
+        {/* TradingView Official Live Crypto Screener Table */}
+        {(viewMode === "both" || viewMode === "screener") && (
+          <TradingViewCryptoScreener currency={fiat} />
+        )}
 
         {/* Main P2P Offers Table Card */}
+        {(viewMode === "both" || viewMode === "offers") && (
         <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl overflow-hidden p-5 sm:p-6 space-y-4 shadow-xs dark:shadow-xl">
           <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/5">
             <div>
@@ -330,6 +369,7 @@ export default function P2PCryptoTradingPage() {
             </table>
           </div>
         </div>
+        )}
 
       </main>
 
