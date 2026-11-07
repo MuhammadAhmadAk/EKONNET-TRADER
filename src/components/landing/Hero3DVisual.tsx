@@ -106,26 +106,16 @@ export default function Hero3DVisual() {
           <div className="w-[85%] h-[75%] rounded-[100%] bg-gradient-to-b from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950 shadow-inner" />
         </div>
 
-        {/* Central 3D Glowing Red/Orange Coin Emblem (Browzzit Coin Aesthetic) */}
-        <div className="relative -mt-44 sm:-mt-52 w-44 h-44 sm:w-56 sm:h-56 rounded-full bg-gradient-to-tr from-rose-600 via-orange-500 to-amber-400 p-[3px] shadow-[0_25px_60px_-10px_rgba(244,63,94,0.65)] animate-float-slow">
+        {/* Central 3D Glowing Official Ekonnet Logo Emblem */}
+        <div className="relative -mt-44 sm:-mt-52 w-48 h-48 sm:w-60 sm:h-60 flex items-center justify-center animate-float-slow z-20">
+          {/* Subtle warm ambient illumination behind emblem */}
+          <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-orange-600/30 via-red-500/30 to-amber-400/20 blur-2xl -z-10" />
           
-          {/* Inner Coin Surface */}
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-red-600 via-rose-500 to-orange-500 p-3 sm:p-4 shadow-inner flex items-center justify-center relative overflow-hidden">
-            
-            {/* Top Gloss Light Reflection */}
-            <div className="absolute -top-12 left-1/4 w-3/4 h-24 bg-white/35 rounded-full blur-md transform -rotate-12 pointer-events-none" />
-
-            {/* Inner Concentric Core */}
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-rose-700 via-red-600 to-orange-600 border border-white/25 shadow-[inset_0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center">
-              
-              {/* Center White Core Circle (Browzzit Logo Symbol) */}
-              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.9)] flex items-center justify-center">
-                <div className="w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gradient-to-tr from-rose-600 to-orange-500" />
-              </div>
-
-            </div>
-
-          </div>
+          <img
+            src="/images/ekonnet-hero-emblem.png"
+            alt="Ekonnet Official 3D Logo Emblem"
+            className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(249,115,22,0.4)]"
+          />
         </div>
 
       </div>

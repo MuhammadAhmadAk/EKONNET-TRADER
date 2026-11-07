@@ -94,12 +94,14 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4 lg:gap-6">
           
-          {/* Brand Logo (Browzzit Warm Orb Aesthetic) */}
+          {/* Brand Logo with Official Ekonnet Emblem */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 via-rose-500 to-red-600 p-[2px] shadow-md shadow-orange-500/20 group-hover:shadow-orange-500/40 transition">
-              <div className="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
-                <Layers className="w-4 h-4 text-orange-500 group-hover:scale-110 transition transform" />
-              </div>
+            <div className="w-8 h-8 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 group-hover:scale-105 transition transform">
+              <img
+                src="/images/ekonnet-hero-emblem.png"
+                alt="Ekonnet Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white">

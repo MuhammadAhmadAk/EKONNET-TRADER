@@ -13,10 +13,12 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-3">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 via-rose-500 to-red-600 p-[2px] shadow-md shadow-orange-500/20">
-                <div className="w-full h-full bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
-                  <Layers className="w-4 h-4 text-orange-500" />
-                </div>
+              <div className="w-8 h-8 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 group-hover:scale-105 transition transform">
+                <img
+                  src="/images/ekonnet-hero-emblem.png"
+                  alt="Ekonnet Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white tracking-tight">
                 EKONNET<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">TRADER</span>
