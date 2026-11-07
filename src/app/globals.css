@@ -6,9 +6,9 @@
   --foreground-rgb: 243, 244, 246;
   --background-start-rgb: 11, 15, 25;
   --background-end-rgb: 15, 23, 42;
-  --theme-color-primary: #2563eb;
-  --theme-color-glow: rgba(37, 99, 235, 0.35);
-  --theme-bg-light: #F8FAFC;
+  --theme-color-primary: #f97316;
+  --theme-color-glow: rgba(249, 115, 22, 0.35);
+  --theme-bg-light: #FAFAFC;
   --theme-bg-dark: #070A14;
 }
 
@@ -52,8 +52,11 @@
 }
 
 html {
+  transition: background-color 0.3s ease;
+}
+
+html.dark {
   color-scheme: dark;
-  transition: background-color 0.4s ease;
 }
 
 html:not(.dark) {
@@ -63,7 +66,10 @@ html:not(.dark) {
 body {
   color: rgb(var(--foreground-rgb));
   background-color: transparent !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
@@ -101,7 +107,7 @@ html:not(.dark) select:-webkit-autofill {
   border-color: #CBD5E1 !important;
 }
 
-/* Custom Scrollbar for High-Tech Fintech Dashboards */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -112,34 +118,27 @@ html:not(.dark) select:-webkit-autofill {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1F293D;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1F293D;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #3B82F6;
+  background: #F97316;
 }
 
 /* Glow & Shimmer utilities */
-.glow-blue {
-  box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.35);
-}
-
-.glow-violet {
-  box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.35);
+.glow-orange {
+  box-shadow: 0 0 25px -5px rgba(249, 115, 22, 0.35);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #60A5FA 0%, #A855F7 50%, #EC4899 100%);
+  background: linear-gradient(135deg, #F97316 0%, #F43F5E 50%, #EF4444 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.bg-glass {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ========================================================================= */
@@ -151,7 +150,7 @@ html:not(.dark) select:-webkit-autofill {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-12px) rotate(2deg);
+    transform: translateY(-8px) rotate(1.5deg);
   }
 }
 
@@ -160,14 +159,14 @@ html:not(.dark) select:-webkit-autofill {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(12px) rotate(-2deg);
+    transform: translateY(8px) rotate(-1.5deg);
   }
 }
 
 .animate-float-slow {
-  animation: floatSlow 8s ease-in-out infinite;
+  animation: floatSlow 6s ease-in-out infinite;
 }
 
 .animate-float-reverse {
-  animation: floatReverse 9s ease-in-out infinite;
+  animation: floatReverse 7s ease-in-out infinite;
 }

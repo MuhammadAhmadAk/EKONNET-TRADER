@@ -5,6 +5,7 @@ import Navbar from "@/components/landing/Navbar";
 import LiveTicker from "@/components/landing/LiveTicker";
 import HeroSection from "@/components/landing/HeroSection";
 import LiveMarketOverview from "@/components/landing/LiveMarketOverview";
+import AdvancedTradingSection from "@/components/landing/AdvancedTradingSection";
 import TradingPillars from "@/components/landing/TradingPillars";
 import PaymentRailSection from "@/components/landing/PaymentRailSection";
 import PricingPackages from "@/components/landing/PricingPackages";
@@ -64,6 +65,8 @@ export default function LandingPage() {
 
       {/* Main Landing Sections */}
       <main className="flex-grow">
+        
+        {/* Browzzit Style Hero Section */}
         <HeroSection 
           onOpenRegister={() => setIsRegisterOpen(true)}
           onOpenLogin={() => setIsLoginOpen(true)}
@@ -71,6 +74,12 @@ export default function LandingPage() {
 
         {/* Browzzit Style Live Market Prices Overview */}
         <LiveMarketOverview />
+
+        {/* Browzzit Style Advanced Trading Made Easy */}
+        <AdvancedTradingSection 
+          onOpenRegister={() => setIsRegisterOpen(true)}
+          onOpenLogin={() => setIsLoginOpen(true)}
+        />
         
         <TradingPillars />
         

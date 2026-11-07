@@ -37,15 +37,15 @@ export default function PaymentRailSection() {
   const fee = (transferAmount * feeRate).toFixed(2);
 
   return (
-    <section id="payments-section" className="py-14 sm:py-20 bg-transparent border-t border-slate-200/80 dark:border-white/5 transition-colors">
+    <section id="payments-section" className="py-12 sm:py-16 bg-transparent border-t border-slate-100 dark:border-white/[0.06] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 text-xs font-bold">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200/60 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 text-xs font-semibold">
             <span>GLOBAL PAYMENT GATEWAY & 14 PROCESSORS COMBINED</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
             Comprehensive <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-red-600">Payment Rails</span>
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
@@ -58,37 +58,37 @@ export default function PaymentRailSection() {
           {PAYMENT_RAILS.map((rail) => (
             <div 
               key={rail.name} 
-              className="p-4 rounded-2xl bg-white/85 dark:bg-slate-900/50 border border-slate-200/80 dark:border-white/10 hover:border-orange-500/40 hover:shadow-md transition-all text-center space-y-1.5 backdrop-blur-md"
+              className="p-3.5 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] hover:border-orange-500/40 hover:shadow-xs transition-all text-center space-y-1"
             >
-              <div className="text-2xl">{rail.icon}</div>
+              <div className="text-xl">{rail.icon}</div>
               <div className="font-bold text-xs text-slate-900 dark:text-white">{rail.name}</div>
               <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{rail.type}</div>
-              <div className="text-[10px] font-mono font-bold text-emerald-500 pt-1.5 border-t border-slate-100 dark:border-white/10">
+              <div className="text-[10px] font-mono font-bold text-emerald-500 pt-1 border-t border-slate-100 dark:border-white/[0.06]">
                 {rail.speed}
               </div>
             </div>
           ))}
         </div>
 
-        {/* FX Transfer Calculator Widget */}
-        <div className="rounded-3xl bg-white/90 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-xl">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100 dark:border-white/10">
+        {/* FX Transfer Calculator Widget (Rounded-2xl with clean border) */}
+        <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-100 dark:border-white/[0.08] p-5 sm:p-7 max-w-2xl mx-auto shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100 dark:border-white/[0.06]">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Globe2 className="w-4 h-4 text-orange-500" />
                 <span>Instant Multi-Currency FX Engine</span>
               </h3>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Real-time cross-currency routing with automated platform clearing</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Real-time cross-currency routing with automated platform clearing</p>
             </div>
-            <span className="text-xs font-mono font-bold text-emerald-500 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <span className="text-[11px] font-mono font-semibold text-emerald-500 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-500/30">
               Mid-Market FX Rate
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <div>
-              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1">Send Amount</label>
-              <div className="flex items-center rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
+              <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-1">Send Amount</label>
+              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                 <input
                   type="number"
                   value={transferAmount}
@@ -98,7 +98,7 @@ export default function PaymentRailSection() {
                 <select
                   value={sourceCurr}
                   onChange={(e) => setSourceCurr(e.target.value)}
-                  className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-xs"
+                  className="bg-white dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-lg px-2 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-xs"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -108,8 +108,8 @@ export default function PaymentRailSection() {
             </div>
 
             <div>
-              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1">Recipient Receives</label>
-              <div className="flex items-center rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
+              <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-1">Recipient Receives</label>
+              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                 <input
                   type="text"
                   readOnly
@@ -119,7 +119,7 @@ export default function PaymentRailSection() {
                 <select
                   value={destCurr}
                   onChange={(e) => setDestCurr(e.target.value)}
-                  className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-xs"
+                  className="bg-white dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-lg px-2 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-xs"
                 >
                   <option value="EUR">EUR</option>
                   <option value="USD">USD</option>
@@ -129,8 +129,8 @@ export default function PaymentRailSection() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/10 flex justify-between items-center text-xs font-mono text-slate-500 dark:text-slate-400">
-            <span>Estimated Fee (0.3%): <strong className="text-slate-900 dark:text-white">${fee}</strong></span>
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/[0.06] flex justify-between items-center text-xs font-mono text-slate-500 dark:text-slate-400">
+            <span>Estimated Fee (0.3%): <strong className="text-slate-900 dark:text-white font-semibold">${fee}</strong></span>
             <span className="text-emerald-500 font-bold">Guaranteed Delivery: &lt; 15 mins</span>
           </div>
         </div>
