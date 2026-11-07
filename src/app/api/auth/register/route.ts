@@ -104,7 +104,8 @@ export async function POST(request: Request) {
       user: newUser
     }, { status: 201 });
 
-  } catch (error) {
-    return NextResponse.json({ error: "Registration processing failed." }, { status: 500 });
+  } catch (error: any) {
+    console.error("REGISTER ERROR:", error);
+    return NextResponse.json({ error: error?.message || "Registration processing failed." }, { status: 500 });
   }
 }
