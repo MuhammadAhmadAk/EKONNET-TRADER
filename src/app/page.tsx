@@ -34,8 +34,8 @@ export default function LandingPage() {
     setTimeout(() => setActiveNotification(""), 6000);
   };
 
-  const handleLoginSuccess = () => {
-    setActiveNotification("Authentication successful. Welcome to your Ekonnet Trader workspace.");
+  const handleLoginSuccess = (user?: any) => {
+    setActiveNotification(`Welcome back${user?.fullName ? ', ' + user.fullName : ''}! Authentication successful.`);
     setTimeout(() => setActiveNotification(""), 5000);
   };
 

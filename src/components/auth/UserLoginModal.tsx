@@ -11,55 +11,90 @@ import {
   User as UserIcon,
   ShieldCheck,
   Zap,
-  Layers
+  Layers,
+  Loader2
 } from "lucide-react";
 
 interface UserLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (user?: any) => void;
 }
 
 export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLoginModalProps) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [securityAnswer, setSecurityAnswer] = useState("");
   const [step, setStep] = useState<"credentials" | "two_factor">("credentials");
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [lockedUntil, setLockedUntil] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
-    // Simulate 3-attempt lockout (Section 25)
-    if (failedAttempts >= 2 && password !== "correct123") {
-      setFailedAttempts(3);
-      setLockedUntil("30:00 Minutes");
-      setErrorMessage("SECURITY ALERT: 3 consecutive failed attempts detected. Your account is temporarily locked for 30 minutes in accordance with Section 25.");
+    if (!identifier || !password) {
+      setErrorMessage("Please enter your Username or Ekonnet User ID and Password.");
       return;
     }
 
-    if (step === "credentials") {
-      if (!identifier || !password) {
-        setErrorMessage("Please enter your Username or Ekonnet User ID and Password.");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: identifier.trim(),
+          password: password,
+          twoFactorCode: twoFactorCode.trim() || undefined
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.isLocked) {
+          setLockedUntil(`${data.remainingMinutes || 30}:00 Minutes`);
+          setFailedAttempts(3);
+          setErrorMessage(data.error || "SECURITY ALERT: Account is locked for 30 minutes due to consecutive failed attempts (Section 27.1).");
+        } else {
+          setFailedAttempts((prev) => prev + 1);
+          setErrorMessage(data.error || "Invalid username or password.");
+        }
+        setIsLoading(false);
         return;
       }
-      // Advance to 2FA step (Section 16)
-      setStep("two_factor");
-    } else {
-      if (!twoFactorCode || twoFactorCode.length < 6) {
-        setErrorMessage("Please enter your 6-digit TOTP Authenticator code.");
+
+      // Check if user has 2FA enabled and we haven't prompted yet
+      if (data.user?.twoFactorEnabled && step === "credentials" && !twoFactorCode) {
+        setStep("two_factor");
+        setIsLoading(false);
         return;
       }
-      // Successful auth
-      onSuccess();
+
+      // Save user session in localStorage and dispatch event for immediate reactivity
+      localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-changed"));
+
+      onSuccess(data.user);
       onClose();
+    } catch (err: any) {
+      setErrorMessage("Network error connecting to authentication server. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const fillQuickDemo = (demoId: string, demoPass: string) => {
+    setIdentifier(demoId);
+    setPassword(demoPass);
+    setErrorMessage("");
+    setLockedUntil(null);
   };
 
   return (
@@ -117,7 +152,7 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
             </h2>
 
             <p className="text-xs text-slate-400 leading-relaxed mb-5">
-              Unified cross-border clearing across 14 payment rails and 5 base pairs. Hand-crafted proprietary architecture.
+              Unified cross-border clearing across 14 payment rails and 5 base pairs. Live MongoDB auth engine.
             </p>
 
             <div className="space-y-2 pt-2 border-t border-white/10 text-xs text-slate-300">
@@ -188,16 +223,17 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
               <>
                 <div>
                   <label className="text-xs font-semibold text-slate-300 mb-1.5 block">
-                    Username or User ID (e.g. EKON-819204)
+                    Username or User ID (e.g. EKON-000001, master_admin)
                   </label>
                   <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-3 focus-within:border-blue-500 transition-colors">
                     <UserIcon className="w-4 h-4 text-slate-400 mr-2.5" />
                     <input
                       type="text"
-                      disabled={!!lockedUntil}
+                      required
+                      disabled={!!lockedUntil || isLoading}
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="Enter your Username or ID"
+                      placeholder="Enter Username or ID"
                       className="w-full bg-transparent text-sm text-white focus:outline-none"
                     />
                   </div>
@@ -212,7 +248,8 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
                     <Lock className="w-4 h-4 text-slate-400 mr-2.5" />
                     <input
                       type="password"
-                      disabled={!!lockedUntil}
+                      required
+                      disabled={!!lockedUntil || isLoading}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••••••"
@@ -230,7 +267,7 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
                     <span>STEP 2: 2FA AUTHENTICATOR CODE (SECTION 16)</span>
                   </div>
                   <p className="text-[11px] text-slate-400">
-                    Open your Proton or Google Authenticator App and enter your 6-digit rolling code:
+                    Enter the 6-digit rolling code from your Authenticator app (or enter 123456 for test):
                   </p>
                   <input
                     type="text"
@@ -241,37 +278,61 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
                     className="w-full text-center tracking-[0.5em] text-2xl font-black font-mono bg-white/[0.03] dark:bg-black/30 border border-blue-500/40 text-emerald-400 p-3 rounded-xl focus:outline-none"
                   />
                 </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-slate-300 mb-1.5 block">
-                    Security Question: What was your first pet name?
-                  </label>
-                  <input
-                    type="text"
-                    value={securityAnswer}
-                    onChange={(e) => setSecurityAnswer(e.target.value)}
-                    placeholder="Your answer"
-                    className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-3 text-sm text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
               </>
             )}
 
             <button
               type="submit"
-              disabled={!!lockedUntil}
+              disabled={!!lockedUntil || isLoading}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <span>{step === "credentials" ? "Continue to 2FA" : "Confirm & Enter Platform"}</span>
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>{step === "credentials" ? "Sign In to Platform" : "Confirm & Enter Platform"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
 
           </form>
 
-          <div className="mt-5 text-center text-xs text-slate-400">
+          {/* Quick Demo Pre-fill Links for Testing */}
+          <div className="mt-6 pt-4 border-t border-white/10">
+            <span className="text-[11px] text-slate-400 block mb-2 font-mono">Quick Test Accounts:</span>
+            <div className="flex flex-wrap gap-2 text-[11px]">
+              <button 
+                type="button"
+                onClick={() => fillQuickDemo("master_admin", "Ekonnet2026!")}
+                className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition font-mono"
+              >
+                Master Admin
+              </button>
+              <button 
+                type="button"
+                onClick={() => fillQuickDemo("manager_sarah", "Ekonnet2026!")}
+                className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 transition font-mono"
+              >
+                Management
+              </button>
+              <button 
+                type="button"
+                onClick={() => fillQuickDemo("staff_alex", "Ekonnet2026!")}
+                className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition font-mono"
+              >
+                Staff (Alex)
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 text-center text-xs text-slate-400">
             Trouble logging in?{" "}
-            <button onClick={() => alert("Verification reset link will be sent to your 3 registered emails.")} className="text-blue-400 hover:underline">
-              Request Email Magic Verification Link
+            <button onClick={() => alert("Verification reset link sent to your registered emails.")} className="text-blue-400 hover:underline">
+              Request Email Verification Link
             </button>
           </div>
 

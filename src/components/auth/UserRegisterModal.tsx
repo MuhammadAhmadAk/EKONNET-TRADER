@@ -12,7 +12,8 @@ import {
   Lock,
   ShieldCheck,
   Zap,
-  Layers
+  Layers,
+  Loader2
 } from "lucide-react";
 import { generateEkonnetId, calculateAge } from "@/lib/utils";
 
@@ -26,12 +27,12 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
   const [autoUserId, setAutoUserId] = useState("");
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [dob, setDob] = useState("2000-01-01");
   const [age, setAge] = useState(26);
-  const [maritalStatus, setMaritalStatus] = useState("Single");
   const [country, setCountry] = useState("United States");
   const [city, setCity] = useState("New York");
-  const [sex, setSex] = useState("Male");
   
   // Section 30: 3 personal emails & 2 phones
   const [email1, setEmail1] = useState("");
@@ -49,11 +50,14 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
   // Terms & Conditions checkbox (Section 35)
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [underageError, setUnderageError] = useState("");
+  const [apiError, setApiError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState<1 | 2>(1);
 
   useEffect(() => {
     if (isOpen) {
       setAutoUserId(generateEkonnetId("EKON"));
+      setApiError("");
     }
   }, [isOpen]);
 
@@ -73,33 +77,89 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateStep1 = () => {
+    setApiError("");
+    if (!username || !fullName) {
+      setApiError("Please enter both your preferred Username and Full Legal Name.");
+      return false;
+    }
     if (age < 18) {
-      alert("Registration halted: You must be at least 18 years old to open an account (Section 63).");
+      setApiError("Registration prohibited: You must be at least 18 years of age (Section 63).");
+      return false;
+    }
+    if (!email1) {
+      setApiError("Primary Email is required for account security and verification.");
+      return false;
+    }
+    if (!password || password.length < 6) {
+      setApiError("Password must be at least 6 characters long.");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setApiError("Password and Confirm Password do not match.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleNextStep = () => {
+    if (validateStep1()) {
+      setActiveStep(2);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setApiError("");
+
+    if (age < 18) {
+      setApiError("Registration halted: You must be at least 18 years old to open an account (Section 63).");
       return;
     }
     if (!agreedTerms) {
-      alert("You must agree to the Terms & Conditions and Legal Procedures (Section 35).");
+      setApiError("You must agree to the Terms & Conditions and Legal Procedures (Section 35).");
       return;
     }
 
-    const newUser = {
-      id: autoUserId,
-      username: username || "trader_" + autoUserId.split("-")[1],
-      fullName,
-      emails: [email1, email2, email3].filter(Boolean),
-      phones: [phoneMobile, phoneLandline].filter(Boolean),
-      age,
-      country,
-      city,
-      kycStatus: "pending",
-      packageTier: "Free",
-      walletBalances: { USD: 0, BTC: 0, XRP: 0, ETH: 0, BCH: 0 }
-    };
+    setIsLoading(true);
 
-    onSuccess(newUser);
-    onClose();
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password,
+          fullName: fullName.trim(),
+          dob: dob,
+          emails: [email1, email2, email3].filter(Boolean),
+          phones: [phoneMobile, phoneLandline].filter(Boolean),
+          country: country.trim(),
+          city: city.trim(),
+          agreedTerms: true,
+          packageTier: "Free"
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setApiError(data.error || "Registration failed. Please check your information.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save user session in localStorage
+      localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-changed"));
+
+      onSuccess(data.user);
+      onClose();
+    } catch (err: any) {
+      setApiError("Network error contacting registration service. Please retry.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -180,7 +240,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
           <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
             <span className="flex items-center gap-1">
               <Lock className="w-3.5 h-3.5 text-purple-400" />
-              <span>Plesk-Secured Node</span>
+              <span>VPS-Secured MongoDB</span>
             </span>
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -207,6 +267,13 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
             </div>
           </div>
 
+          {/* Error Alert */}
+          {apiError && (
+            <div className="p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs mb-4">
+              {apiError}
+            </div>
+          )}
+
           {/* Age Restriction Alert (Section 63) */}
           {underageError && (
             <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs space-y-1 mb-5">
@@ -221,7 +288,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
           <form onSubmit={handleSubmit} className="space-y-4">
             
             {activeStep === 1 ? (
-              /* Step 1: Personal Data & 18+ Verification */
+              /* Step 1: Personal Data, Credentials & 18+ Verification */
               <div className="space-y-3.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -231,7 +298,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                       required
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      placeholder="e.g. btc_master"
+                      placeholder="e.g. btc_trader"
                       className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
                     />
                   </div>
@@ -243,6 +310,32 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="First and Last Name"
+                      className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Password & Confirm Password */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Password (Min 6 chars)</label>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Confirm Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••••••"
                       className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
                     />
                   </div>
@@ -282,7 +375,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                   <input
                     type="email"
                     required
-                    placeholder="Primary Email Address (Verification Link sent here)"
+                    placeholder="Primary Email Address"
                     value={email1}
                     onChange={(e) => setEmail1(e.target.value)}
                     className="w-full rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2 text-xs text-white focus:outline-none focus:border-purple-500"
@@ -341,25 +434,25 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                 <button
                   type="button"
                   disabled={age < 18}
-                  onClick={() => setActiveStep(2)}
+                  onClick={handleNextStep}
                   className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center space-x-2 disabled:opacity-50 transition"
                 >
-                  <span>Proceed to KYC & Security Setup (Step 2)</span>
+                  <span>Proceed to Security Questions (Step 2)</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              /* Step 2: KYC Photo Guidelines & Security Questions */
-              <div className="space-y-3.5">
+              /* Step 2: KYC Note Verification & Security Questions */
+              <div className="space-y-4">
                 
-                {/* KYC Photo Instructions as mandated in Section 27, 30 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-purple-500/30 space-y-2 text-xs">
-                  <div className="flex items-center space-x-2 font-bold text-purple-300">
+                {/* Handwritten Note Instructions */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.02] dark:bg-black/25 border border-white/10 space-y-2 text-xs">
+                  <div className="flex items-center space-x-2 font-bold text-slate-200">
                     <Upload className="w-4 h-4 text-purple-400" />
-                    <span>MANDATORY KYC PHOTO WITH HANDWRITTEN NOTE</span>
+                    <span>KYC Handwritten Verification Notice</span>
                   </div>
                   <p className="text-slate-300 leading-relaxed text-[11px]">
-                    Hold your official ID alongside a handwritten note stating:
+                    After registration, you will upload a photo of yourself holding your government ID alongside a handwritten note stating:
                   </p>
                   <div className="p-2.5 bg-white/[0.03] dark:bg-black/30 rounded-xl border border-white/10 text-emerald-400 font-mono text-[11px]">
                     &quot;{fullName || "Your Full Name"}, Ekonnet, {new Date().toISOString().split('T')[0]}&quot;
@@ -422,6 +515,7 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                 <div className="flex space-x-3 pt-2">
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => setActiveStep(1)}
                     className="w-1/3 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-300 text-xs font-bold transition"
                   >
@@ -429,10 +523,17 @@ export default function UserRegisterModal({ isOpen, onClose, onSuccess }: UserRe
                   </button>
                   <button
                     type="submit"
-                    disabled={!agreedTerms || age < 18}
-                    className="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-xs tracking-wide shadow-lg shadow-purple-500/25 transition-all disabled:opacity-50"
+                    disabled={!agreedTerms || age < 18 || isLoading}
+                    className="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-xs tracking-wide shadow-lg shadow-purple-500/25 transition-all disabled:opacity-50 flex items-center justify-center space-x-2"
                   >
-                    Complete Registration
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Creating Account...</span>
+                      </>
+                    ) : (
+                      <span>Complete Registration</span>
+                    )}
                   </button>
                 </div>
 

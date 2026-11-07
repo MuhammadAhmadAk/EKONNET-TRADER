@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { 
       username, 
+      password,
       fullName, 
       dob, 
       emails, 
@@ -20,6 +21,10 @@ export async function POST(request: Request) {
 
     if (!username || !fullName || !dob || !emails?.length) {
       return NextResponse.json({ error: "Missing required registration fields (username, full name, DOB, and primary email)." }, { status: 400 });
+    }
+
+    if (password && password.length < 6) {
+      return NextResponse.json({ error: "Password must be at least 6 characters long." }, { status: 400 });
     }
 
     // Check if username already exists
@@ -54,6 +59,7 @@ export async function POST(request: Request) {
     const newUser: User = {
       id: autoId,
       username: username.toLowerCase().trim(),
+      password: password || "Ekonnet2026!",
       fullName,
       role: "user",
       emails: cleanEmails,

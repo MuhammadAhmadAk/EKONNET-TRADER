@@ -24,20 +24,48 @@ export default function ManagementAuthGate() {
   const [error, setError] = useState("");
   const [isAuthorizing, setIsAuthorizing] = useState(false);
 
-  const handleAdminAuth = (e: React.FormEvent) => {
+  const handleAdminAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!adminToken || !rootKey) {
-      setError("Both Root Admin Token and Encryption Master Key are required.");
+      setError("Both Admin Token / Username and Master Key / Password are required.");
       return;
     }
 
     setIsAuthorizing(true);
-    setTimeout(() => {
-      setIsAuthorizing(false);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: adminToken.trim(),
+          password: rootKey,
+          twoFactorCode: twoFactorCode.trim() || undefined
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Authentication failed. Access denied to Management Root.");
+        setIsAuthorizing(false);
+        return;
+      }
+
+      if (data.user?.role !== "master_admin" && data.user?.role !== "management") {
+        setError("Access Restricted: This gate requires Master Admin or Management Sub-Admin credentials (Section 27).");
+        setIsAuthorizing(false);
+        return;
+      }
+
+      localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-changed"));
       router.push("/admin");
-    }, 900);
+    } catch (err) {
+      setError("Network error connecting to management auth service.");
+      setIsAuthorizing(false);
+    }
   };
 
   return (

@@ -23,7 +23,11 @@ import {
   BookOpen,
   ArrowRightLeft,
   Briefcase,
-  Cpu
+  Cpu,
+  LogOut,
+  User,
+  Wallet,
+  CheckCircle
 } from "lucide-react";
 
 interface NavbarProps {
@@ -36,6 +40,38 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   const [investDropdownOpen, setInvestDropdownOpen] = useState(false);
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
   const [academyDropdownOpen, setAcademyDropdownOpen] = useState(false);
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  React.useEffect(() => {
+    const loadUser = () => {
+      try {
+        const stored = localStorage.getItem("ekonnet_user");
+        if (stored) {
+          setCurrentUser(JSON.parse(stored));
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (e) {
+        setCurrentUser(null);
+      }
+    };
+
+    loadUser();
+    window.addEventListener("auth-changed", loadUser);
+    window.addEventListener("storage", loadUser);
+    return () => {
+      window.removeEventListener("auth-changed", loadUser);
+      window.removeEventListener("storage", loadUser);
+    };
+  }, []);
+
+  const handleSignOut = () => {
+    localStorage.removeItem("ekonnet_user");
+    setCurrentUser(null);
+    setUserDropdownOpen(false);
+    window.dispatchEvent(new Event("auth-changed"));
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#070b14]/95 backdrop-blur-xl border-b border-white/10 transition-all select-none shadow-2xl">
@@ -316,29 +352,113 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
 
           {/* Right Action Bar */}
           <div className="hidden sm:flex items-center gap-3 shrink-0 whitespace-nowrap">
-            <Link
-              href="/admin"
-              className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-[11px] text-blue-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
-              title="Enterprise Admin Management Console"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Admin Console</span>
-            </Link>
+            {currentUser ? (
+              <div className="flex items-center gap-3">
+                {/* Admin Console shortcut for privileged accounts */}
+                {currentUser.role !== "user" && (
+                  <Link
+                    href="/admin"
+                    className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-[11px] text-blue-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
+                    title="Enterprise Admin Management Console"
+                  >
+                    <Lock className="w-3 h-3" />
+                    <span>Admin Console</span>
+                  </Link>
+                )}
 
-            <button
-              onClick={onOpenLogin}
-              className="text-xs font-semibold text-slate-300 hover:text-white px-2.5 py-1.5 transition"
-            >
-              Sign In
-            </button>
+                {/* User Session Pill with Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 border border-white/10 text-xs transition"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold">
+                      {currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <div className="text-left flex flex-col leading-tight">
+                      <span className="font-bold text-white text-[11px] truncate max-w-[120px]">
+                        {currentUser.fullName || currentUser.username}
+                      </span>
+                      <span className="text-[9px] text-slate-400 font-mono">
+                        {currentUser.id}
+                      </span>
+                    </div>
+                    <ChevronDown className="w-3 h-3 text-slate-400" />
+                  </button>
 
-            <button
-              onClick={onOpenRegister}
-              className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center gap-1.5"
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Register (18+)</span>
-            </button>
+                  {/* Dropdown Menu */}
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#090e1a] border border-white/10 shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 text-xs space-y-3">
+                      <div className="border-b border-white/10 pb-2.5">
+                        <div className="font-bold text-white text-xs">{currentUser.fullName}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">{currentUser.id} • @{currentUser.username}</div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            {currentUser.role.replace('_', ' ')}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase font-mono ${
+                            currentUser.kycStatus === 'approved' 
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                          }`}>
+                            KYC {currentUser.kycStatus || 'pending'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Wallet Summary */}
+                      {currentUser.walletBalances && (
+                        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1 font-mono text-[11px]">
+                          <div className="flex justify-between text-slate-400">
+                            <span>USD Balance:</span>
+                            <span className="text-emerald-400 font-bold">${Number(currentUser.walletBalances.USD || 0).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between text-slate-400">
+                            <span>BTC Balance:</span>
+                            <span className="text-amber-400 font-bold">{currentUser.walletBalances.BTC || 0} BTC</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Sign Out Button */}
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-semibold text-xs flex items-center justify-center gap-2 transition"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/admin"
+                  className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-[11px] text-blue-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
+                  title="Enterprise Admin Management Console"
+                >
+                  <Lock className="w-3 h-3" />
+                  <span>Admin Console</span>
+                </Link>
+
+                <button
+                  onClick={onOpenLogin}
+                  className="text-xs font-semibold text-slate-300 hover:text-white px-2.5 py-1.5 transition"
+                >
+                  Sign In
+                </button>
+
+                <button
+                  onClick={onOpenRegister}
+                  className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center gap-1.5"
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span>Register (18+)</span>
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile Hamburger Button */}

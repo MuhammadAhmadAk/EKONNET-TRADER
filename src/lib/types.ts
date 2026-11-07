@@ -18,6 +18,7 @@ export interface User {
   kycStatus: KYCStatus;
   kycDocumentUrl?: string;
   kycNoteVerified?: boolean;
+  password?: string;
   packageTier: 'Free' | 'Pro Trader' | 'Institutional' | 'Enterprise';
   isLocked: boolean;
   lockoutUntil?: string;
