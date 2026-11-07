@@ -156,10 +156,10 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
   const progressPercent = Math.min(100, (currentTime / duration) * 100);
 
   return (
-    <section id="tutorials-academy" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-slate-950/80 border-t border-white/5 overflow-hidden">
+    <section id="tutorials-academy" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-transparent border-t border-slate-200/80 dark:border-white/5 overflow-hidden transition-colors">
       {/* Background Lighting */}
-      <div className="absolute top-1/3 left-1/4 w-[600px] h-[400px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none -z-10" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[300px] bg-emerald-600/10 blur-[130px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/4 w-[600px] h-[400px] bg-blue-500/10 dark:bg-blue-600/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute bottom-10 right-1/4 w-[500px] h-[300px] bg-emerald-500/10 dark:bg-emerald-600/10 blur-[130px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto space-y-16">
         
@@ -167,28 +167,28 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
             HEADER BADGE & TITLE (BITFINEX 2 STYLE EDUCATION SPOTLIGHT)
         ===================================================================== */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider shadow-lg shadow-emerald-500/10">
-            <MonitorPlay className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider shadow-sm">
+            <MonitorPlay className="w-4 h-4 text-emerald-500 dark:text-emerald-400 animate-pulse" />
             <span>Interactive Video Academy • Battle Tested Since 2012 Style</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
             Learn How to Master Every Tool. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 dark:from-emerald-400 dark:via-cyan-400 dark:to-blue-400">
               Interactive Video Tutorials & Guides
             </span>
           </h2>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
             Just like Bitfinex, Bitpanda, and CMC Markets, we provide clear video lessons and detailed written instructions so you can confidently exploit advanced order types, hedging protocols, and multi-asset liquidity.
           </p>
 
           <div className="pt-2 flex justify-center gap-3">
             <Link
               href="/tutorials"
-              className="px-5 py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-semibold flex items-center gap-2 transition"
+              className="px-5 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-600/20 hover:bg-blue-100 dark:hover:bg-blue-600/30 border border-blue-200 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 text-xs font-semibold flex items-center gap-2 transition"
             >
-              <BookOpen className="w-4 h-4 text-blue-400" />
+              <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Browse Full Documentation & Academy</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -202,7 +202,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
           
           {/* Left: Video Player Screen (8 Cols) */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl group">
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 dark:border-slate-800 shadow-xl dark:shadow-2xl group">
               
               {/* Simulated Video Canvas / Live Demonstration Screen */}
               <div className="relative w-full aspect-video bg-gradient-to-br from-slate-950 via-[#0B101E] to-slate-900 flex flex-col justify-between p-6 overflow-hidden">
@@ -279,7 +279,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Play/Pause Button */}
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 transition"
+                        className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 transition cursor-pointer"
                         title={isPlaying ? "Pause" : "Play"}
                       >
                         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -288,7 +288,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Replay Button */}
                       <button
                         onClick={() => { setCurrentTime(0); setIsPlaying(true); }}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
+                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
                         title="Replay from start"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
@@ -306,7 +306,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Mute/Unmute */}
                       <button 
                         onClick={() => setIsMuted(!isMuted)}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
+                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
                       >
                         {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-slate-300" />}
                       </button>
@@ -314,7 +314,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Fullscreen */}
                       <button 
                         onClick={() => alert("Video is playing in optimized responsive container.")}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
+                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
                       >
                         <Maximize2 className="w-4 h-4" />
                       </button>
@@ -328,32 +328,32 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
             </div>
 
             {/* Accompanying Lesson Written Instructions */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-slate-900/60 border border-slate-800 space-y-6">
-              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+            <div className="rounded-2xl p-6 sm:p-8 bg-white/95 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-md dark:shadow-xl">
+              <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/5 pb-4">
                 <div>
-                  <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Step-by-Step Written Guide</span>
-                  <h3 className="text-xl font-bold text-white mt-0.5">{selectedLesson.title}</h3>
+                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Step-by-Step Written Guide</span>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{selectedLesson.title}</h3>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-mono">
+                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-xs font-mono font-medium">
                   {selectedLesson.category}
                 </span>
               </div>
 
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 {selectedLesson.summary}
               </p>
 
               {/* 3 Action Steps */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {selectedLesson.steps.map((step, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-slate-950/70 border border-white/5 space-y-2">
+                  <div key={idx} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-white/5 space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
                         {idx + 1}
                       </span>
-                      <h4 className="text-xs font-bold text-white">{step.title}</h4>
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">{step.title}</h4>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
                       {step.desc}
                     </p>
                   </div>
@@ -362,13 +362,13 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
 
               {/* Key Takeaways & Trader Benefits */}
               <div className="pt-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
                   Trader Benefits Obtained:
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {selectedLesson.keyTakeaways.map((takeaway, idx) => (
-                    <div key={idx} className="flex items-start gap-2 p-3 rounded-xl bg-slate-950/40 border border-white/5 text-xs text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={idx} className="flex items-start gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200/80 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{takeaway}</span>
                     </div>
                   ))}
@@ -380,13 +380,13 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
 
           {/* Right: Lesson Selector & Academy Chapters (4 Cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="rounded-3xl p-6 bg-slate-900/80 border border-slate-800 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="rounded-2xl p-6 bg-white/95 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 shadow-md dark:shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <Video className="w-4 h-4 text-emerald-400" />
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">Course Curriculum</h3>
+                  <Video className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Course Curriculum</h3>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">4 Lessons</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">4 Lessons</span>
               </div>
 
               <div className="space-y-3">
@@ -396,22 +396,22 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                     <div
                       key={lesson.id}
                       onClick={() => handleSelectLesson(lesson)}
-                      className={`cursor-pointer rounded-2xl p-4 border transition-all duration-200 space-y-2 ${
+                      className={`cursor-pointer rounded-xl p-4 border transition-all duration-200 space-y-2 ${
                         isSelected
-                          ? "bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-500/10"
-                          : "bg-slate-950/50 border-white/5 hover:border-slate-700 hover:bg-slate-950/80"
+                          ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/50 shadow-sm"
+                          : "bg-slate-50 dark:bg-slate-950/50 border-slate-200/80 dark:border-white/5 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-950/80"
                       }`}
                     >
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-mono text-[10px] text-slate-500 uppercase">Lesson 0{idx + 1}</span>
-                        <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[10px]">
+                        <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[10px]">
                           {lesson.duration}
                         </span>
                       </div>
-                      <h4 className={`text-xs font-bold transition ${isSelected ? "text-white" : "text-slate-300"}`}>
+                      <h4 className={`text-xs font-bold transition ${isSelected ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
                         {lesson.title}
                       </h4>
-                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                         {lesson.summary}
                       </p>
                     </div>
@@ -420,17 +420,17 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
               </div>
 
               {/* Call to action card */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-500/30 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-white">
-                  <Sparkles className="w-4 h-4 text-yellow-400" />
+              <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-purple-900/30 border border-blue-200 dark:border-blue-500/30 space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white">
+                  <Sparkles className="w-4 h-4 text-amber-500 dark:text-yellow-400" />
                   <span>Need Custom Trading Mentorship?</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-normal">
                   Our institutional trade desk provides 1-on-1 strategy breakdowns for scaled orders and cross-asset liquidity.
                 </p>
                 <Link
                   href="/tutorials"
-                  className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold text-center block transition shadow-lg shadow-blue-600/30"
+                  className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold text-center block transition shadow-md shadow-blue-600/30 cursor-pointer"
                 >
                   Open Comprehensive Academy
                 </Link>

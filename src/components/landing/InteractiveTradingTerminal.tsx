@@ -203,24 +203,24 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
   const activeTechniqueObj = ORDER_TECHNIQUES.find((t) => t.id === selectedTechnique) || ORDER_TECHNIQUES[0];
 
   return (
-    <section className="relative py-16 sm:py-24 bg-transparent border-t border-b border-white/[0.06] overflow-hidden" id="web-terminal">
+    <section className="relative py-16 sm:py-24 bg-transparent border-t border-b border-slate-200/80 dark:border-white/[0.06] overflow-hidden transition-colors" id="web-terminal">
       {/* Background illumination */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-gradient-to-r from-blue-600/10 via-emerald-600/10 to-purple-600/10 blur-[150px] pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-purple-500/10 dark:from-blue-600/10 dark:via-emerald-600/10 dark:to-purple-600/10 blur-[150px] pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[11px] font-mono font-bold tracking-wider uppercase">
-            <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400 text-[11px] font-mono font-bold tracking-wider uppercase">
+            <Radio className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400 animate-pulse" />
             <span>Bitfinex • Bitpanda • CMC Markets Multi-Asset Architecture</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Institutional Web Trading & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">Advanced Order Suite</span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Institutional Web Trading & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 dark:from-blue-400 dark:via-indigo-300 dark:to-emerald-400">Advanced Order Suite</span>
           </h2>
 
-          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
             All 9 institutional order techniques from Bitfinex, CMC Markets risk controls, and Bitpanda multi-asset liquidity — operating 100% in your browser with zero installation.
           </p>
 
@@ -229,10 +229,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             <button
               type="button"
               onClick={() => setTradingMode("demo")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 tradingMode === "demo"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20 ring-1 ring-emerald-400"
-                  : "bg-white/5 text-slate-400 hover:text-white border border-white/10"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20 ring-1 ring-emerald-400"
+                  : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-white/10"
               }`}
             >
               <Play className="w-3.5 h-3.5 fill-current" />
@@ -242,31 +242,31 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             <button
               type="button"
               onClick={() => setTradingMode("live")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 tradingMode === "live"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/20 ring-1 ring-blue-400"
-                  : "bg-white/5 text-slate-400 hover:text-white border border-white/10"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20 ring-1 ring-blue-400"
+                  : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-white/10"
               }`}
             >
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <Zap className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
               <span>Live Account Clearing</span>
             </button>
 
             <Link
               href="/tutorials"
-              className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-white/10 flex items-center gap-1.5 transition"
+              className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 flex items-center gap-1.5 transition"
             >
-              <BookOpen className="w-3.5 h-3.5 text-yellow-400" />
+              <BookOpen className="w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400" />
               <span>Tutorial Guides</span>
             </Link>
           </div>
         </div>
 
         {/* Institutional Trading HUD Window */}
-        <div className="rounded-3xl border border-slate-800 bg-[#070B14]/95 backdrop-blur-2xl shadow-2xl overflow-hidden ring-1 ring-white/5 relative">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-[#070B14]/95 backdrop-blur-2xl shadow-xl dark:shadow-2xl overflow-hidden ring-1 ring-slate-200/60 dark:ring-white/5 relative">
           
           {/* Top Platform Navigation Strip (Matches Bitfinex Screenshot 3 & 4) */}
-          <div className="px-5 py-3 border-b border-slate-800 bg-slate-950 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
+          <div className="px-5 py-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
             {/* Navigation Tabs */}
             <div className="flex items-center space-x-1 sm:space-x-2">
               {(["Trading", "Derivatives", "Funding", "Securities", "OTC"] as const).map((tab) => (
@@ -274,10 +274,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     activeTab === tab
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5"
                   }`}
                 >
                   {tab}
@@ -286,14 +286,14 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             </div>
 
             {/* Live Websocket Status Indicator Badge (Matches Bitfinex Screenshot 5 Exactly) */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-600 dark:text-emerald-300 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               <span>Websocket connection is now online</span>
             </div>
           </div>
 
           {/* Subheader: Assets & Balance */}
-          <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/40 flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div className="px-5 py-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/40 flex flex-wrap items-center justify-between gap-4 text-xs">
             {/* Asset selector */}
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {ASSETS.map((asset) => {
@@ -303,14 +303,14 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     key={asset.symbol}
                     type="button"
                     onClick={() => setSelectedAsset(asset)}
-                    className={`px-3 py-1 rounded-lg font-mono font-bold transition-all flex items-center gap-1.5 shrink-0 ${
+                    className={`px-3 py-1 rounded-lg font-mono font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                       isSelected
-                        ? "bg-slate-800 text-white border border-blue-500/40 shadow-sm"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                        ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-blue-500/40 shadow-sm"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-white/5"
                     }`}
                   >
                     <span>{asset.symbol}</span>
-                    <span className={`text-[10px] ${asset.change24h >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    <span className={`text-[10px] ${asset.change24h >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                       {asset.change24h >= 0 ? "+" : ""}{asset.change24h}%
                     </span>
                   </button>
@@ -321,22 +321,22 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             {/* Virtual Balance */}
             <div className="flex items-center gap-3">
               {tradingMode === "demo" ? (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-[11px]">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-mono text-[11px]">
                   <span>Demo Balance:</span>
-                  <strong className="text-white font-bold">${demoBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+                  <strong className="text-slate-900 dark:text-white font-bold">${demoBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
                   <button
                     type="button"
                     onClick={handleResetDemo}
                     title="Reload $10,000 simulator capital"
-                    className="ml-1 text-slate-400 hover:text-white cursor-pointer"
+                    className="ml-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
                   >
                     <RotateCcw className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px]">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-300 font-mono text-[11px]">
                   <span>Live Brokerage Mode:</span>
-                  <strong className="text-white font-bold">14 Payment Rails Active</strong>
+                  <strong className="text-slate-900 dark:text-white font-bold">14 Payment Rails Active</strong>
                 </div>
               )}
             </div>
@@ -344,14 +344,14 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
 
           {/* Toast Notification */}
           {lastExecuted && (
-            <div className="px-5 py-2.5 bg-emerald-950/80 border-b border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2 animate-fade-in font-mono">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="px-5 py-2.5 bg-emerald-100 dark:bg-emerald-950/80 border-b border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2 animate-fade-in font-mono">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>{lastExecuted}</span>
             </div>
           )}
 
           {/* Main Terminal Grid: Chart Simulator (Left 8 Cols) + Bitfinex Order Form (Right 4 Cols) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80 dark:divide-slate-800">
             
             {/* Left 8 Cols: Chart Visualizer & Market Depth */}
             <div className="lg:col-span-8 p-5 sm:p-6 space-y-5">
@@ -360,24 +360,24 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-black text-white font-serif">{selectedAsset.name}</h3>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-cyan-300 font-bold uppercase">
+                    <h3 className="text-xl font-extrabold text-slate-900 dark:text-white font-serif">{selectedAsset.name}</h3>
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-white/10 text-blue-600 dark:text-cyan-300 font-bold uppercase">
                       {selectedAsset.category}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
                       {activeTab} Mode
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                     24h High: ${selectedAsset.high24h.toLocaleString()} • 24h Low: ${selectedAsset.low24h.toLocaleString()}
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-2xl font-black font-mono text-white tracking-tight">
+                  <div className="text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
                     ${currentPrice.toLocaleString("en-US", { minimumFractionDigits: selectedAsset.category === "forex" ? 4 : 2 })}
                   </div>
-                  <div className={`text-xs font-mono font-bold flex items-center justify-end gap-1 ${selectedAsset.change24h >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  <div className={`text-xs font-mono font-bold flex items-center justify-end gap-1 ${selectedAsset.change24h >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                     {selectedAsset.change24h >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                     <span>{selectedAsset.change24h >= 0 ? "+" : ""}{selectedAsset.change24h}% (24h)</span>
                   </div>
@@ -385,7 +385,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
 
               {/* Dynamic Visual Candlestick Chart */}
-              <div className="relative h-64 rounded-2xl bg-[#03060C] border border-slate-800 p-4 flex flex-col justify-between overflow-hidden">
+              <div className="relative h-64 rounded-2xl bg-slate-950 border border-slate-900 dark:border-slate-800 p-4 flex flex-col justify-between overflow-hidden shadow-inner">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_24px] pointer-events-none" />
 
                 <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 relative z-10">
@@ -432,16 +432,16 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
 
               {/* CMC Markets Style Client Sentiment Gauge */}
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <div className="flex items-center gap-1.5 text-slate-300">
-                    <BarChart2 className="w-3.5 h-3.5 text-blue-400" />
+                  <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                    <BarChart2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>Client Sentiment (CMC Markets Protocol):</span>
                   </div>
-                  <span className="text-emerald-400 font-bold">73% Long / 27% Short</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">73% Long / 27% Short</span>
                 </div>
                 {/* Visual Bar */}
-                <div className="w-full h-2 rounded-full bg-rose-500/40 overflow-hidden flex">
+                <div className="w-full h-2 rounded-full bg-rose-500/30 overflow-hidden flex">
                   <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: "73%" }} />
                 </div>
                 <div className="flex justify-between text-[10px] font-mono text-slate-500">
@@ -452,28 +452,28 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
 
               {/* Recent Executed Orders History */}
               <div>
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center justify-between">
                   <span>Active & Recent Orders</span>
-                  <span className="text-[10px] text-slate-500">Audit-Verified Order Ledger</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">Audit-Verified Order Ledger</span>
                 </div>
                 {executedTrades.length === 0 ? (
-                  <div className="p-3 rounded-xl border border-slate-800 bg-slate-900/30 text-center text-xs text-slate-500 font-mono">
+                  <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30 text-center text-xs text-slate-500 font-mono">
                     No orders submitted yet. Select an order technique on the right to test execution.
                   </div>
                 ) : (
                   <div className="space-y-1.5 font-mono text-xs">
                     {executedTrades.map((t) => (
-                      <div key={t.id} className="p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 flex items-center justify-between">
+                      <div key={t.id} className="p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${t.side === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${t.side === "buy" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"}`}>
                             {t.side} {t.technique}
                           </span>
-                          <span className="font-bold text-white">{t.units} {t.symbol}</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{t.units} {t.symbol}</span>
                         </div>
-                        <div className="text-slate-400 text-[11px]">
+                        <div className="text-slate-500 dark:text-slate-400 text-[11px]">
                           @ ${t.price.toLocaleString()} • Fee: ${t.fee.toFixed(2)}
                         </div>
-                        <div className="text-[10px] text-emerald-400 font-bold">{t.status}</div>
+                        <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">{t.status}</div>
                       </div>
                     ))}
                   </div>
@@ -482,27 +482,27 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
             </div>
 
             {/* Right 4 Cols: Bitfinex-Style Comprehensive Order Form (Images 3, 4, 5) */}
-            <div className="lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between space-y-6 bg-slate-900/30">
+            <div className="lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between space-y-6 bg-slate-50/50 dark:bg-slate-900/30">
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs font-mono font-bold uppercase text-slate-400">Order Form</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 font-semibold">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
+                  <span className="text-xs font-mono font-bold uppercase text-slate-600 dark:text-slate-400">Order Form</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-300 font-semibold">
                     {tradingMode === "demo" ? "DEMO SIMULATOR" : "LIVE CLEARING"}
                   </span>
                 </div>
 
                 {/* 1. ORDER TECHNIQUE DROPDOWN (Matches Bitfinex Images 4 & 5 marked IMPORTANT) */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                     <span>Order Technique:</span>
-                    <span className="text-[10px] font-mono text-blue-400">Bitfinex Institutional Suite</span>
+                    <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400">Bitfinex Institutional Suite</span>
                   </label>
                   <div className="relative">
                     <select
                       value={selectedTechnique}
                       onChange={(e) => setSelectedTechnique(e.target.value as OrderTechnique)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono font-bold focus:outline-none focus:border-blue-500 appearance-none cursor-pointer pr-8"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono font-bold focus:outline-none focus:border-blue-500 appearance-none cursor-pointer pr-8 shadow-sm"
                     >
                       {ORDER_TECHNIQUES.map((tech) => (
                         <option key={tech.id} value={tech.id}>
@@ -510,17 +510,17 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                    <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-3 top-3 pointer-events-none" />
                   </div>
                 </div>
 
                 {/* Order Technique Benefit Explainer Banner */}
-                <div className="p-3 rounded-xl bg-blue-950/40 border border-blue-500/30 text-xs space-y-1">
-                  <div className="flex items-center gap-1.5 text-blue-300 font-bold">
-                    <Info className="w-3.5 h-3.5 text-cyan-400" />
+                <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/30 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300 font-bold">
+                    <Info className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
                     <span>{activeTechniqueObj.label} Benefit:</span>
                   </div>
-                  <p className="text-[11px] text-slate-300 leading-normal">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-normal">
                     {activeTechniqueObj.benefit}
                   </p>
                 </div>
@@ -530,10 +530,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   <button
                     type="button"
                     onClick={() => setSide("buy")}
-                    className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       side === "buy"
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400"
-                        : "bg-white/5 text-slate-400 hover:text-white"
+                        : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     Exchange Buy
@@ -541,10 +541,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   <button
                     type="button"
                     onClick={() => setSide("sell")}
-                    className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       side === "sell"
                         ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-1 ring-rose-400"
-                        : "bg-white/5 text-slate-400 hover:text-white"
+                        : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     Exchange Sell
@@ -556,7 +556,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   
                   {/* Amount Input */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                       Total Order Amount (USD)
                     </label>
                     <div className="relative">
@@ -569,7 +569,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         max={tradingMode === "demo" ? demoBalance : 1000000}
                         value={tradeAmount}
                         onChange={(e) => setTradeAmount(Number(e.target.value))}
-                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500 shadow-sm"
                       />
                     </div>
                   </div>
@@ -577,7 +577,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   {/* Limit Price Input (For Limit, Stop Limit, OCO) */}
                   {(selectedTechnique === "Limit" || selectedTechnique === "Stop Limit") && (
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                         Limit Price (USD)
                       </label>
                       <input
@@ -585,7 +585,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         step="0.01"
                         value={limitPrice}
                         onChange={(e) => setLimitPrice(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500 shadow-sm"
                       />
                     </div>
                   )}
@@ -593,7 +593,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   {/* Stop Price Input (For Stop, Stop Limit) */}
                   {(selectedTechnique === "Stop" || selectedTechnique === "Stop Limit") && (
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                         Stop Trigger Price (USD)
                       </label>
                       <input
@@ -601,7 +601,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         step="0.01"
                         value={stopTriggerPrice}
                         onChange={(e) => setStopTriggerPrice(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500 shadow-sm"
                       />
                     </div>
                   )}
@@ -609,7 +609,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   {/* Trailing Delta Input */}
                   {selectedTechnique === "Trailing Stop" && (
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                         Trailing Distance Delta ($)
                       </label>
                       <input
@@ -617,7 +617,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         step="10"
                         value={trailingDelta}
                         onChange={(e) => setTrailingDelta(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500 shadow-sm"
                       />
                     </div>
                   )}
@@ -626,7 +626,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   {selectedTechnique === "Scaled" && (
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                           Tranches (Orders)
                         </label>
                         <input
@@ -635,14 +635,14 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                           max="20"
                           value={scaledCount}
                           onChange={(e) => setScaledCount(Number(e.target.value))}
-                          className="w-full px-2.5 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                          className="w-full px-2.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500 shadow-sm"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
                           Distribution
                         </label>
-                        <select className="w-full px-2 py-2 rounded-xl border border-slate-700 bg-slate-900 text-white text-xs font-mono">
+                        <select className="w-full px-2 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono shadow-sm">
                           <option>Flat Weighted</option>
                           <option>Increasing Scale</option>
                           <option>Decreasing Scale</option>
@@ -652,13 +652,13 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   )}
 
                   {/* Order Options Checkboxes (Matches Bitfinex Images 4 & 5) */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/80 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400">
                     <label className="flex items-center gap-1.5 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={isOco}
                         onChange={(e) => setIsOco(e.target.checked)}
-                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                        className="rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-blue-600 focus:ring-0"
                       />
                       <span>OCO</span>
                     </label>
@@ -668,7 +668,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         type="checkbox"
                         checked={isHidden}
                         onChange={(e) => setIsHidden(e.target.checked)}
-                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                        className="rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-blue-600 focus:ring-0"
                       />
                       <span>Hidden</span>
                     </label>
@@ -678,7 +678,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         type="checkbox"
                         checked={isPostOnly}
                         onChange={(e) => setIsPostOnly(e.target.checked)}
-                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                        className="rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-blue-600 focus:ring-0"
                       />
                       <span>Post-Only</span>
                     </label>
@@ -688,30 +688,30 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                         type="checkbox"
                         checked={isTif}
                         onChange={(e) => setIsTif(e.target.checked)}
-                        className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                        className="rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-blue-600 focus:ring-0"
                       />
                       <span>TIF (GTC)</span>
                     </label>
                   </div>
 
                   {/* Order Calculation Preview */}
-                  <div className="p-3 rounded-xl border border-slate-800 bg-slate-950/60 space-y-1.5 text-xs font-mono">
-                    <div className="flex items-center justify-between text-slate-400">
+                  <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-950/60 space-y-1.5 text-xs font-mono">
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                       <span>Execution Size:</span>
-                      <strong className="text-white font-bold">
+                      <strong className="text-slate-900 dark:text-white font-bold">
                         {(tradeAmount / (selectedTechnique === "Limit" ? limitPrice : currentPrice)).toFixed(5)} {selectedAsset.symbol.split("/")[0]}
                       </strong>
                     </div>
-                    <div className="flex items-center justify-between text-slate-400">
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
                       <span>Trading Fee (0.10%):</span>
-                      <span className="text-emerald-400 font-bold">${(tradeAmount * 0.001).toFixed(2)}</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">${(tradeAmount * 0.001).toFixed(2)}</span>
                     </div>
                   </div>
 
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${
                       side === "buy"
                         ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white shadow-emerald-600/30"
                         : "bg-gradient-to-r from-rose-600 to-pink-600 hover:opacity-90 text-white shadow-rose-600/30"
@@ -734,10 +734,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
 
               {/* Bottom Information Link */}
-              <div className="pt-3 border-t border-slate-800 text-center">
+              <div className="pt-3 border-t border-slate-200/80 dark:border-slate-800 text-center">
                 <Link
                   href="/tutorials"
-                  className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 transition"
+                  className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center justify-center gap-1 transition"
                 >
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>How to use these order techniques? View Full Guide</span>

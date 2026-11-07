@@ -165,31 +165,31 @@ export default function SovereignEcosystemShowcase({
   return (
     <section 
       id="ecosystem-showcase" 
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-slate-800/40 dark:border-white/10 select-none"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-slate-200/80 dark:border-white/10 select-none transition-colors"
     >
       {/* SECTION HEADER: BIG ADVERTISEMENT BILLBOARD FOR ALL 5 PLATFORMS */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-blue-500/10 border border-blue-500/30 text-blue-400">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400">
           <Globe2 className="w-3.5 h-3.5" />
           <span>The Sovereign 5-Platform Digital Empire</span>
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight font-serif text-slate-900 dark:text-white leading-tight">
           One Master Account. <br className="hidden sm:inline" />
-          <span className="bg-gradient-to-r from-blue-400 via-[#FF5C35] to-emerald-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-600 via-[#FF5C35] to-emerald-600 dark:from-blue-400 dark:via-[#FF5C35] dark:to-emerald-400 bg-clip-text text-transparent">
             5 Interconnected Enterprise Platforms.
           </span>
         </h2>
 
-        <p className="text-xs sm:text-base leading-relaxed text-slate-400">
+        <p className="text-xs sm:text-base leading-relaxed text-slate-600 dark:text-slate-400">
           Why juggle dozens of expensive third-party subscriptions? We combined the best features of global giants 
-          like <span className="font-semibold text-white">Binance, Proton, Zillow, Zoom, Upwork, and Dropbox</span> into 
+          like <span className="font-semibold text-slate-900 dark:text-white">Binance, Proton, Zillow, Zoom, Upwork, and Dropbox</span> into 
           5 sovereign platforms—all unlocked automatically through your single master identity.
         </p>
 
         {/* 1 Master SSO Identity Benefit Pill */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border text-xs font-mono bg-slate-900/80 border-slate-700/80 text-cyan-300">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border text-xs font-mono bg-white dark:bg-slate-900/80 border-slate-200/80 dark:border-slate-700/80 text-cyan-700 dark:text-cyan-300 shadow-sm">
+          <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
           <span>Single Sign-On (SSO): Your <strong>#USR-XXXXXX</strong> handle works seamlessly across all 5 platforms</span>
         </div>
       </div>
@@ -206,8 +206,8 @@ export default function SovereignEcosystemShowcase({
               onClick={() => setSelectedAppId(platform.id)}
               className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 group relative overflow-hidden ${
                 isSelected
-                  ? `${platform.borderColor} bg-slate-900/95 text-white shadow-xl scale-[1.02]`
-                  : "bg-slate-950/60 border-slate-800/80 hover:border-blue-500/50 hover:bg-slate-900/50 text-slate-300"
+                  ? `${platform.borderColor} bg-white dark:bg-slate-900/95 text-slate-900 dark:text-white shadow-xl scale-[1.02]`
+                  : "bg-white/80 dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 hover:border-blue-500/50 hover:bg-slate-50 dark:hover:bg-slate-900/50 text-slate-600 dark:text-slate-300 shadow-sm"
               }`}
             >
               {isSelected && (
@@ -217,17 +217,17 @@ export default function SovereignEcosystemShowcase({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
-                    isSelected ? "bg-white/10 border-white/20" : "bg-slate-900 border-slate-800"
+                    isSelected ? "bg-blue-50 dark:bg-white/10 border-blue-200 dark:border-white/20" : "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
                   }`}>
                     <IconComponent className={`w-5 h-5 ${platform.accentColor}`} />
                   </div>
                   
                   {platform.isCurrent ? (
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40">
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30">
                       Active Site
                     </span>
                   ) : (
-                    <span className="text-[9px] font-mono text-slate-400 group-hover:text-cyan-400 flex items-center gap-1">
+                    <span className="text-[9px] font-mono text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 flex items-center gap-1">
                       <span>Live</span>
                       <ExternalLink className="w-2.5 h-2.5" />
                     </span>
@@ -235,29 +235,29 @@ export default function SovereignEcosystemShowcase({
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold font-serif leading-tight text-white">
+                  <h3 className="text-lg font-bold font-serif leading-tight text-slate-900 dark:text-white">
                     {platform.name}
                   </h3>
-                  <span className="text-[10px] font-mono text-slate-400 block mt-0.5 uppercase tracking-wide">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 block mt-0.5 uppercase tracking-wide">
                     {platform.category}
                   </span>
                 </div>
 
-                <div className="pt-2 border-t border-white/10">
-                  <span className="text-[10px] font-mono text-amber-400 block">
+                <div className="pt-2 border-t border-slate-200/80 dark:border-white/10">
+                  <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 block font-semibold">
                     Replaces:
                   </span>
-                  <p className="text-xs font-semibold text-slate-200 truncate">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">
                     {platform.replaces}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-semibold">
-                <span className={isSelected ? "text-blue-400 font-bold" : "text-slate-500"}>
+              <div className="pt-3 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs font-semibold">
+                <span className={isSelected ? "text-blue-600 dark:text-blue-400 font-bold" : "text-slate-400 dark:text-slate-500"}>
                   {isSelected ? "Inspecting" : "Click to View"}
                 </span>
-                <ArrowRight className={`w-3.5 h-3.5 transition-transform ${isSelected ? "translate-x-1 text-blue-400" : "text-slate-400"}`} />
+                <ArrowRight className={`w-3.5 h-3.5 transition-transform ${isSelected ? "translate-x-1 text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
               </div>
             </div>
           );
@@ -265,39 +265,39 @@ export default function SovereignEcosystemShowcase({
       </div>
 
       {/* INTERACTIVE DEEP INSPECTOR PANE */}
-      <div className="p-6 sm:p-10 rounded-2xl border bg-slate-950/70 border-slate-800/80 text-white shadow-2xl transition-all">
+      <div className="p-6 sm:p-10 rounded-2xl border bg-white/95 dark:bg-slate-950/70 border-slate-200/80 dark:border-slate-800/80 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl transition-all">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           <div className="lg:col-span-7 space-y-6">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-400">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 Ecosystem Spotlight
               </span>
               <span className="text-slate-400">•</span>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                 {activeApp.domain}
               </span>
             </div>
 
             <div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-serif text-white">
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-serif text-slate-900 dark:text-white">
                 {activeApp.name}
               </h3>
-              <p className="text-sm font-semibold text-blue-400 mt-1">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-1">
                 Replaces: {activeApp.replaces}
               </p>
-              <p className="text-xs sm:text-sm mt-3 leading-relaxed text-slate-300">
+              <p className="text-xs sm:text-sm mt-3 leading-relaxed text-slate-600 dark:text-slate-300">
                 {activeApp.deepExplanation}
               </p>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
               {activeApp.metrics.map((m, idx) => (
-                <div key={idx} className="p-3 rounded-xl border text-center bg-slate-900/60 border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                <div key={idx} className="p-3 rounded-xl border text-center bg-slate-50 dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-800">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                     {m.label}
                   </span>
-                  <span className="text-sm sm:text-base font-black text-white font-mono mt-0.5 block">
+                  <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono mt-0.5 block">
                     {m.value}
                   </span>
                 </div>
@@ -307,8 +307,8 @@ export default function SovereignEcosystemShowcase({
             <div className="space-y-2.5 pt-2">
               {activeApp.features.map((f, idx) => (
                 <div key={idx} className="flex items-start gap-2.5 text-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span className="text-slate-300">{f}</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-slate-600 dark:text-slate-300">{f}</span>
                 </div>
               ))}
             </div>
@@ -318,7 +318,7 @@ export default function SovereignEcosystemShowcase({
                 <button
                   type="button"
                   onClick={onOpenRegister}
-                  className="px-5 py-2.5 rounded-full bg-blue-600 text-white font-bold text-xs shadow-lg hover:bg-blue-700 transition cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition cursor-pointer"
                 >
                   ✓ Open Web Trading Terminal
                 </button>
@@ -327,7 +327,7 @@ export default function SovereignEcosystemShowcase({
                   href={activeApp.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 via-[#FF5C35] to-purple-600 text-white font-bold text-xs shadow-lg hover:opacity-95 transition cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 via-[#FF5C35] to-purple-600 text-white font-bold text-xs shadow-md hover:opacity-95 transition cursor-pointer"
                 >
                   <span>Launch {activeApp.name} Platform</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -337,7 +337,7 @@ export default function SovereignEcosystemShowcase({
               <button
                 type="button"
                 onClick={onOpenRegister}
-                className="px-5 py-3 rounded-full text-xs font-bold border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition"
+                className="px-5 py-3 rounded-full text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-slate-500 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
               >
                 Create Universal SSO Account
               </button>
@@ -345,46 +345,46 @@ export default function SovereignEcosystemShowcase({
           </div>
 
           <div className="lg:col-span-5">
-            <div className="p-6 rounded-2xl border space-y-5 bg-slate-900/90 border-slate-800">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <div className="p-6 rounded-2xl border space-y-5 bg-slate-50/80 dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-white/10">
                 <div className="flex items-center gap-2">
                   <ActiveIcon className={`w-4 h-4 ${activeApp.accentColor}`} />
-                  <span className="font-bold text-xs text-white font-mono">
+                  <span className="font-bold text-xs text-slate-900 dark:text-white font-mono">
                     {activeApp.name} Specification
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Live Operational
                 </span>
               </div>
 
               <div className="space-y-3 text-xs font-mono">
-                <div className="flex items-center justify-between py-1 border-b border-white/5">
+                <div className="flex items-center justify-between py-1 border-b border-slate-200/60 dark:border-white/5">
                   <span className="text-slate-500">Live URL:</span>
-                  <a href={activeApp.url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline flex items-center gap-1">
+                  <a href={activeApp.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-cyan-400 underline flex items-center gap-1 font-medium">
                     {activeApp.domain}
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
 
-                <div className="flex items-center justify-between py-1 border-b border-white/5">
+                <div className="flex items-center justify-between py-1 border-b border-slate-200/60 dark:border-white/5">
                   <span className="text-slate-500">Platform Category:</span>
-                  <span className="text-slate-200">{activeApp.category}</span>
+                  <span className="text-slate-800 dark:text-slate-200">{activeApp.category}</span>
                 </div>
 
-                <div className="flex items-center justify-between py-1 border-b border-white/5">
+                <div className="flex items-center justify-between py-1 border-b border-slate-200/60 dark:border-white/5">
                   <span className="text-slate-500">Consolidation:</span>
-                  <span className="text-amber-400">{activeApp.replaces}</span>
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold">{activeApp.replaces}</span>
                 </div>
 
-                <div className="flex items-center justify-between py-1 border-b border-white/5">
+                <div className="flex items-center justify-between py-1 border-b border-slate-200/60 dark:border-white/5">
                   <span className="text-slate-500">Cross-Platform SSO:</span>
-                  <span className="text-emerald-400">Supported (Instant Switch)</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Supported (Instant Switch)</span>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-[11px] leading-relaxed text-blue-300">
+              <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-[11px] leading-relaxed text-blue-800 dark:text-blue-300">
                 <p>
                   <strong>Zero Multiple Logins:</strong> When you register an account on {activeApp.name}, your credentials 
                   automatically authenticate you on all 5 platforms.
