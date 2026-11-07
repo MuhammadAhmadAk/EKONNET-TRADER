@@ -1,72 +1,105 @@
 "use client";
 
 import React from "react";
-import { INITIAL_MARKET_TICKERS } from "@/lib/mockData";
-import { formatCurrency, formatPercent } from "@/lib/utils";
+import Link from "next/link";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { useBinanceLivePrices } from "@/hooks/useBinanceLivePrices";
+import { useBinanceLivePrices, LiveTickerItem } from "@/hooks/useBinanceLivePrices";
 
 export default function LiveTicker() {
-  const { coins, isConnected } = useBinanceLivePrices();
+  const { allTickers, isConnected } = useBinanceLivePrices();
 
-  // Merge live Binance crypto prices with static Forex pairs
-  const tickers = INITIAL_MARKET_TICKERS.map((ticker) => {
-    const liveMatch = coins.find((c) => ticker.symbol.startsWith(c.symbol));
-    if (liveMatch) {
-      return {
-        ...ticker,
-        price: liveMatch.price,
-        change24h: liveMatch.changePercent,
-        priceDirection: liveMatch.priceDirection,
-      };
-    }
-    return ticker;
-  });
+  // Helper renderer for a single ticker item
+  const renderTickerCard = (ticker: LiveTickerItem, index: number, isDuplicate = false) => {
+    const isPositive = ticker.change24h >= 0;
+    const isFlashUp = ticker.priceDirection === "up";
+    const isFlashDown = ticker.priceDirection === "down";
+
+    // Format target trade link
+    const targetLink =
+      ticker.category === "Crypto"
+        ? `/trades/crypto/direct?pair=${ticker.pair.replace("USDT", "_USD")}`
+        : ticker.category === "Forex"
+        ? `/trades/forex?pair=${ticker.symbol.replace("/", "_")}`
+        : `/trades/shares`;
+
+    return (
+      <Link
+        key={`${ticker.symbol}-${index}-${isDuplicate ? "dup" : "orig"}`}
+        href={targetLink}
+        className="flex items-center gap-2.5 shrink-0 px-4 py-1.5 hover:bg-orange-500/5 dark:hover:bg-white/5 rounded-lg transition-all duration-200 group cursor-pointer"
+      >
+        {/* Symbol & Category */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-500 transition-colors">
+            {ticker.symbol}
+          </span>
+          <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-mono font-medium tracking-tight px-1 py-0.2 rounded bg-slate-100 dark:bg-white/5">
+            {ticker.category}
+          </span>
+        </div>
+
+        {/* Live Price with Real-Time Directional Flash */}
+        <span
+          className={`text-xs font-mono font-semibold transition-all duration-300 px-1 rounded ${
+            isFlashUp
+              ? "text-emerald-500 bg-emerald-500/10 font-bold scale-105"
+              : isFlashDown
+              ? "text-rose-500 bg-rose-500/10 font-bold scale-105"
+              : "text-slate-900 dark:text-slate-200"
+          }`}
+        >
+          {ticker.formattedPrice}
+        </span>
+
+        {/* 24h Percentage Change */}
+        <div
+          className={`flex items-center text-[10px] font-bold ${
+            isPositive ? "text-emerald-500" : "text-rose-500"
+          }`}
+        >
+          {isPositive ? (
+            <ArrowUpRight className="w-3 h-3 mr-0.5 shrink-0" />
+          ) : (
+            <ArrowDownRight className="w-3 h-3 mr-0.5 shrink-0" />
+          )}
+          <span>{ticker.formattedChange}</span>
+        </div>
+
+        {/* Micro Divider */}
+        <span className="text-slate-200 dark:text-white/10 ml-2 select-none">•</span>
+      </Link>
+    );
+  };
 
   return (
-    <div className="w-full bg-white/60 dark:bg-black/20 border-b border-slate-200/80 dark:border-white/5 py-2 overflow-hidden select-none backdrop-blur-md transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar">
-          
-          <div className="flex items-center gap-2 pr-4 border-r border-slate-200 dark:border-white/10 text-[11px] font-bold text-slate-700 dark:text-slate-300 shrink-0">
-            <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" : "bg-amber-500"}`} />
-            <span className="tracking-wider uppercase">Binance Live</span>
-          </div>
-          
-          {tickers.map((ticker) => {
-            const isPositive = ticker.change24h >= 0;
-            const isFlashUp = (ticker as any).priceDirection === "up";
-            const isFlashDown = (ticker as any).priceDirection === "down";
+    <div className="w-full relative bg-white/80 dark:bg-[#070b14]/90 border-b border-slate-200/80 dark:border-white/10 h-10 overflow-hidden select-none backdrop-blur-md transition-colors z-30 flex items-center">
+      
+      {/* Pinned Left Brand Live Badge */}
+      <div className="absolute left-0 top-0 bottom-0 z-20 flex items-center gap-2 pl-4 pr-3.5 bg-white/95 dark:bg-[#070b14]/95 backdrop-blur-md border-r border-slate-200 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 shadow-sm shrink-0">
+        <span
+          className={`w-2 h-2 rounded-full ${
+            isConnected
+              ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"
+              : "bg-amber-500 animate-ping"
+          }`}
+        />
+        <span className="tracking-wider uppercase whitespace-nowrap text-[10px] sm:text-[11px]">
+          Binance Live
+        </span>
+      </div>
 
-            return (
-              <div 
-                key={ticker.symbol} 
-                className="flex items-center gap-2.5 shrink-0 px-3 py-0.5 hover:text-orange-500 transition cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-slate-900 dark:text-white">
-                    {ticker.symbol}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-mono">
-                    {ticker.category}
-                  </span>
-                </div>
-
-                <span className={`text-xs font-mono font-semibold transition-colors duration-300 ${
-                  isFlashUp ? "text-emerald-500 font-bold" : isFlashDown ? "text-rose-500 font-bold" : "text-slate-800 dark:text-slate-200"
-                }`}>
-                  {formatCurrency(ticker.price, ticker.category === 'Forex' ? '' : 'USD')}
-                </span>
-
-                <div className={`flex items-center text-[10px] font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}`}>
-                  {isPositive ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}
-                  <span>{formatPercent(ticker.change24h)}</span>
-                </div>
-              </div>
-            );
-          })}
+      {/* Infinite Seamless Scrolling Track */}
+      <div className="w-full overflow-hidden pl-32 sm:pl-36">
+        <div className="animate-ticker-marquee flex items-center">
+          {/* First set of full-market items */}
+          {allTickers.map((ticker, idx) => renderTickerCard(ticker, idx, false))}
+          {/* Second duplicate set for perfectly seamless, infinite marquee loop */}
+          {allTickers.map((ticker, idx) => renderTickerCard(ticker, idx, true))}
         </div>
       </div>
+
+      {/* Right Gradient Fade Edge */}
+      <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-white/95 dark:from-[#070b14]/95 to-transparent pointer-events-none z-10" />
     </div>
   );
 }

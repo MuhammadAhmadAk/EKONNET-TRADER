@@ -170,3 +170,27 @@ html.dark ::-webkit-scrollbar-thumb {
 .animate-float-reverse {
   animation: floatReverse 7s ease-in-out infinite;
 }
+
+/* ========================================================================= */
+/* CONTINUOUS AUTO-SCROLLING TICKER MARQUEE                                  */
+/* ========================================================================= */
+
+@keyframes tickerMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-ticker-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: tickerMarquee 55s linear infinite;
+}
+
+.animate-ticker-marquee:hover {
+  animation-play-state: paused;
+}
