@@ -80,6 +80,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("ekonnet_theme", "light");
     }
+    window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: next } }));
   };
 
   const handleSignOut = () => {

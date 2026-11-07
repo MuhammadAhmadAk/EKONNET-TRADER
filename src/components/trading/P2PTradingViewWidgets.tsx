@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { TrendingUp, Activity, Globe2, ShieldCheck } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { TrendingUp, Activity, Globe2 } from "lucide-react";
 
 interface P2PTradingViewWidgetsProps {
   asset?: "ALL" | "BTC" | "ETH" | "USDT";
@@ -16,18 +16,31 @@ const SYMBOL_MAP: Record<string, string> = {
 
 export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewWidgetsProps) {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const miniChartRef = useRef<HTMLDivElement>(null);
-  const technicalAnalysisRef = useRef<HTMLDivElement>(null);
-  const forexRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   const currentSymbol = SYMBOL_MAP[asset] || "BINANCE:BTCUSDT";
   const displayAssetName = asset === "ALL" ? "BTC" : asset;
 
-  // Listen for dark mode changes
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
+    setMounted(true);
+    // Initial sync
+    const saved = localStorage.getItem("ekonnet_theme");
+    const isDark = saved ? saved === "dark" : document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
+    // Listen to theme-changed custom event from Navbar
+    const handleThemeChange = (e: any) => {
+      if (e.detail?.theme) {
+        setTheme(e.detail.theme);
+      } else {
+        const darkNow = document.documentElement.classList.contains("dark");
+        setTheme(darkNow ? "dark" : "light");
+      }
+    };
+
+    window.addEventListener("theme-changed", handleThemeChange);
+
+    // MutationObserver as secondary guarantee
     const observer = new MutationObserver(() => {
       const darkNow = document.documentElement.classList.contains("dark");
       setTheme(darkNow ? "dark" : "light");
@@ -38,118 +51,59 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
       attributeFilter: ["class"],
     });
 
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener("theme-changed", handleThemeChange);
+      observer.disconnect();
+    };
   }, []);
 
-  // Inject Mini Chart Widget
-  useEffect(() => {
-    if (!miniChartRef.current) return;
-    miniChartRef.current.innerHTML = "";
+  // Construct iframe URLs with colorTheme and isTransparent: false
+  const miniSettings = {
+    symbol: currentSymbol,
+    width: "100%",
+    height: 220,
+    locale: "en",
+    dateRange: "1M",
+    colorTheme: theme,
+    isTransparent: false,
+    autosize: false,
+    largeChartUrl: "",
+    chartOnly: false,
+    noTimeScale: false,
+  };
+  const miniIframeSrc = `https://www.tradingview-widget.com/embed-widget/mini-symbol-overview/#${encodeURIComponent(
+    JSON.stringify(miniSettings)
+  )}`;
 
-    const container = document.createElement("div");
-    container.className = "tradingview-widget-container";
-    container.style.width = "100%";
-    container.style.height = "100%";
+  const taSettings = {
+    interval: "1D",
+    width: "100%",
+    isTransparent: false,
+    height: 220,
+    symbol: currentSymbol,
+    showIntervalTabs: false,
+    displayMode: "single",
+    locale: "en",
+    colorTheme: theme,
+  };
+  const taIframeSrc = `https://www.tradingview-widget.com/embed-widget/technical-analysis/#${encodeURIComponent(
+    JSON.stringify(taSettings)
+  )}`;
 
-    const widgetDiv = document.createElement("div");
-    widgetDiv.className = "tradingview-widget-container__widget";
-    widgetDiv.style.width = "100%";
-    widgetDiv.style.height = "100%";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      symbol: currentSymbol,
-      width: "100%",
-      height: 220,
-      locale: "en",
-      dateRange: "1M",
-      colorTheme: theme,
-      isTransparent: true,
-      autosize: false,
-      largeChartUrl: "",
-      chartOnly: false,
-      noTimeScale: false,
-    });
-
-    container.appendChild(script);
-    miniChartRef.current.appendChild(container);
-  }, [currentSymbol, theme]);
-
-  // Inject Technical Analysis Widget
-  useEffect(() => {
-    if (!technicalAnalysisRef.current) return;
-    technicalAnalysisRef.current.innerHTML = "";
-
-    const container = document.createElement("div");
-    container.className = "tradingview-widget-container";
-    container.style.width = "100%";
-    container.style.height = "100%";
-
-    const widgetDiv = document.createElement("div");
-    widgetDiv.className = "tradingview-widget-container__widget";
-    widgetDiv.style.width = "100%";
-    widgetDiv.style.height = "100%";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      interval: "1D",
-      width: "100%",
-      isTransparent: true,
-      height: 220,
-      symbol: currentSymbol,
-      showIntervalTabs: false,
-      displayMode: "single",
-      locale: "en",
-      colorTheme: theme,
-    });
-
-    container.appendChild(script);
-    technicalAnalysisRef.current.appendChild(container);
-  }, [currentSymbol, theme]);
-
-  // Inject Forex Cross Rates Widget
-  useEffect(() => {
-    if (!forexRef.current) return;
-    forexRef.current.innerHTML = "";
-
-    const container = document.createElement("div");
-    container.className = "tradingview-widget-container";
-    container.style.width = "100%";
-    container.style.height = "100%";
-
-    const widgetDiv = document.createElement("div");
-    widgetDiv.className = "tradingview-widget-container__widget";
-    widgetDiv.style.width = "100%";
-    widgetDiv.style.height = "100%";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      width: "100%",
-      height: 220,
-      currencies: ["EUR", "USD", "GBP", "AED", "PKR"],
-      isTransparent: true,
-      colorTheme: theme,
-      locale: "en",
-    });
-
-    container.appendChild(script);
-    forexRef.current.appendChild(container);
-  }, [theme]);
+  const forexSettings = {
+    width: "100%",
+    height: 220,
+    currencies: ["EUR", "USD", "GBP", "AED", "PKR"],
+    isTransparent: false,
+    colorTheme: theme,
+    locale: "en",
+  };
+  const forexIframeSrc = `https://www.tradingview-widget.com/embed-widget/forex-cross-rates/#${encodeURIComponent(
+    JSON.stringify(forexSettings)
+  )}`;
 
   return (
-    <div className="space-y-3">
+    <div key={`tv-widgets-${theme}-${currentSymbol}`} className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -161,7 +115,7 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
           </span>
         </div>
         <div className="text-xs text-slate-500 dark:text-slate-400 font-mono hidden sm:block">
-          Active: <span className="font-bold text-slate-900 dark:text-white">{displayAssetName}</span> Market Benchmarks
+          Active: <span className="font-bold text-slate-900 dark:text-white">{displayAssetName}</span> ({theme.toUpperCase()} MODE)
         </div>
       </div>
 
@@ -175,7 +129,16 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">1M Trend</span>
           </div>
-          <div className="h-[220px] w-full" ref={miniChartRef} />
+          {mounted && (
+            <iframe
+              src={miniIframeSrc}
+              width="100%"
+              height="220"
+              style={{ border: "none", borderRadius: "10px", display: "block" }}
+              scrolling="no"
+              title="TradingView Mini Chart"
+            />
+          )}
         </div>
 
         {/* Card 2: Market Sentiment Gauge */}
@@ -187,7 +150,16 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">1D Signals</span>
           </div>
-          <div className="h-[220px] w-full" ref={technicalAnalysisRef} />
+          {mounted && (
+            <iframe
+              src={taIframeSrc}
+              width="100%"
+              height="220"
+              style={{ border: "none", borderRadius: "10px", display: "block" }}
+              scrolling="no"
+              title="TradingView Technical Analysis"
+            />
+          )}
         </div>
 
         {/* Card 3: Global Fiat Cross Rates */}
@@ -199,7 +171,16 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">Interbank</span>
           </div>
-          <div className="h-[220px] w-full" ref={forexRef} />
+          {mounted && (
+            <iframe
+              src={forexIframeSrc}
+              width="100%"
+              height="220"
+              style={{ border: "none", borderRadius: "10px", display: "block" }}
+              scrolling="no"
+              title="TradingView Forex Rates"
+            />
+          )}
         </div>
       </div>
     </div>
