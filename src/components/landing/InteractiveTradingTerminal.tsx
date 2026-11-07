@@ -385,19 +385,19 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
 
               {/* Dynamic Visual Candlestick Chart */}
-              <div className="relative h-64 rounded-2xl bg-slate-950 border border-slate-900 dark:border-slate-800 p-4 flex flex-col justify-between overflow-hidden shadow-inner">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_24px] pointer-events-none" />
+              <div className="relative h-64 rounded-2xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col justify-between overflow-hidden shadow-inner transition-colors">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_24px] pointer-events-none" />
 
-                <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 relative z-10">
+                <div className="flex items-center justify-between text-[11px] font-mono text-slate-600 dark:text-slate-400 relative z-10">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-bold">{selectedAsset.symbol}</span>
-                    <span className="text-slate-500">•</span>
+                    <span className="text-slate-900 dark:text-white font-bold">{selectedAsset.symbol}</span>
+                    <span className="text-slate-400 dark:text-slate-500">•</span>
                     <span>30m Candles</span>
-                    <span className="text-slate-500">•</span>
-                    <span className="text-emerald-400 font-bold">Bitfinex Liquidity Bridge</span>
+                    <span className="text-slate-400 dark:text-slate-500">•</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Bitfinex Liquidity Bridge</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px]">Indicators: RSI, MACD, Volume</span>
+                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] shadow-2xs">Indicators: RSI, MACD, Volume</span>
                   </div>
                 </div>
 
@@ -407,7 +407,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     const isGreen = idx % 3 !== 0;
                     return (
                       <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full">
-                        <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500/60" : "bg-rose-500/60"}`} />
+                        <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500" : "bg-rose-500"}`} />
                         <div
                           style={{ height: `${(val / 120) * 100}%` }}
                           className={`w-full rounded-xs transition-all duration-500 ${
@@ -416,18 +416,18 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                               : "bg-gradient-to-t from-rose-600 to-rose-400 shadow-sm shadow-rose-500/20"
                           }`}
                         />
-                        <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500/60" : "bg-rose-500/60"}`} />
+                        <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500" : "bg-rose-500"}`} />
                       </div>
                     );
                   })}
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-2 border-t border-slate-800/80 relative z-10">
+                <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 relative z-10">
                   <span>06:00 UTC</span>
                   <span>12:00 UTC</span>
                   <span>18:00 UTC</span>
                   <span>00:00 UTC</span>
-                  <span className="text-emerald-400 font-bold">2ms WebSocket Tick</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">2ms WebSocket Tick</span>
                 </div>
               </div>
 

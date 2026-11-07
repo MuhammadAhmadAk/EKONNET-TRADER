@@ -202,14 +202,14 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
           
           {/* Left: Video Player Screen (8 Cols) */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 dark:border-slate-800 shadow-xl dark:shadow-2xl group">
+            <div className="relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 shadow-xl dark:shadow-2xl group transition-colors">
               
               {/* Simulated Video Canvas / Live Demonstration Screen */}
-              <div className="relative w-full aspect-video bg-gradient-to-br from-slate-950 via-[#0B101E] to-slate-900 flex flex-col justify-between p-6 overflow-hidden">
+              <div className="relative w-full aspect-video bg-gradient-to-br from-slate-100 via-white to-slate-50 dark:from-slate-950 dark:via-[#0B101E] dark:to-slate-900 flex flex-col justify-between p-6 overflow-hidden">
                 
                 {/* Background Tech Grid & Watermark */}
-                <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-800 font-mono text-7xl font-black select-none pointer-events-none opacity-20">
+                <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-800 font-mono text-7xl font-black select-none pointer-events-none opacity-40 dark:opacity-20">
                   EKONNET TRADER
                 </div>
 
@@ -217,49 +217,49 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
-                    <span className="px-2.5 py-1 rounded-md bg-black/60 border border-white/10 text-[11px] font-mono text-emerald-400 font-bold backdrop-blur-md">
+                    <span className="px-2.5 py-1 rounded-md bg-white/80 dark:bg-black/60 border border-slate-200 dark:border-white/10 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold backdrop-blur-md shadow-2xs">
                       HD 1080P • {selectedLesson.category}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-400 font-mono bg-black/40 px-3 py-1 rounded-lg border border-white/5 backdrop-blur-md">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono bg-white/80 dark:bg-black/40 px-3 py-1 rounded-lg border border-slate-200 dark:border-white/5 backdrop-blur-md shadow-2xs">
                     BATTLE TESTED TRADING PROTOCOL
                   </span>
                 </div>
 
                 {/* Interactive Dynamic Center Graphic: Simulating Real Platform Action */}
                 <div className="relative z-10 my-auto text-center space-y-4 max-w-lg mx-auto">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 border border-emerald-500/40 mx-auto flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/20">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 border border-emerald-500/40 mx-auto flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-lg shadow-emerald-500/20">
                     {isPlaying ? (
-                      <Sliders className="w-8 h-8 text-cyan-400 animate-spin-slow" />
+                      <Sliders className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin-slow" />
                     ) : (
-                      <Play className="w-8 h-8 text-emerald-400 ml-1" />
+                      <Play className="w-8 h-8 text-emerald-600 dark:text-emerald-400 ml-1" />
                     )}
                   </div>
                   <div>
-                    <span className="text-xs uppercase font-mono tracking-widest text-emerald-400 font-bold">
+                    <span className="text-xs uppercase font-mono tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">
                       Interactive Tutorial Lesson
                     </span>
-                    <h4 className="text-xl sm:text-2xl font-black text-white mt-1">
+                    <h4 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
                       {selectedLesson.videoHeading}
                     </h4>
                   </div>
                   
                   {/* Dynamic Simulation Ticker Display */}
-                  <div className="inline-flex items-center gap-4 px-4 py-2 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs font-mono text-slate-300">
-                    <span>Order Engine: <strong className="text-emerald-400">ACTIVE</strong></span>
+                  <div className="inline-flex items-center gap-4 px-4 py-2 rounded-xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 text-xs font-mono text-slate-700 dark:text-slate-300 shadow-sm">
+                    <span>Order Engine: <strong className="text-emerald-600 dark:text-emerald-400">ACTIVE</strong></span>
                     <span>•</span>
-                    <span>Simulated Fill: <strong className="text-blue-400">100%</strong></span>
+                    <span>Simulated Fill: <strong className="text-blue-600 dark:text-blue-400">100%</strong></span>
                     <span>•</span>
-                    <span>Latency: <strong className="text-purple-400">4.2ms</strong></span>
+                    <span>Latency: <strong className="text-purple-600 dark:text-purple-400">4.2ms</strong></span>
                   </div>
                 </div>
 
                 {/* Bottom Video Controls Bar (Matches Bitfinex Screenshot 2 with Scrubber 0:54 / 1:05) */}
-                <div className="relative z-10 bg-slate-950/85 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 space-y-2">
+                <div className="relative z-10 bg-white/95 dark:bg-slate-950/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl p-3 sm:p-4 space-y-2 shadow-sm">
                   
                   {/* Progress Bar / Scrubber */}
                   <div 
-                    className="relative w-full h-2 bg-slate-800 rounded-full overflow-hidden cursor-pointer group/bar"
+                    className="relative w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden cursor-pointer group/bar"
                     onClick={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const clickX = e.clientX - rect.left;
@@ -268,18 +268,18 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                     }}
                   >
                     <div 
-                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 via-cyan-400 to-blue-500 rounded-full transition-all duration-300"
+                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
 
                   {/* Playback Controls & Timestamp */}
-                  <div className="flex items-center justify-between text-xs text-slate-300 pt-1">
+                  <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 pt-1">
                     <div className="flex items-center space-x-4">
                       {/* Play/Pause Button */}
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 transition cursor-pointer"
                         title={isPlaying ? "Pause" : "Play"}
                       >
                         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -288,17 +288,17 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Replay Button */}
                       <button
                         onClick={() => { setCurrentTime(0); setIsPlaying(true); }}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                         title="Replay from start"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
 
                       {/* Time Counter Highlighted like Bitfinex 2 Circle (0:54 / 1:05) */}
-                      <div className="flex items-center gap-1 font-mono text-[11px] sm:text-xs text-white bg-slate-900/90 px-3 py-1 rounded-lg border border-emerald-500/30 shadow-inner">
-                        <span className="text-emerald-400 font-bold">{formatSeconds(currentTime)}</span>
-                        <span className="text-slate-500">/</span>
-                        <span className="text-slate-400">{formatSeconds(duration)}</span>
+                      <div className="flex items-center gap-1 font-mono text-[11px] sm:text-xs text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900/90 px-3 py-1 rounded-lg border border-emerald-500/30 shadow-inner">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{formatSeconds(currentTime)}</span>
+                        <span className="text-slate-400 dark:text-slate-500">/</span>
+                        <span className="text-slate-500 dark:text-slate-400">{formatSeconds(duration)}</span>
                       </div>
                     </div>
 
@@ -306,15 +306,15 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                       {/* Mute/Unmute */}
                       <button 
                         onClick={() => setIsMuted(!isMuted)}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                       >
-                        {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-slate-300" />}
+                        {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
                       </button>
 
                       {/* Fullscreen */}
                       <button 
                         onClick={() => alert("Video is playing in optimized responsive container.")}
-                        className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                       >
                         <Maximize2 className="w-4 h-4" />
                       </button>
