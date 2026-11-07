@@ -6,7 +6,7 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useBinanceLivePrices, LiveTickerItem } from "@/hooks/useBinanceLivePrices";
 
 export default function LiveTicker() {
-  const { allTickers, isConnected } = useBinanceLivePrices();
+  const { allTickers } = useBinanceLivePrices();
 
   // Helper renderer for a single ticker item
   const renderTickerCard = (ticker: LiveTickerItem, index: number, isDuplicate = false) => {
@@ -74,22 +74,11 @@ export default function LiveTicker() {
   return (
     <div className="w-full relative bg-white/80 dark:bg-[#070b14]/90 border-b border-slate-200/80 dark:border-white/10 h-10 overflow-hidden select-none backdrop-blur-md transition-colors z-30 flex items-center">
       
-      {/* Pinned Left Brand Live Badge */}
-      <div className="absolute left-0 top-0 bottom-0 z-20 flex items-center gap-2 pl-4 pr-3.5 bg-white/95 dark:bg-[#070b14]/95 backdrop-blur-md border-r border-slate-200 dark:border-white/10 text-[11px] font-bold text-slate-800 dark:text-slate-200 shadow-sm shrink-0">
-        <span
-          className={`w-2 h-2 rounded-full ${
-            isConnected
-              ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"
-              : "bg-amber-500 animate-ping"
-          }`}
-        />
-        <span className="tracking-wider uppercase whitespace-nowrap text-[10px] sm:text-[11px]">
-          Binance Live
-        </span>
-      </div>
+      {/* Left Gradient Fade Edge */}
+      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white/95 dark:from-[#070b14]/95 to-transparent pointer-events-none z-10" />
 
-      {/* Infinite Seamless Scrolling Track */}
-      <div className="w-full overflow-hidden pl-32 sm:pl-36">
+      {/* Full-Width Infinite Seamless Scrolling Track */}
+      <div className="w-full overflow-hidden">
         <div className="animate-ticker-marquee flex items-center">
           {/* First set of full-market items */}
           {allTickers.map((ticker, idx) => renderTickerCard(ticker, idx, false))}
@@ -99,7 +88,7 @@ export default function LiveTicker() {
       </div>
 
       {/* Right Gradient Fade Edge */}
-      <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-white/95 dark:from-[#070b14]/95 to-transparent pointer-events-none z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white/95 dark:from-[#070b14]/95 to-transparent pointer-events-none z-10" />
     </div>
   );
 }

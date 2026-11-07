@@ -188,7 +188,7 @@ html.dark ::-webkit-scrollbar-thumb {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: tickerMarquee 55s linear infinite;
+  animation: tickerMarquee 120s linear infinite;
 }
 
 .animate-ticker-marquee:hover {
