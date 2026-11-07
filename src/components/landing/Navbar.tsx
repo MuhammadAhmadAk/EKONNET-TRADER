@@ -30,8 +30,8 @@ import {
 } from "lucide-react";
 
 interface NavbarProps {
-  onOpenLogin: () => void;
-  onOpenRegister: () => void;
+  onOpenLogin?: () => void;
+  onOpenRegister?: () => void;
 }
 
 export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
@@ -497,14 +497,14 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
                 </Link>
 
                 <button
-                  onClick={onOpenLogin}
+                  onClick={onOpenLogin || (() => window.location.href = '/#login')}
                   className="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-white px-3 py-1.5 transition"
                 >
                   Log In
                 </button>
 
                 <button
-                  onClick={onOpenRegister}
+                  onClick={onOpenRegister || (() => window.location.href = '/#register')}
                   className="px-4 py-2 rounded-full bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-xs font-bold shadow-md shadow-orange-500/25 hover:shadow-orange-500/40 transition flex items-center gap-1.5"
                 >
                   <UserCheck className="w-3.5 h-3.5" />
@@ -627,7 +627,8 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  onOpenLogin();
+                  if (onOpenLogin) onOpenLogin();
+                  else window.location.href = '/#login';
                 }}
                 className="flex-1 py-2 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center text-xs font-bold text-slate-700 dark:text-slate-200"
               >
@@ -636,7 +637,8 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  onOpenRegister();
+                  if (onOpenRegister) onOpenRegister();
+                  else window.location.href = '/#register';
                 }}
                 className="flex-1 py-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-600 text-center text-xs font-bold text-white shadow-md shadow-orange-500/25"
               >

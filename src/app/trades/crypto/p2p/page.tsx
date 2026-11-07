@@ -13,8 +13,12 @@ import {
   CheckCircle2, 
   Star,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Zap
 } from "lucide-react";
+import Navbar from "@/components/landing/Navbar";
+import LiveTicker from "@/components/landing/LiveTicker";
+import Footer from "@/components/landing/Footer";
 import { getPlatformStatus } from "@/lib/systemStatus";
 import MaintenanceScreen from "@/components/common/MaintenanceScreen";
 
@@ -90,15 +94,13 @@ export default function P2PCryptoTradingPage() {
 
   if (isMaintenance) {
     return (
-      <div className="min-h-screen bg-[#060913] text-white">
-        <header className="h-20 bg-[#090e1a]/90 border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-          <Link href="/" className="font-extrabold text-white">Ekonnet<span className="text-cyan-400">Trader</span></Link>
-          <Link href="/admin" className="text-xs text-blue-400 font-bold">Admin Console</Link>
-        </header>
+      <div className="min-h-screen bg-transparent flex flex-col">
+        <Navbar />
         <MaintenanceScreen 
           platformName="Peers to Peers Crypto Trades & Exchanges Platform"
           category="Crypto Sector [B]"
         />
+        <Footer />
       </div>
     );
   }
@@ -109,65 +111,29 @@ export default function P2PCryptoTradingPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#060913] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-slate-800 dark:text-gray-100 flex flex-col transition-colors duration-300">
       
-      {/* Top Header */}
-      <header className="h-20 bg-[#090e1a]/90 backdrop-blur-xl border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-400 p-[1px] shadow-md shadow-emerald-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <ArrowRightLeft className="w-4 h-4 text-emerald-400" />
-              </div>
-            </div>
-            <span className="text-base font-extrabold tracking-tight text-white hidden sm:inline">
-              Ekonnet<span className="text-emerald-400">P2P</span>
-            </span>
-          </Link>
+      {/* Universal Navbar */}
+      <Navbar />
 
-          <div className="h-5 w-px bg-white/10 hidden sm:block" />
-
-          {/* Clean Breadcrumbs */}
-          <nav className="flex items-center space-x-2 text-xs font-mono text-slate-400">
-            <Link href="/" className="hover:text-white transition">Home</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <Link href="/trades" className="hover:text-white transition">Ways to Invest</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-emerald-400 font-bold">Peer-to-Peer Crypto Settlement</span>
-          </nav>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <Link
-            href="/trades/crypto/direct"
-            className="hidden md:inline-flex px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-xs text-blue-400 font-semibold transition"
-          >
-            Direct Exchange &rarr;
-          </Link>
-          <Link
-            href="/admin"
-            className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 font-bold transition-all"
-          >
-            Admin Console
-          </Link>
-        </div>
-      </header>
+      {/* Real-time Ticker Bar */}
+      <LiveTicker />
 
       {/* Main P2P View */}
-      <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6 flex-1">
         
         {/* Banner */}
-        <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs dark:shadow-xl">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/20">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold border border-orange-500/20">
+              <ShieldCheck className="w-3 h-3 text-orange-500" />
               <span>Direct Peer-to-Peer Smart Settlement • Independent Sector</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white">
-              Peers to Peers Cryptocurrency Trades & Exchanges
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Peer-to-Peer Crypto Trading & Settlement
             </h1>
-            <p className="text-xs text-slate-400">
-              Trade local fiat directly with verified counterparties across 14 global payment rails with zero middleman dispute hold-ups.
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Trade local fiat directly with verified counterparties across 14 global payment rails with zero middleman hold-ups.
             </p>
           </div>
 
@@ -175,7 +141,7 @@ export default function P2PCryptoTradingPage() {
             <button
               onClick={() => setSide("buy")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                side === "buy" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/30" : "bg-white/5 text-slate-400 hover:text-white"
+                side === "buy" ? "bg-emerald-600 text-white shadow-xs" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10"
               }`}
             >
               Buy Crypto
@@ -183,7 +149,7 @@ export default function P2PCryptoTradingPage() {
             <button
               onClick={() => setSide("sell")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                side === "sell" ? "bg-rose-600 text-white shadow-lg shadow-rose-500/30" : "bg-white/5 text-slate-400 hover:text-white"
+                side === "sell" ? "bg-rose-600 text-white shadow-xs" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10"
               }`}
             >
               Sell Crypto
@@ -192,15 +158,17 @@ export default function P2PCryptoTradingPage() {
         </div>
 
         {/* Filters Bar */}
-        <div className="p-4 rounded-2xl bg-slate-900/40 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400">Asset Filter:</span>
+            <span className="text-slate-500 dark:text-slate-400 font-sans font-medium">Asset Filter:</span>
             {(["ALL", "BTC", "ETH", "USDT"] as const).map(asset => (
               <button
                 key={asset}
                 onClick={() => setAssetFilter(asset)}
                 className={`px-3 py-1 rounded-lg transition-all ${
-                  assetFilter === asset ? "bg-blue-600 text-white font-bold" : "bg-white/5 text-slate-400 hover:text-white"
+                  assetFilter === asset 
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold shadow-xs" 
+                    : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10"
                 }`}
               >
                 {asset}
@@ -208,17 +176,18 @@ export default function P2PCryptoTradingPage() {
             ))}
           </div>
 
-          <div className="text-slate-400 text-[11px]">
-            <span>100% Non-Custodial Direct Settlement</span>
+          <div className="text-slate-500 dark:text-slate-400 text-[11px] font-sans flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>100% Non-Custodial Direct Settlement Protected</span>
           </div>
         </div>
 
         {/* Offers Table */}
-        <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl overflow-hidden p-6 space-y-4 shadow-2xl">
+        <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl overflow-hidden p-5 sm:p-6 space-y-4 shadow-xs dark:shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse font-mono">
               <thead>
-                <tr className="border-b border-white/10 text-slate-500 text-[10px] uppercase">
+                <tr className="border-b border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                   <th className="py-3 pr-4">Advertiser / Trader</th>
                   <th className="py-3 px-4">Price</th>
                   <th className="py-3 px-4">Available / Limit</th>
@@ -226,34 +195,34 @@ export default function P2PCryptoTradingPage() {
                   <th className="py-3 pl-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {filteredOffers.map((offer) => (
-                  <tr key={offer.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={offer.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 pr-4">
-                      <div className="font-bold text-white flex items-center gap-1.5">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                         <span>{offer.trader}</span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" />
                       </div>
-                      <div className="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
                         <span>{offer.ordersCount} orders</span>
-                        <span className="text-emerald-400 font-bold">{offer.rating} completion</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{offer.rating} completion</span>
                       </div>
                     </td>
 
                     <td className="py-4 px-4">
-                      <div className="text-sm font-black text-white">{offer.fiatPrice}</div>
-                      <div className="text-[10px] text-slate-400">Unit Rate ({offer.asset})</div>
+                      <div className="text-sm font-black text-slate-900 dark:text-white">{offer.fiatPrice}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-sans">Unit Rate ({offer.asset})</div>
                     </td>
 
-                    <td className="py-4 px-4 text-slate-300">
-                      <div>Available: <span className="text-white font-bold">{offer.available}</span></div>
-                      <div className="text-[10px] text-slate-400">Limit: {offer.limit}</div>
+                    <td className="py-4 px-4 text-slate-700 dark:text-slate-300">
+                      <div>Available: <span className="text-slate-900 dark:text-white font-bold">{offer.available}</span></div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Limit: {offer.limit}</div>
                     </td>
 
                     <td className="py-4 px-4">
                       <div className="flex flex-wrap gap-1.5">
                         {offer.paymentMethods.map((pm, i) => (
-                          <span key={i} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-slate-300">
+                          <span key={i} className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] text-slate-700 dark:text-slate-300 font-sans">
                             {pm}
                           </span>
                         ))}
@@ -263,7 +232,7 @@ export default function P2PCryptoTradingPage() {
                     <td className="py-4 pl-4 text-right">
                       <button
                         onClick={() => alert(`Initiating direct P2P order with ${offer.trader} for ${offer.asset}. Smart settlement agreement prepared.`)}
-                        className={`px-4 py-2 rounded-xl font-bold text-xs text-white transition-all shadow-md ${
+                        className={`px-4 py-2 rounded-xl font-bold text-xs text-white transition-all shadow-sm ${
                           side === "buy" ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 hover:bg-rose-500 shadow-rose-500/20"
                         }`}
                       >
@@ -278,6 +247,9 @@ export default function P2PCryptoTradingPage() {
         </div>
 
       </main>
+
+      {/* Universal Footer */}
+      <Footer />
 
     </div>
   );

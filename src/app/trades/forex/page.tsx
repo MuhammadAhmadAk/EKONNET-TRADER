@@ -12,6 +12,9 @@ import {
   Lock,
   ArrowRight
 } from "lucide-react";
+import Navbar from "@/components/landing/Navbar";
+import LiveTicker from "@/components/landing/LiveTicker";
+import Footer from "@/components/landing/Footer";
 import { getPlatformStatus } from "@/lib/systemStatus";
 import MaintenanceScreen from "@/components/common/MaintenanceScreen";
 
@@ -48,92 +51,66 @@ export default function ForexTradingPage() {
 
   if (isMaintenance) {
     return (
-      <div className="min-h-screen bg-[#060913] text-white">
-        <header className="h-20 bg-[#090e1a]/90 border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-          <Link href="/" className="font-extrabold text-white">Ekonnet<span className="text-cyan-400">Trader</span></Link>
-          <Link href="/admin" className="text-xs text-blue-400 font-bold">Admin Console</Link>
-        </header>
+      <div className="min-h-screen bg-transparent flex flex-col">
+        <Navbar />
         <MaintenanceScreen 
           platformName="Forex Trades & Exchanges Platform"
           category="Forex Sector [2]"
         />
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#060913] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-slate-800 dark:text-gray-100 flex flex-col transition-colors duration-300">
       
-      {/* Top Header */}
-      <header className="h-20 bg-[#090e1a]/90 backdrop-blur-xl border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-400 p-[1px] shadow-md shadow-purple-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <Globe2 className="w-4 h-4 text-purple-400" />
-              </div>
-            </div>
-            <span className="text-base font-extrabold tracking-tight text-white hidden sm:inline">
-              Ekonnet<span className="text-purple-400">Forex</span>
-            </span>
-          </Link>
+      {/* Universal Navbar */}
+      <Navbar />
 
-          <div className="h-5 w-px bg-white/10 hidden sm:block" />
-
-          {/* Clean Breadcrumbs */}
-          <nav className="flex items-center space-x-2 text-xs font-mono text-slate-400">
-            <Link href="/" className="hover:text-white transition">Home</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <Link href="/trades" className="hover:text-white transition">Ways to Invest</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-purple-400 font-bold">Forex Trading Markets</span>
-          </nav>
-        </div>
-
-        <Link
-          href="/admin"
-          className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 font-bold transition-all"
-        >
-          Admin Console
-        </Link>
-      </header>
+      {/* Real-time Ticker Bar */}
+      <LiveTicker />
 
       {/* Main Forex View */}
-      <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6 flex-1">
         
         {/* Banner */}
-        <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs dark:shadow-xl">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-mono font-bold border border-purple-500/20">
-              <Globe2 className="w-3 h-3 text-purple-400" />
-              <span>Sovereign Currencies Engine • Independent Sector</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold border border-orange-500/20">
+              <Globe2 className="w-3 h-3 text-orange-500" />
+              <span>Sovereign Currencies Engine • Low Latency STP</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white">
-              Forex Trades & Exchanges Platforms
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Forex Trading & Sovereign Currency Rails
             </h1>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Trade 168+ sovereign currency pairs with institutional tight raw spreads from 0.0 pips and dynamic margin leverage.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 font-mono text-xs">
-            <span className="text-slate-400">Active Pair:</span>
-            <span className="px-3 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300 font-bold">
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className="text-slate-500 dark:text-slate-400 font-sans font-medium">Selected Pair:</span>
+            <span className="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-600 dark:text-orange-400 font-bold">
               {activePair.symbol}
             </span>
           </div>
         </div>
 
         {/* Forex Terminal Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          <div className="lg:col-span-8 space-y-6">
-            <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl space-y-4">
-              <h3 className="text-base font-bold text-white">Major & Cross Sovereign Currency Pairs</h3>
+          <div className="lg:col-span-8 space-y-4">
+            <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl shadow-xs dark:shadow-xl space-y-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Major & Cross Sovereign Currency Pairs</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Real-time interbank quote feeds</p>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono border-collapse">
                   <thead>
-                    <tr className="border-b border-white/10 text-slate-500 text-[10px] uppercase">
+                    <tr className="border-b border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                       <th className="py-2.5 pr-4">Currency Pair</th>
                       <th className="py-2.5 px-3">Bid Price</th>
                       <th className="py-2.5 px-3">Ask Price</th>
@@ -141,23 +118,23 @@ export default function ForexTradingPage() {
                       <th className="py-2.5 pl-3 text-right">24h Change</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                     {FOREX_PAIRS.map((pair) => (
                       <tr 
                         key={pair.symbol} 
                         onClick={() => setActivePair(pair)}
                         className={`cursor-pointer transition-colors ${
-                          activePair.symbol === pair.symbol ? "bg-purple-500/10" : "hover:bg-white/[0.02]"
+                          activePair.symbol === pair.symbol ? "bg-orange-500/5 dark:bg-orange-500/10" : "hover:bg-slate-50 dark:hover:bg-white/[0.02]"
                         }`}
                       >
                         <td className="py-3.5 pr-4">
-                          <div className="font-bold text-white text-sm">{pair.symbol}</div>
-                          <div className="text-[10px] text-slate-400">{pair.name}</div>
+                          <div className="font-bold text-slate-900 dark:text-white text-sm">{pair.symbol}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-sans">{pair.name}</div>
                         </td>
-                        <td className="py-3.5 px-3 text-rose-400 font-bold">{pair.bid}</td>
-                        <td className="py-3.5 px-3 text-emerald-400 font-bold">{pair.ask}</td>
-                        <td className="py-3.5 px-3 text-cyan-400">{pair.spread}</td>
-                        <td className={`py-3.5 pl-3 text-right font-bold ${pair.isPositive ? "text-emerald-400" : "text-rose-400"}`}>
+                        <td className="py-3.5 px-3 text-rose-600 dark:text-rose-400 font-bold">{pair.bid}</td>
+                        <td className="py-3.5 px-3 text-emerald-600 dark:text-emerald-400 font-bold">{pair.ask}</td>
+                        <td className="py-3.5 px-3 text-orange-600 dark:text-orange-400 font-semibold">{pair.spread}</td>
+                        <td className={`py-3.5 pl-3 text-right font-bold ${pair.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                           {pair.change24h}
                         </td>
                       </tr>
@@ -168,40 +145,40 @@ export default function ForexTradingPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
+          <div className="lg:col-span-4 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xs dark:shadow-xl">
             <div>
-              <h3 className="text-base font-bold text-white">Forex Order Execution</h3>
-              <p className="text-xs text-slate-400">Direct STP/ECN Liquidity Bridge</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Forex Order Execution</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Direct STP/ECN Liquidity Bridge</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-black/30 border border-white/5 flex justify-between items-center font-mono">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex justify-between items-center font-mono">
               <div>
-                <div className="text-[10px] text-slate-500 uppercase">Selected Pair</div>
-                <div className="text-lg font-black text-white">{activePair.symbol}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-sans">Selected Pair</div>
+                <div className="text-lg font-black text-slate-900 dark:text-white">{activePair.symbol}</div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] text-slate-500 uppercase">Spread</div>
-                <div className="text-xs font-bold text-cyan-400">{activePair.spread}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-sans">Spread</div>
+                <div className="text-xs font-bold text-orange-600 dark:text-orange-400">{activePair.spread}</div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-slate-400 block font-semibold font-mono">Volume (Standard Lots):</label>
+              <label className="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Volume (Standard Lots):</label>
               <input
                 type="number"
                 step="0.1"
                 value={lotSize}
                 onChange={(e) => setLotSize(Number(e.target.value))}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-lg font-mono font-bold text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-lg font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-slate-400 block font-semibold font-mono">Leverage Tier:</label>
+              <label className="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Leverage Tier:</label>
               <select
                 value={leverage}
                 onChange={(e) => setLeverage(Number(e.target.value))}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-mono text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               >
                 <option value={10}>1:10 Conservative</option>
                 <option value={30}>1:30 Retail Standard</option>
@@ -213,22 +190,30 @@ export default function ForexTradingPage() {
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={() => alert(`Executed SELL ${lotSize} Lots on ${activePair.symbol} at ${activePair.bid}.`)}
-                className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase font-mono shadow-lg shadow-rose-600/25 transition"
+                className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-rose-600/20 transition"
               >
                 Sell (Bid) {activePair.bid}
               </button>
               <button
                 onClick={() => alert(`Executed BUY ${lotSize} Lots on ${activePair.symbol} at ${activePair.ask}.`)}
-                className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase font-mono shadow-lg shadow-emerald-600/25 transition"
+                className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-emerald-600/20 transition"
               >
                 Buy (Ask) {activePair.ask}
               </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>STP Order Routing • Zero Requotes</span>
             </div>
           </div>
 
         </div>
 
       </main>
+
+      {/* Universal Footer */}
+      <Footer />
 
     </div>
   );

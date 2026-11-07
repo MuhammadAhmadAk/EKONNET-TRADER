@@ -9,12 +9,15 @@ import {
   Briefcase, 
   ArrowUpRight, 
   ArrowDownRight,
-  ShieldCheck,
-  Zap,
-  BarChart2,
-  ChevronRight,
+  ShieldCheck, 
+  Zap, 
+  BarChart2, 
+  ChevronRight, 
   Layers
 } from "lucide-react";
+import Navbar from "@/components/landing/Navbar";
+import LiveTicker from "@/components/landing/LiveTicker";
+import Footer from "@/components/landing/Footer";
 import { INITIAL_MARKET_TICKERS, BASE_PAIRS } from "@/lib/mockData";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
@@ -24,112 +27,84 @@ export default function TradesPage() {
   const [orderAmount, setOrderAmount] = useState<number>(500);
 
   return (
-    <div className="min-h-screen bg-[#060913] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-slate-800 dark:text-gray-100 flex flex-col transition-colors duration-300">
       
-      {/* Top Professional Header */}
-      <header className="h-20 bg-[#090e1a]/90 backdrop-blur-xl border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1px] shadow-md shadow-blue-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <Layers className="w-4 h-4 text-cyan-400" />
-              </div>
-            </div>
-            <span className="text-base font-extrabold tracking-tight text-white hidden sm:inline">
-              Ekonnet<span className="text-cyan-400">Trader</span>
-            </span>
-          </Link>
+      {/* Universal Navbar */}
+      <Navbar />
 
-          <div className="h-5 w-px bg-white/10 hidden sm:block" />
-
-          {/* Clean Web Breadcrumbs */}
-          <nav className="flex items-center space-x-2 text-xs font-mono text-slate-400">
-            <Link href="/" className="hover:text-white transition">Home</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <Link href="/trades" className="hover:text-white transition">Markets</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-blue-400 font-bold">Multi-Asset Terminal</span>
-          </nav>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <Link
-            href="/trades/crypto/direct"
-            className="hidden md:inline-flex px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-xs text-blue-400 font-semibold transition"
-          >
-            Direct Crypto Orderbook
-          </Link>
-          <Link
-            href="/admin"
-            className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 font-bold transition-all"
-          >
-            Admin Console
-          </Link>
-        </div>
-      </header>
+      {/* Real-time Ticker Bar */}
+      <LiveTicker />
 
       {/* Main Terminal View */}
-      <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6 flex-1">
         
-        {/* Base Pairs Selector Bar */}
-        <div className="p-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-bold text-slate-400">Institutional Base Currencies:</span>
-            <div className="flex space-x-2">
+        {/* Banner with Breadcrumbs & Base Pairs Selector */}
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs dark:shadow-xl">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold border border-orange-500/20">
+              <Zap className="w-3 h-3 text-orange-500" />
+              <span>Multi-Asset Liquidity Terminal • Ultra-Low Latency</span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Global Multi-Asset Markets
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Direct institutional order execution across crypto, forex, and equities.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1">Base Currency:</span>
+            <div className="flex bg-slate-100 dark:bg-black/40 p-1 rounded-xl border border-slate-200 dark:border-white/10 gap-1">
               {BASE_PAIRS.map(pair => (
                 <button
                   key={pair}
                   onClick={() => setSelectedBasePair(pair)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                     selectedBasePair === pair 
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" 
-                      : "bg-white/[0.03] text-gray-400 hover:text-white border border-white/10"
+                      ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-xs" 
+                      : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
-                  {pair} Markets
+                  {pair}
                 </button>
               ))}
             </div>
           </div>
-
-          <div className="text-xs font-mono text-emerald-400 flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>Order Matching Engine: Active (0.15% Fee)</span>
-          </div>
         </div>
 
         {/* Trading Terminal Layout: Charts & Order Book */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Left 8 Columns: Live Candlestick Simulation & Market Table */}
           <div className="lg:col-span-8 space-y-6">
             
             {/* Chart Container */}
-            <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl shadow-2xl space-y-4">
-              <div className="flex justify-between items-center">
+            <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl shadow-xs dark:shadow-xl space-y-4">
+              <div className="flex flex-wrap justify-between items-center gap-3">
                 <div className="flex items-center space-x-3">
-                  <div className="text-xl font-black font-mono text-cyan-400 mr-1">
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black font-mono text-base border border-orange-500/20">
                     BTC
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-white">BTC / {selectedBasePair} — Real-Time Index</h3>
-                    <div className="text-xs text-gray-400">TradingView API Streaming Integration</div>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">BTC / {selectedBasePair} — Real-Time Index</h3>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">Institutional Aggregated Pricing Feed</div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-2xl font-black text-white font-mono">$67,420.50</div>
-                  <div className="text-xs text-emerald-400 font-bold font-mono">+3.42% (24h)</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono">$67,420.50</div>
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold font-mono">+3.42% (24h)</div>
                 </div>
               </div>
 
               {/* Graphic Chart Display Canvas */}
-              <div className="h-64 rounded-2xl bg-black/30 border border-white/10 p-4 flex flex-col justify-between relative overflow-hidden">
-                <div className="flex space-x-2 text-[11px] font-mono text-gray-500">
-                  <span className="px-2 py-0.5 rounded bg-gray-800 text-gray-200">1H</span>
-                  <span className="px-2 py-0.5 rounded hover:bg-gray-800 cursor-pointer">4H</span>
-                  <span className="px-2 py-0.5 rounded hover:bg-gray-800 cursor-pointer">1D</span>
-                  <span className="px-2 py-0.5 rounded hover:bg-gray-800 cursor-pointer">1W</span>
+              <div className="h-64 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-4 flex flex-col justify-between relative overflow-hidden">
+                <div className="flex space-x-2 text-[11px] font-mono text-slate-500 dark:text-gray-400">
+                  <span className="px-2.5 py-1 rounded-md bg-white dark:bg-gray-800 text-slate-900 dark:text-gray-200 shadow-xs border border-slate-200 dark:border-white/10">1H</span>
+                  <span className="px-2.5 py-1 rounded-md hover:bg-white dark:hover:bg-gray-800 cursor-pointer">4H</span>
+                  <span className="px-2.5 py-1 rounded-md hover:bg-white dark:hover:bg-gray-800 cursor-pointer">1D</span>
+                  <span className="px-2.5 py-1 rounded-md hover:bg-white dark:hover:bg-gray-800 cursor-pointer">1W</span>
                 </div>
 
                 {/* Simulated candlesticks */}
@@ -146,22 +121,35 @@ export default function TradesPage() {
                   ))}
                 </div>
 
-                <div className="flex justify-between text-[10px] text-gray-500 font-mono">
+                <div className="flex justify-between text-[10px] text-slate-500 dark:text-gray-500 font-mono">
                   <span>06:00 UTC</span>
                   <span>12:00 UTC</span>
                   <span>18:00 UTC</span>
-                  <span>Live Feed</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">● Live Matching Feed</span>
                 </div>
               </div>
             </div>
 
             {/* Markets List */}
-            <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl overflow-hidden p-6 space-y-4 shadow-xl">
-              <h4 className="text-base font-bold text-white">Live Market Pairs Overview</h4>
+            <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl overflow-hidden p-5 sm:p-6 space-y-4 shadow-xs dark:shadow-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white">Live Market Pairs Overview</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Institutional order routing across all supported pairs</p>
+                </div>
+                <Link
+                  href="/trades/crypto/direct"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                >
+                  <span>Advanced Terminal</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-800 text-gray-500 font-mono uppercase text-[10px]">
+                    <tr className="border-b border-slate-200 dark:border-gray-800 text-slate-500 dark:text-gray-400 font-mono uppercase text-[10px]">
                       <th className="py-2.5">Pair</th>
                       <th className="py-2.5">Category</th>
                       <th className="py-2.5">Price</th>
@@ -169,16 +157,16 @@ export default function TradesPage() {
                       <th className="py-2.5">24h Volume</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-800/80 font-mono">
+                  <tbody className="divide-y divide-slate-100 dark:divide-gray-800/80 font-mono">
                     {INITIAL_MARKET_TICKERS.map(t => (
-                      <tr key={t.symbol} className="hover:bg-white/[0.03] transition-colors cursor-pointer">
-                        <td className="py-3 font-bold text-white">{t.symbol}</td>
-                        <td className="py-3 text-gray-400">{t.category}</td>
-                        <td className="py-3 text-gray-200">{formatCurrency(t.price, t.category === 'Forex' ? '' : 'USD')}</td>
-                        <td className={`py-3 font-bold ${t.change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      <tr key={t.symbol} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-colors cursor-pointer">
+                        <td className="py-3 font-bold text-slate-900 dark:text-white">{t.symbol}</td>
+                        <td className="py-3 text-slate-500 dark:text-gray-400">{t.category}</td>
+                        <td className="py-3 text-slate-900 dark:text-gray-200">{formatCurrency(t.price, t.category === 'Forex' ? '' : 'USD')}</td>
+                        <td className={`py-3 font-bold ${t.change24h >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                           {formatPercent(t.change24h)}
                         </td>
-                        <td className="py-3 text-gray-400">{t.volume24h}</td>
+                        <td className="py-3 text-slate-500 dark:text-gray-400">{t.volume24h}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -189,18 +177,18 @@ export default function TradesPage() {
           </div>
 
           {/* Right 4 Columns: Buy/Sell Execution Form */}
-          <div className="lg:col-span-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
+          <div className="lg:col-span-4 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xs dark:shadow-xl">
             <div>
-              <h3 className="text-base font-bold text-white">Order Execution Panel</h3>
-              <p className="text-xs text-slate-400">Direct High-Speed Liquidity Execution</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Order Execution Panel</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Direct High-Speed Liquidity Execution</p>
             </div>
 
             {/* Buy / Sell switch */}
-            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-black/30 border border-white/10">
+            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-black/30 border border-slate-200 dark:border-white/10">
               <button
                 onClick={() => setOrderType("buy")}
                 className={`py-2 rounded-lg text-xs font-bold transition-all ${
-                  orderType === "buy" ? "bg-emerald-600 text-white" : "text-gray-400 hover:text-white"
+                  orderType === "buy" ? "bg-emerald-600 text-white shadow-xs" : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Buy BTC
@@ -208,7 +196,7 @@ export default function TradesPage() {
               <button
                 onClick={() => setOrderType("sell")}
                 className={`py-2 rounded-lg text-xs font-bold transition-all ${
-                  orderType === "sell" ? "bg-rose-600 text-white" : "text-gray-400 hover:text-white"
+                  orderType === "sell" ? "bg-rose-600 text-white shadow-xs" : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Sell BTC
@@ -217,50 +205,54 @@ export default function TradesPage() {
 
             {/* Amount input */}
             <div className="space-y-2">
-              <label className="text-xs text-gray-400 block">Order Amount (USD):</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-gray-400 block">Order Amount (USD):</label>
               <input
                 type="number"
                 value={orderAmount}
                 onChange={(e) => setOrderAmount(Math.max(0, Number(e.target.value)))}
-                className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-lg font-bold font-mono text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-lg font-bold font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
 
             {/* Order Summary */}
-            <div className="p-4 rounded-2xl bg-black/20 border border-white/10 space-y-2 text-xs font-mono">
-              <div className="flex justify-between text-gray-400">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 space-y-2 text-xs font-mono">
+              <div className="flex justify-between text-slate-600 dark:text-gray-400">
                 <span>Estimated Crypto:</span>
-                <span className="text-emerald-400 font-bold">{(orderAmount / 67420.50).toFixed(6)} BTC</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">{(orderAmount / 67420.50).toFixed(6)} BTC</span>
               </div>
-              <div className="flex justify-between text-gray-400">
+              <div className="flex justify-between text-slate-600 dark:text-gray-400">
                 <span>Fee Deducted (0.15%):</span>
-                <span className="text-gray-300">-${(orderAmount * 0.0015).toFixed(2)} USD</span>
+                <span className="text-slate-800 dark:text-gray-300 font-medium">-${(orderAmount * 0.0015).toFixed(2)} USD</span>
               </div>
-              <div className="flex justify-between text-gray-400 pt-1 border-t border-white/10">
+              <div className="flex justify-between text-slate-600 dark:text-gray-400 pt-1 border-t border-slate-200 dark:border-white/10">
                 <span>Liquidity Mode:</span>
-                <span className="text-blue-400">Ekonnet Internal Pool</span>
+                <span className="text-orange-600 dark:text-orange-400 font-semibold">Ekonnet Internal Pool</span>
               </div>
             </div>
 
             <button
               onClick={() => alert(`Executed ${orderType.toUpperCase()} order for $${orderAmount}. Ekonnet fee of 0.15% deducted automatically.`)}
-              className={`w-full py-4 rounded-xl font-bold text-sm text-white shadow-xl transition-all ${
+              className={`w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${
                 orderType === "buy" 
-                  ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/25" 
-                  : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/25"
+                  ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20" 
+                  : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/20"
               }`}
             >
               Confirm {orderType.toUpperCase()} Order
             </button>
 
-            <p className="text-[11px] text-gray-500 text-center font-mono">
-              Protected by TLS 1.3 & Multi-Sig Smart Settlement
-            </p>
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>TLS 1.3 & Multi-Sig Smart Settlement</span>
+            </div>
           </div>
 
         </div>
 
       </main>
+
+      {/* Universal Footer */}
+      <Footer />
 
     </div>
   );

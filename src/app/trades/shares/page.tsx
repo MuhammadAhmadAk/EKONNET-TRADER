@@ -14,6 +14,9 @@ import {
   Layers,
   CheckCircle2
 } from "lucide-react";
+import Navbar from "@/components/landing/Navbar";
+import LiveTicker from "@/components/landing/LiveTicker";
+import Footer from "@/components/landing/Footer";
 import { getPlatformStatus } from "@/lib/systemStatus";
 import MaintenanceScreen from "@/components/common/MaintenanceScreen";
 
@@ -51,70 +54,40 @@ export default function SharesInvestmentPage() {
 
   if (isMaintenance) {
     return (
-      <div className="min-h-screen bg-[#060913] text-white">
-        <header className="h-20 bg-[#090e1a]/90 border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-          <Link href="/" className="font-extrabold text-white">Ekonnet<span className="text-cyan-400">Trader</span></Link>
-          <Link href="/admin" className="text-xs text-blue-400 font-bold">Admin Console</Link>
-        </header>
+      <div className="min-h-screen bg-transparent flex flex-col">
+        <Navbar />
         <MaintenanceScreen 
           platformName="Shares & Investments Trades & Exchange Platforms"
           category="Equities Sector [3]"
         />
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#060913] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-slate-800 dark:text-gray-100 flex flex-col transition-colors duration-300">
       
-      {/* Top Header */}
-      <header className="h-20 bg-[#090e1a]/90 backdrop-blur-xl border-b border-white/10 px-6 sm:px-12 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-600 via-orange-600 to-yellow-400 p-[1px] shadow-md shadow-amber-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <Briefcase className="w-4 h-4 text-amber-400" />
-              </div>
-            </div>
-            <span className="text-base font-extrabold tracking-tight text-white hidden sm:inline">
-              Ekonnet<span className="text-amber-400">Invest</span>
-            </span>
-          </Link>
+      {/* Universal Navbar */}
+      <Navbar />
 
-          <div className="h-5 w-px bg-white/10 hidden sm:block" />
-
-          {/* Clean Breadcrumbs */}
-          <nav className="flex items-center space-x-2 text-xs font-mono text-slate-400">
-            <Link href="/" className="hover:text-white transition">Home</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <Link href="/trades" className="hover:text-white transition">Ways to Invest</Link>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-amber-400 font-bold">Shares & Investment Portfolios</span>
-          </nav>
-        </div>
-
-        <Link
-          href="/admin"
-          className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 font-bold transition-all"
-        >
-          Admin Console
-        </Link>
-      </header>
+      {/* Real-time Ticker Bar */}
+      <LiveTicker />
 
       {/* Main Shares View */}
-      <main className="p-6 sm:p-10 max-w-7xl mx-auto w-full space-y-8 flex-1">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6 flex-1">
         
         {/* Banner */}
-        <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs dark:shadow-xl">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-mono font-bold border border-amber-500/20">
-              <Briefcase className="w-3 h-3 text-amber-400" />
-              <span>International Equities & ETFs • Independent Sector</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold border border-orange-500/20">
+              <Briefcase className="w-3 h-3 text-orange-500" />
+              <span>International Equities & ETFs • Fractional Trading</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white">
-              Shares & Investments Trades & Exchange Platforms
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Global Shares & Equity Investments
             </h1>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Invest in global Wall Street shares, fractional blue-chip equities from $10, and leading index ETFs with zero custodian markups.
             </p>
           </div>
@@ -122,33 +95,41 @@ export default function SharesInvestmentPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setInvestMode("fractional")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                investMode === "fractional" ? "bg-amber-600 text-white shadow-lg shadow-amber-500/30" : "bg-white/5 text-slate-400 hover:text-white"
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                investMode === "fractional" 
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-xs" 
+                  : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10"
               }`}
             >
-              Fractional Shares ($)
+              Fractional ($)
             </button>
             <button
               onClick={() => setInvestMode("shares")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                investMode === "shares" ? "bg-amber-600 text-white shadow-lg shadow-amber-500/30" : "bg-white/5 text-slate-400 hover:text-white"
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                investMode === "shares" 
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-xs" 
+                  : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10"
               }`}
             >
-              Whole Shares (Units)
+              Whole Units
             </button>
           </div>
         </div>
 
         {/* Shares Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          <div className="lg:col-span-8 space-y-6">
-            <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl space-y-4">
-              <h3 className="text-base font-bold text-white">International Blue-Chip Equities & ETFs</h3>
+          <div className="lg:col-span-8 space-y-4">
+            <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl shadow-xs dark:shadow-xl space-y-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">International Blue-Chip Equities & ETFs</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Direct settlement without middleman markups</p>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono border-collapse">
                   <thead>
-                    <tr className="border-b border-white/10 text-slate-500 text-[10px] uppercase">
+                    <tr className="border-b border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] uppercase">
                       <th className="py-2.5 pr-4">Ticker / Company</th>
                       <th className="py-2.5 px-3">Price</th>
                       <th className="py-2.5 px-3">P/E Ratio</th>
@@ -157,24 +138,24 @@ export default function SharesInvestmentPage() {
                       <th className="py-2.5 pl-3 text-right">24h Change</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                     {EQUITY_SHARES.map((stock) => (
                       <tr 
                         key={stock.ticker}
                         onClick={() => setSelectedStock(stock)}
                         className={`cursor-pointer transition-colors ${
-                          selectedStock.ticker === stock.ticker ? "bg-amber-500/10" : "hover:bg-white/[0.02]"
+                          selectedStock.ticker === stock.ticker ? "bg-orange-500/5 dark:bg-orange-500/10" : "hover:bg-slate-50 dark:hover:bg-white/[0.02]"
                         }`}
                       >
                         <td className="py-3.5 pr-4">
-                          <div className="font-bold text-white text-sm">{stock.ticker}</div>
-                          <div className="text-[10px] text-slate-400">{stock.name}</div>
+                          <div className="font-bold text-slate-900 dark:text-white text-sm">{stock.ticker}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-sans">{stock.name}</div>
                         </td>
-                        <td className="py-3.5 px-3 text-white font-bold">{stock.price}</td>
-                        <td className="py-3.5 px-3 text-slate-300">{stock.peRatio}</td>
-                        <td className="py-3.5 px-3 text-slate-300">{stock.marketCap}</td>
-                        <td className="py-3.5 px-3 text-emerald-400">{stock.dividendYield}</td>
-                        <td className={`py-3.5 pl-3 text-right font-bold ${stock.isPositive ? "text-emerald-400" : "text-rose-400"}`}>
+                        <td className="py-3.5 px-3 text-slate-900 dark:text-white font-bold">{stock.price}</td>
+                        <td className="py-3.5 px-3 text-slate-600 dark:text-slate-300">{stock.peRatio}</td>
+                        <td className="py-3.5 px-3 text-slate-600 dark:text-slate-300">{stock.marketCap}</td>
+                        <td className="py-3.5 px-3 text-emerald-600 dark:text-emerald-400 font-bold">{stock.dividendYield}</td>
+                        <td className={`py-3.5 pl-3 text-right font-bold ${stock.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                           {stock.change24h}
                         </td>
                       </tr>
@@ -185,48 +166,48 @@ export default function SharesInvestmentPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-xl p-6 space-y-6 shadow-2xl">
+          <div className="lg:col-span-4 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xs dark:shadow-xl">
             <div>
-              <h3 className="text-base font-bold text-white">Share Investment Order</h3>
-              <p className="text-xs text-slate-400">Institutional direct stock custody</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Share Investment Order</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Institutional direct stock custody</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-black/30 border border-white/5 flex justify-between items-center font-mono">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 flex justify-between items-center font-mono">
               <div>
-                <div className="text-[10px] text-slate-500 uppercase">Selected Equity</div>
-                <div className="text-lg font-black text-white">{selectedStock.ticker}</div>
-                <div className="text-[11px] text-slate-400">{selectedStock.name}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-sans">Selected Equity</div>
+                <div className="text-lg font-black text-slate-900 dark:text-white">{selectedStock.ticker}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-sans">{selectedStock.name}</div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] text-slate-500 uppercase">Market Price</div>
-                <div className="text-lg font-black text-amber-400">{selectedStock.price}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-sans">Market Price</div>
+                <div className="text-lg font-black text-orange-600 dark:text-orange-400">{selectedStock.price}</div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-slate-400 block font-semibold font-mono">
+              <label className="text-xs text-slate-600 dark:text-slate-400 block font-semibold font-mono">
                 {investMode === "fractional" ? "Investment Capital (USD):" : "Number of Shares:"}
               </label>
               <input
                 type="number"
                 value={investAmount}
                 onChange={(e) => setInvestAmount(Number(e.target.value))}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-lg font-mono font-bold text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-lg font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
 
-            <div className="p-4 rounded-2xl bg-black/30 border border-white/5 text-xs font-mono space-y-2">
-              <div className="flex justify-between text-slate-400">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/5 text-xs font-mono space-y-2">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Commission:</span>
-                <span className="text-emerald-400 font-bold">$0.00 Free Trading</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">$0.00 Free Trading</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Settlement Speed:</span>
-                <span className="text-white font-bold">Instant T+0 Ledger</span>
+                <span className="text-slate-900 dark:text-white font-bold">Instant T+0 Ledger</span>
               </div>
-              <div className="flex justify-between text-slate-400 pt-1 border-t border-white/10">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-white/10">
                 <span>Estimated Holdings:</span>
-                <span className="text-amber-400 font-bold">
+                <span className="text-orange-600 dark:text-orange-400 font-bold">
                   {investMode === "fractional" 
                     ? `${(investAmount / parseFloat(selectedStock.price.replace('$', ''))).toFixed(4)} Shares`
                     : `${investAmount} Shares`
@@ -237,15 +218,23 @@ export default function SharesInvestmentPage() {
 
             <button
               onClick={() => alert(`Executed investment in ${selectedStock.ticker} for ${investAmount} (${investMode}). Direct custody confirmed.`)}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white font-bold text-xs uppercase font-mono shadow-lg shadow-amber-600/30 transition-all"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase font-mono shadow-md shadow-orange-500/20 transition-all"
             >
               Confirm Equity Order
             </button>
+
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>SIPC Insured Custody Protection</span>
+            </div>
           </div>
 
         </div>
 
       </main>
+
+      {/* Universal Footer */}
+      <Footer />
 
     </div>
   );
