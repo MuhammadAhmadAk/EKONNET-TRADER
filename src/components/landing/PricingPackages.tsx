@@ -12,63 +12,62 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   return (
-    <section id="pricing-packages" className="py-16 bg-transparent border-t border-white/5">
+    <section id="pricing-packages" className="py-14 sm:py-20 bg-transparent border-t border-slate-200/80 dark:border-white/5 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-semibold">
+          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 text-xs font-bold">
             <span>TRANSPARENT ACCOUNT TIERS & DEALS PACKAGES</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Flexible Account Tiers & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Deals Packages</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Flexible Account Tiers & <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-red-600">Deals Packages</span>
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
             Choose the ideal toolkit for your trading and cross-border payment requirements. Upgrade or adjust anytime.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-2 p-1 rounded-xl bg-white/[0.03] dark:bg-slate-900/40 border border-white/10 mt-2">
+          {/* Billing Toggle (Pill style) */}
+          <div className="inline-flex items-center gap-1.5 p-1.5 rounded-full bg-white/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 shadow-xs mt-3">
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
                 billingCycle === "monthly" 
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" 
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-md shadow-orange-500/20" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               Monthly Billing
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition ${
                 billingCycle === "yearly" 
-                  ? "bg-purple-600 text-white shadow-md shadow-purple-500/20" 
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-md shadow-orange-500/20" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <span>Annual Billing</span>
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">SAVE 20%</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold">SAVE 20%</span>
             </button>
           </div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PRICING_PACKAGES.map((pkg) => {
             const isPopular = pkg.popular;
-
             return (
               <div
                 key={pkg.name}
-                className={`rounded-2xl p-6 transition flex flex-col justify-between ${
+                className={`p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between backdrop-blur-md ${
                   isPopular
-                    ? "bg-white/[0.03] dark:bg-slate-900/30 border-2 border-blue-500/80 shadow-2xl backdrop-blur-xl relative rounded-3xl"
-                    : "bg-white/[0.02] dark:bg-white/[0.02] border border-white/10 hover:border-blue-500/40 rounded-3xl backdrop-blur-xl transition-all"
+                    ? "bg-white/95 dark:bg-slate-900/70 border-2 border-orange-500 shadow-xl shadow-orange-500/10 relative"
+                    : "bg-white/85 dark:bg-slate-900/50 border border-slate-200/80 dark:border-white/10 hover:border-orange-500/40 hover:shadow-lg shadow-xs"
                 }`}
               >
                 {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-md">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-600 text-white text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-md">
                     <Sparkles className="w-3 h-3" />
                     MOST POPULAR
                   </div>
@@ -76,29 +75,29 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white">{pkg.name}</h3>
-                    <p className="text-xs text-slate-400 mt-1">{pkg.description}</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{pkg.name}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{pkg.description}</p>
                   </div>
 
                   <div className="pt-2">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black font-mono text-white">{pkg.price}</span>
-                      <span className="text-xs text-slate-400 font-mono">
+                      <span className="text-3xl font-black font-mono text-slate-900 dark:text-white">{pkg.price}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                         {pkg.price === "$0" ? "Forever Free" : "/month"}
                       </span>
                     </div>
                     {billingCycle === "yearly" && pkg.price !== "$0" && (
-                      <span className="text-[10px] text-emerald-400 font-mono block mt-0.5">
+                      <span className="text-[10px] text-emerald-500 font-mono font-bold block mt-0.5">
                         Discounted on Annual Billing
                       </span>
                     )}
                   </div>
 
                   {/* Features List */}
-                  <div className="space-y-2 pt-3 border-t border-white/10">
+                  <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-white/10">
                     {pkg.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
-                        <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                        <Check className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                         <span>{feat}</span>
                       </div>
                     ))}
@@ -108,10 +107,10 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
                 <div className="pt-6">
                   <button
                     onClick={() => onSelectPackage(pkg.name)}
-                    className={`w-full py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 ${
+                    className={`w-full py-3 rounded-full font-bold text-xs transition flex items-center justify-center gap-2 ${
                       isPopular
-                        ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/25"
-                        : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+                        ? "bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg shadow-orange-500/25"
+                        : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10"
                     }`}
                   >
                     <span>{pkg.buttonText}</span>

@@ -37,18 +37,18 @@ export default function PaymentRailSection() {
   const fee = (transferAmount * feeRate).toFixed(2);
 
   return (
-    <section id="payments-section" className="py-16 bg-transparent border-t border-white/5">
+    <section id="payments-section" className="py-14 sm:py-20 bg-transparent border-t border-slate-200/80 dark:border-white/5 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-semibold">
+          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 text-xs font-bold">
             <span>GLOBAL PAYMENT GATEWAY & 14 PROCESSORS COMBINED</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Comprehensive <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Payment Rails</span>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Comprehensive <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-red-600">Payment Rails</span>
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
             Ekonnet combines 14 leading payment processors and multi-currency banking rails into one unified gateway.
           </p>
         </div>
@@ -58,12 +58,12 @@ export default function PaymentRailSection() {
           {PAYMENT_RAILS.map((rail) => (
             <div 
               key={rail.name} 
-              className="p-3.5 rounded-2xl bg-white/[0.02] dark:bg-white/[0.02] border border-white/5 hover:border-blue-500/30 hover:bg-white/[0.04] transition-all text-center space-y-1.5 backdrop-blur-xs"
+              className="p-4 rounded-2xl bg-white/85 dark:bg-slate-900/50 border border-slate-200/80 dark:border-white/10 hover:border-orange-500/40 hover:shadow-md transition-all text-center space-y-1.5 backdrop-blur-md"
             >
               <div className="text-2xl">{rail.icon}</div>
-              <div className="font-bold text-xs text-white">{rail.name}</div>
-              <div className="text-[10px] text-slate-400 leading-tight">{rail.type}</div>
-              <div className="text-[9px] font-mono font-bold text-emerald-400 pt-1 border-t border-white/10">
+              <div className="font-bold text-xs text-slate-900 dark:text-white">{rail.name}</div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{rail.type}</div>
+              <div className="text-[10px] font-mono font-bold text-emerald-500 pt-1.5 border-t border-slate-100 dark:border-white/10">
                 {rail.speed}
               </div>
             </div>
@@ -71,34 +71,34 @@ export default function PaymentRailSection() {
         </div>
 
         {/* FX Transfer Calculator Widget */}
-        <div className="rounded-3xl bg-white/[0.03] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-2xl">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-white/10">
+        <div className="rounded-3xl bg-white/90 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100 dark:border-white/10">
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Globe2 className="w-4 h-4 text-blue-400" />
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Globe2 className="w-4 h-4 text-orange-500" />
                 <span>Instant Multi-Currency FX Engine</span>
               </h3>
-              <p className="text-[10px] text-slate-400 mt-0.5">Real-time cross-currency routing with automated platform clearing</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Real-time cross-currency routing with automated platform clearing</p>
             </div>
-            <span className="text-xs font-mono font-bold text-emerald-400">
+            <span className="text-xs font-mono font-bold text-emerald-500 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               Mid-Market FX Rate
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <div>
-              <label className="text-[11px] font-semibold text-slate-400 block mb-1">Send Amount</label>
-              <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5 focus-within:border-blue-500">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1">Send Amount</label>
+              <div className="flex items-center rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                 <input
                   type="number"
                   value={transferAmount}
                   onChange={(e) => setTransferAmount(Math.max(0, Number(e.target.value)))}
-                  className="w-full bg-transparent text-sm font-bold font-mono text-white focus:outline-none"
+                  className="w-full bg-transparent text-sm font-bold font-mono text-slate-900 dark:text-white focus:outline-none"
                 />
                 <select
                   value={sourceCurr}
                   onChange={(e) => setSourceCurr(e.target.value)}
-                  className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-200"
+                  className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-xs"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -108,18 +108,18 @@ export default function PaymentRailSection() {
             </div>
 
             <div>
-              <label className="text-[11px] font-semibold text-slate-400 block mb-1">Recipient Receives</label>
-              <div className="flex items-center rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 p-2.5">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1">Recipient Receives</label>
+              <div className="flex items-center rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                 <input
                   type="text"
                   readOnly
                   value={convertedAmount}
-                  className="w-full bg-transparent text-sm font-bold font-mono text-cyan-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm font-bold font-mono text-orange-600 dark:text-orange-400 focus:outline-none"
                 />
                 <select
                   value={destCurr}
                   onChange={(e) => setDestCurr(e.target.value)}
-                  className="bg-white/[0.06] dark:bg-slate-800/80 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-200"
+                  className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-xs"
                 >
                   <option value="EUR">EUR</option>
                   <option value="USD">USD</option>
@@ -129,9 +129,9 @@ export default function PaymentRailSection() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center text-xs font-mono text-slate-400">
-            <span>Estimated Fee (0.3%): <strong className="text-slate-200">${fee}</strong></span>
-            <span className="text-emerald-400 font-bold">Guaranteed Delivery: &lt; 15 mins</span>
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/10 flex justify-between items-center text-xs font-mono text-slate-500 dark:text-slate-400">
+            <span>Estimated Fee (0.3%): <strong className="text-slate-900 dark:text-white">${fee}</strong></span>
+            <span className="text-emerald-500 font-bold">Guaranteed Delivery: &lt; 15 mins</span>
           </div>
         </div>
 

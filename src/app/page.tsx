@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Navbar from "@/components/landing/Navbar";
 import LiveTicker from "@/components/landing/LiveTicker";
 import HeroSection from "@/components/landing/HeroSection";
+import LiveMarketOverview from "@/components/landing/LiveMarketOverview";
 import TradingPillars from "@/components/landing/TradingPillars";
 import PaymentRailSection from "@/components/landing/PaymentRailSection";
 import PricingPackages from "@/components/landing/PricingPackages";
@@ -46,8 +47,8 @@ export default function LandingPage() {
       
       {/* Toast Notification */}
       {activeNotification && (
-        <div className="fixed top-24 right-6 z-50 p-4 rounded-2xl bg-slate-900/90 dark:bg-[#080c16]/90 backdrop-blur-xl border border-emerald-500/40 text-emerald-300 text-xs shadow-2xl flex items-center space-x-3 glow-blue">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="fixed top-24 right-6 z-50 p-4 rounded-2xl bg-white/95 dark:bg-[#080c16]/95 backdrop-blur-xl border border-emerald-500/40 text-emerald-600 dark:text-emerald-300 text-xs shadow-2xl flex items-center space-x-3">
+          <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
           <span>{activeNotification}</span>
         </div>
       )}
@@ -67,6 +68,9 @@ export default function LandingPage() {
           onOpenRegister={() => setIsRegisterOpen(true)}
           onOpenLogin={() => setIsLoginOpen(true)}
         />
+
+        {/* Browzzit Style Live Market Prices Overview */}
+        <LiveMarketOverview />
         
         <TradingPillars />
         
