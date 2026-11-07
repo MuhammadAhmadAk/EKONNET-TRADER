@@ -17,19 +17,12 @@ import TutorialVideoShowcase from "@/components/landing/TutorialVideoShowcase";
 import Footer from "@/components/landing/Footer";
 import UserLoginModal from "@/components/auth/UserLoginModal";
 import UserRegisterModal from "@/components/auth/UserRegisterModal";
-import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [activeNotification, setActiveNotification] = useState("");
-  const [isPageLoading, setIsPageLoading] = useState(true);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setIsPageLoading(false), 650);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleRegisterSuccess = (newUser: any) => {
     setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete photo note verification.`);
@@ -43,7 +36,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
-      {isPageLoading && <LoadingScreen />}
       {/* <FloatingEcosystemDock currentPlatformId="ekonnet" /> */}
       
       {/* Toast Notification */}
