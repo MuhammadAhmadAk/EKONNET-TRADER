@@ -97,11 +97,19 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
           {/* Brand Logo with Official Ekonnet Emblem */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="w-8 h-8 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 group-hover:scale-105 transition transform">
-              <img
-                src="/images/ekonnet-hero-emblem.png"
-                alt="Ekonnet Logo"
-                className="w-full h-full object-contain"
-              />
+              <picture>
+                <source srcSet="/images/ekonnet-logo-96.webp" type="image/webp" />
+                <img
+                  src="/images/ekonnet-logo-96.png"
+                  alt="Ekonnet Logo"
+                  width={32}
+                  height={32}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-contain"
+                />
+              </picture>
             </div>
             <div className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white">

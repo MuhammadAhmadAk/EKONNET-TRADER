@@ -29,11 +29,19 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
         
         {/* Glowing Official Ekonnet Emblem */}
         <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-900/90 border border-orange-500/30 shadow-[0_0_35px_rgba(249,115,22,0.35)] flex items-center justify-center p-2 relative overflow-hidden">
-          <img
-            src="/images/ekonnet-hero-emblem.png"
-            alt="Ekonnet Logo"
-            className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(249,115,22,0.5)]"
-          />
+          <picture className="w-full h-full flex items-center justify-center">
+            <source srcSet="/images/ekonnet-hero-512.webp" type="image/webp" />
+            <img
+              src="/images/ekonnet-hero-512.png"
+              alt="Ekonnet Logo"
+              width={80}
+              height={80}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(249,115,22,0.5)]"
+            />
+          </picture>
         </div>
       </div>
 

@@ -111,11 +111,19 @@ export default function Hero3DVisual() {
           {/* Subtle warm ambient illumination behind emblem */}
           <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-orange-600/30 via-red-500/30 to-amber-400/20 blur-2xl -z-10" />
           
-          <img
-            src="/images/ekonnet-hero-emblem.png"
-            alt="Ekonnet Official 3D Logo Emblem"
-            className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(249,115,22,0.4)]"
-          />
+          <picture className="w-full h-full flex items-center justify-center">
+            <source srcSet="/images/ekonnet-hero-512.webp" type="image/webp" />
+            <img
+              src="/images/ekonnet-hero-512.png"
+              alt="Ekonnet Official 3D Logo Emblem"
+              width={240}
+              height={240}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(249,115,22,0.4)]"
+            />
+          </picture>
         </div>
 
       </div>

@@ -16,6 +16,21 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* Preload critical above-the-fold brand assets for instant 0ms visual rendering */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/ekonnet-logo-96.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/ekonnet-hero-512.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -14,11 +14,18 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-3">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 group-hover:scale-105 transition transform">
-                <img
-                  src="/images/ekonnet-hero-emblem.png"
-                  alt="Ekonnet Logo"
-                  className="w-full h-full object-contain"
-                />
+                <picture>
+                  <source srcSet="/images/ekonnet-logo-96.webp" type="image/webp" />
+                  <img
+                    src="/images/ekonnet-logo-96.png"
+                    alt="Ekonnet Logo"
+                    width={32}
+                    height={32}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-contain"
+                  />
+                </picture>
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white tracking-tight">
                 EKONNET<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">TRADER</span>

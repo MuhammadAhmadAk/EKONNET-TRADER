@@ -28,4 +28,4 @@ next-env.d.ts
 # Server Credentials
 SERVER_SSH_ROOT_CREDENTIALS.txt
 ftp_cred.txt
-*.mjs
+/scratch
