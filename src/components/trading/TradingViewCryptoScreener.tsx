@@ -57,15 +57,19 @@ export default function TradingViewCryptoScreener({
     height: typeof height === "number" ? height : 580,
     defaultColumn: defaultColumn,
     screener_type: "crypto_mkt",
+    market: "crypto",
+    showSymbolLogo: true,
     displayCurrency: currency,
     colorTheme: theme,
     locale: "en",
     isTransparent: false,
   };
 
-  const iframeSrc = `https://www.tradingview-widget.com/embed-widget/crypto-mkt-screener/#${encodeURIComponent(
+  const iframeSrc = `https://s.tradingview.com/embed-widget/crypto-mkt-screener/?locale=en#${encodeURIComponent(
     JSON.stringify(settings)
   )}`;
+
+  const widgetBgColor = theme === "dark" ? "#131722" : "#ffffff";
 
   return (
     <div
@@ -96,16 +100,22 @@ export default function TradingViewCryptoScreener({
         </div>
       </div>
 
-      {mounted && (
-        <iframe
-          src={iframeSrc}
-          width="100%"
-          height={height}
-          style={{ border: "none", borderRadius: "12px", display: "block" }}
-          scrolling="no"
-          title="TradingView Crypto Screener"
-        />
-      )}
+      <div
+        className="w-full rounded-xl overflow-hidden"
+        style={{ backgroundColor: widgetBgColor, minHeight: typeof height === "number" ? `${height}px` : height }}
+      >
+        {mounted && (
+          <iframe
+            key={`screener-iframe-${theme}-${currency}`}
+            src={iframeSrc}
+            width="100%"
+            height={height}
+            style={{ border: "none", borderRadius: "12px", display: "block", backgroundColor: widgetBgColor }}
+            scrolling="no"
+            title="TradingView Crypto Screener"
+          />
+        )}
+      </div>
     </div>
   );
 }

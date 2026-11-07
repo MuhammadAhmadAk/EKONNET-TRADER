@@ -57,7 +57,7 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
     };
   }, []);
 
-  // Construct iframe URLs with colorTheme and isTransparent: false
+  // Official TradingView iframe URLs with s.tradingview.com, /?locale=en# and colorTheme
   const miniSettings = {
     symbol: currentSymbol,
     width: "100%",
@@ -71,7 +71,7 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
     chartOnly: false,
     noTimeScale: false,
   };
-  const miniIframeSrc = `https://www.tradingview-widget.com/embed-widget/mini-symbol-overview/#${encodeURIComponent(
+  const miniIframeSrc = `https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#${encodeURIComponent(
     JSON.stringify(miniSettings)
   )}`;
 
@@ -86,7 +86,7 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
     locale: "en",
     colorTheme: theme,
   };
-  const taIframeSrc = `https://www.tradingview-widget.com/embed-widget/technical-analysis/#${encodeURIComponent(
+  const taIframeSrc = `https://s.tradingview.com/embed-widget/technical-analysis/?locale=en#${encodeURIComponent(
     JSON.stringify(taSettings)
   )}`;
 
@@ -98,9 +98,11 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
     colorTheme: theme,
     locale: "en",
   };
-  const forexIframeSrc = `https://www.tradingview-widget.com/embed-widget/forex-cross-rates/#${encodeURIComponent(
+  const forexIframeSrc = `https://s.tradingview.com/embed-widget/forex-cross-rates/?locale=en#${encodeURIComponent(
     JSON.stringify(forexSettings)
   )}`;
+
+  const widgetBgColor = theme === "dark" ? "#131722" : "#ffffff";
 
   return (
     <div key={`tv-widgets-${theme}-${currentSymbol}`} className="space-y-3">
@@ -129,16 +131,19 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">1M Trend</span>
           </div>
-          {mounted && (
-            <iframe
-              src={miniIframeSrc}
-              width="100%"
-              height="220"
-              style={{ border: "none", borderRadius: "10px", display: "block" }}
-              scrolling="no"
-              title="TradingView Mini Chart"
-            />
-          )}
+          <div className="w-full rounded-xl overflow-hidden" style={{ backgroundColor: widgetBgColor, height: 220 }}>
+            {mounted && (
+              <iframe
+                key={`mini-${theme}-${currentSymbol}`}
+                src={miniIframeSrc}
+                width="100%"
+                height="220"
+                style={{ border: "none", borderRadius: "10px", display: "block", backgroundColor: widgetBgColor }}
+                scrolling="no"
+                title="TradingView Mini Chart"
+              />
+            )}
+          </div>
         </div>
 
         {/* Card 2: Market Sentiment Gauge */}
@@ -150,19 +155,22 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">1D Signals</span>
           </div>
-          {mounted && (
-            <iframe
-              src={taIframeSrc}
-              width="100%"
-              height="220"
-              style={{ border: "none", borderRadius: "10px", display: "block" }}
-              scrolling="no"
-              title="TradingView Technical Analysis"
-            />
-          )}
+          <div className="w-full rounded-xl overflow-hidden" style={{ backgroundColor: widgetBgColor, height: 220 }}>
+            {mounted && (
+              <iframe
+                key={`ta-${theme}-${currentSymbol}`}
+                src={taIframeSrc}
+                width="100%"
+                height="220"
+                style={{ border: "none", borderRadius: "10px", display: "block", backgroundColor: widgetBgColor }}
+                scrolling="no"
+                title="TradingView Technical Analysis"
+              />
+            )}
+          </div>
         </div>
 
-        {/* Card 3: Global Fiat Cross Rates */}
+        {/* Card 3: Fiat Cross Rates */}
         <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] shadow-xs dark:shadow-xl flex flex-col justify-between overflow-hidden">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -171,16 +179,19 @@ export default function P2PTradingViewWidgets({ asset = "BTC" }: P2PTradingViewW
             </div>
             <span className="text-[10px] font-mono text-slate-400">Interbank</span>
           </div>
-          {mounted && (
-            <iframe
-              src={forexIframeSrc}
-              width="100%"
-              height="220"
-              style={{ border: "none", borderRadius: "10px", display: "block" }}
-              scrolling="no"
-              title="TradingView Forex Rates"
-            />
-          )}
+          <div className="w-full rounded-xl overflow-hidden" style={{ backgroundColor: widgetBgColor, height: 220 }}>
+            {mounted && (
+              <iframe
+                key={`forex-${theme}`}
+                src={forexIframeSrc}
+                width="100%"
+                height="220"
+                style={{ border: "none", borderRadius: "10px", display: "block", backgroundColor: widgetBgColor }}
+                scrolling="no"
+                title="TradingView Forex Cross Rates"
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
