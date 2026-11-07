@@ -21,6 +21,7 @@ import LiveTicker from "@/components/landing/LiveTicker";
 import Footer from "@/components/landing/Footer";
 import { getPlatformStatus } from "@/lib/systemStatus";
 import MaintenanceScreen from "@/components/common/MaintenanceScreen";
+import P2PTradingViewWidgets from "@/components/trading/P2PTradingViewWidgets";
 
 interface P2POffer {
   id: string;
@@ -181,6 +182,9 @@ export default function P2PCryptoTradingPage() {
             <span>100% Non-Custodial Direct Settlement Protected</span>
           </div>
         </div>
+
+        {/* TradingView Market Intelligence Bar */}
+        <P2PTradingViewWidgets asset={assetFilter} />
 
         {/* Offers Table */}
         <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0c1222]/80 border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl overflow-hidden p-5 sm:p-6 space-y-4 shadow-xs dark:shadow-xl">
