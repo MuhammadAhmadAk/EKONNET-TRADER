@@ -79,6 +79,7 @@ export async function getUsers(): Promise<User[]> {
         return dbUsers.map(u => ({
           id: u.id,
           username: u.username,
+          password: u.password,
           fullName: u.fullName,
           role: u.role,
           emails: u.emails || [u.email],
