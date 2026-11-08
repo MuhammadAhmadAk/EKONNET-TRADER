@@ -6,14 +6,11 @@ import {
   Upload, 
   RefreshCw, 
   CheckCircle2, 
-  AlertTriangle, 
-  Sparkles, 
-  UserCheck, 
+  X, 
   RotateCcw,
-  Zap,
-  ShieldCheck,
-  Loader2,
-  ScanFace
+  Check,
+  AlertCircle,
+  UserCheck
 } from "lucide-react";
 
 interface LiveSelfieScannerProps {
@@ -25,148 +22,185 @@ export default function LiveSelfieScanner({
   value,
   onChange
 }: LiveSelfieScannerProps) {
-  const [mode, setMode] = useState<"camera" | "upload">("camera");
-  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [cameraFacing, setCameraFacing] = useState<"user" | "environment">("user");
   const [cameraError, setCameraError] = useState<string>("");
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [flashActive, setFlashActive] = useState(false);
+  const [capturedPreview, setCapturedPreview] = useState<string | null>(null);
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const countdownTimerRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const timerRef = useRef<any>(null);
 
   // Stop camera helper
   const stopCamera = useCallback(() => {
-    if (countdownTimerRef.current) {
-      clearInterval(countdownTimerRef.current);
-      countdownTimerRef.current = null;
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
     setCountdown(null);
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach((track) => {
+        try { track.stop(); } catch (e) {}
+      });
       streamRef.current = null;
     }
-    setIsCameraActive(false);
   }, []);
 
-  // Start camera helper (Front facing for selfie)
-  const startCamera = useCallback(async () => {
+  // Start front selfie camera helper with multi-level fallbacks
+  const startCamera = useCallback(async (facing: "user" | "environment" = cameraFacing) => {
     stopCamera();
     setCameraError("");
-    try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Camera API is not supported by your browser. Please use the Upload Photo option.");
-      }
+    setIsStartingCamera(true);
 
-      const constraints: MediaStreamConstraints = {
+    if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setCameraError("Camera is not supported on this browser. Please use the 'Upload Selfie from Gallery' option.");
+      setIsStartingCamera(false);
+      return;
+    }
+
+    let stream: MediaStream | null = null;
+
+    // Attempt 1: HD user/front camera
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
-          facingMode: { ideal: "user" },
+          facingMode: { ideal: facing },
           width: { ideal: 1280 },
           height: { ideal: 720 }
         }
-      };
+      });
+    } catch (e1) {
+      // Attempt 2: Standard user facing
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { facingMode: facing }
+        });
+      } catch (e2) {
+        // Attempt 3: Any video device
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true
+          });
+        } catch (e3: any) {
+          console.warn("Selfie camera start failed:", e3);
+          setCameraError(e3.message || "Could not access front camera. Please allow camera permissions or upload a photo.");
+          setIsStartingCamera(false);
+          return;
+        }
+      }
+    }
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    if (stream) {
       streamRef.current = stream;
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(() => {});
+        videoRef.current.play().catch((err) => console.warn("Video play error:", err));
       }
-      setIsCameraActive(true);
-    } catch (err: any) {
-      console.warn("Selfie camera start error:", err);
-      setCameraError(err.message || "Could not access front camera. Please allow camera permissions or upload a selfie file.");
-      setIsCameraActive(false);
     }
-  }, [stopCamera]);
+    setIsStartingCamera(false);
+  }, [cameraFacing, stopCamera]);
 
+  // When scanner modal opens, automatically start camera
   useEffect(() => {
+    if (isScannerOpen) {
+      setCapturedPreview(null);
+      startCamera(cameraFacing);
+    } else {
+      stopCamera();
+    }
     return () => {
       stopCamera();
     };
-  }, [stopCamera]);
+  }, [isScannerOpen, cameraFacing, startCamera, stopCamera]);
 
-  // Analyze selfie with Python KYC engine
-  const analyzeSelfieWithPythonEngine = async (dataUrl: string) => {
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
-    try {
-      const res = await fetch("/api/kyc/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "selfie",
-          image: dataUrl
-        })
-      });
-      const json = await res.json();
-      if (json.success && json.data) {
-        setAnalysisResult(json.data);
-      }
-    } catch (err) {
-      console.warn("Selfie analysis error:", err);
-    } finally {
-      setIsAnalyzing(false);
+  // Ensure stream attaches as soon as the video element mounts
+  const handleVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (node && streamRef.current && node.srcObject !== streamRef.current) {
+      node.srcObject = streamRef.current;
+      node.play().catch((err) => console.warn("Ref play error:", err));
     }
+  }, []);
+
+  // Toggle front vs rear camera
+  const toggleCameraFacing = () => {
+    const nextFacing = cameraFacing === "user" ? "environment" : "user";
+    setCameraFacing(nextFacing);
+    startCamera(nextFacing);
   };
 
-  // Perform frame snapshot
-  const executeSnapshot = () => {
+  // Capture current frame from video stream
+  const handleCapture = () => {
     if (!videoRef.current) return;
-    setIsCapturing(true);
-    setFlashActive(true);
-
     try {
       const video = videoRef.current;
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth || 720;
-      canvas.height = video.videoHeight || 720;
+      canvas.height = video.videoHeight || 960;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        // Mirror horizontally for natural selfie view
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
+        // Mirror horizontally if user facing
+        if (cameraFacing === "user") {
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+        }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
         const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-        onChange(dataUrl);
+        setCapturedPreview(dataUrl);
         stopCamera();
-        analyzeSelfieWithPythonEngine(dataUrl);
       }
     } catch (e) {
-      console.error("Selfie capture error:", e);
-    } finally {
-      setTimeout(() => setFlashActive(false), 200);
-      setIsCapturing(false);
-      setCountdown(null);
+      console.error("Selfie frame capture error:", e);
     }
   };
 
-  // Start 3-second auto countdown
-  const triggerCountdownCapture = () => {
+  // Optional 3-second countdown capture
+  const handleCountdownCapture = () => {
     if (countdown !== null) return;
-    let count = 3;
-    setCountdown(count);
-
-    countdownTimerRef.current = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setCountdown(count);
-      } else {
-        clearInterval(countdownTimerRef.current);
-        countdownTimerRef.current = null;
-        executeSnapshot();
-      }
+    setCountdown(3);
+    timerRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+          handleCapture();
+          return null;
+        }
+        return prev - 1;
+      });
     }, 1000);
   };
 
-  // File upload handler
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Confirm and use captured photo
+  const handleConfirmCaptured = () => {
+    if (capturedPreview) {
+      onChange(capturedPreview);
+      setIsScannerOpen(false);
+      setCapturedPreview(null);
+    }
+  };
+
+  // Retake in modal
+  const handleRetakeInModal = () => {
+    setCapturedPreview(null);
+    startCamera(cameraFacing);
+  };
+
+  // Close scanner modal
+  const handleCloseScanner = () => {
+    stopCamera();
+    setIsScannerOpen(false);
+    setCapturedPreview(null);
+  };
+
+  // Handle standard file upload
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
@@ -175,252 +209,257 @@ export default function LiveSelfieScanner({
     }
     const reader = new FileReader();
     reader.onload = () => {
-      const dataUrl = reader.result as string;
-      onChange(dataUrl);
-      analyzeSelfieWithPythonEngine(dataUrl);
+      onChange(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRetake = () => {
-    onChange("");
-    setAnalysisResult(null);
-    if (mode === "camera") {
-      startCamera();
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Header and Mode Switcher */}
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
-            Live Facial Biometric Verification
-          </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400">
-            Real-time liveness check with direct lighting
-          </span>
-        </div>
+    <div className="space-y-3">
+      {/* Hidden file input with selfie front capture attribute */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
-        {!value && (
-          <div className="inline-flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] font-semibold">
-            <button
-              type="button"
-              onClick={() => {
-                setMode("camera");
-                startCamera();
-              }}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
-                mode === "camera"
-                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              <Camera className="w-3 h-3" />
-              <span>Biometric Oval</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMode("upload");
-                stopCamera();
-              }}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
-                mode === "upload"
-                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              <Upload className="w-3 h-3" />
-              <span>Upload Photo</span>
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* CASE 1: Selfie Captured */}
+      {/* STATE 1: Already Captured Selfie Preview */}
       {value ? (
-        <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4 space-y-4">
-          <div className="relative rounded-2xl overflow-hidden bg-black/60 border border-slate-200 dark:border-white/10 flex items-center justify-center max-h-64">
+        <div className="p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 space-y-3 text-center">
+          <div className="relative inline-block mx-auto rounded-full p-1 bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-md">
             <img 
               src={value} 
-              alt="Live Selfie" 
-              className="max-h-60 w-auto object-cover rounded-xl shadow-md"
+              alt="Selfie Preview" 
+              className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full"
             />
-            <div className="absolute top-3 right-3 bg-emerald-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md flex items-center gap-1 shadow-lg">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Biometric Selfie Captured</span>
+            <div className="absolute bottom-1 right-1 bg-emerald-500 text-white p-1 rounded-full shadow">
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
 
-          {/* Real-time Python Biometric Telemetry */}
-          {isAnalyzing ? (
-            <div className="p-3.5 rounded-2xl bg-orange-500/5 border border-orange-500/20 flex items-center gap-3 text-xs text-orange-600 dark:text-orange-400">
-              <Loader2 className="w-4 h-4 animate-spin shrink-0 text-orange-500" />
-              <span>Ekonnet Python Engine checking facial landmarks & single-human liveness...</span>
-            </div>
-          ) : analysisResult ? (
-            <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 space-y-2.5">
-              <div className="flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                <span className="flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-emerald-500" />
-                  <span>Biometric Verification: APPROVED</span>
-                </span>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
-                  Confidence {analysisResult.confidence_score || 96}%
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 dark:text-slate-400 pt-1 border-t border-emerald-500/10">
-                <div>• Face Detection: <strong className="text-slate-900 dark:text-white">Single Live Human</strong></div>
-                <div>• Alignment: <strong className="text-slate-900 dark:text-white">{analysisResult.centering || "Optimal Centered"}</strong></div>
-                <div>• Distance: <strong className="text-slate-900 dark:text-white">{analysisResult.distance || "Optimal"}</strong></div>
-                <div>• Lighting: <strong className="text-slate-900 dark:text-white">{analysisResult.lighting || "Optimal"}</strong></div>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Action buttons */}
-          <div className="flex items-center justify-between pt-1">
-            <button
-              type="button"
-              onClick={handleRetake}
-              className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 transition"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Retake Selfie</span>
-            </button>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-              ✓ Ready for Final Submission
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-200/80 dark:border-white/10">
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <UserCheck className="w-4 h-4" />
+              <span>Face Biometric Verified</span>
             </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                className="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline px-3 py-1.5 rounded-lg bg-orange-500/10 flex items-center gap-1"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Retake Selfie</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:underline px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center gap-1"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload File</span>
+              </button>
+            </div>
           </div>
-        </div>
-      ) : mode === "camera" ? (
-        /* CASE 2: Professional Biometric Oval Viewfinder */
-        <div className="relative rounded-3xl overflow-hidden bg-black border border-orange-500/30 shadow-2xl">
-          {flashActive && (
-            <div className="absolute inset-0 bg-white z-50 pointer-events-none animate-ping opacity-90" />
-          )}
-
-          {isCameraActive ? (
-            <div className="relative w-full aspect-square sm:aspect-[4/3] bg-black flex items-center justify-center overflow-hidden">
-              <video
-                ref={videoRef}
-                playsInline
-                autoPlay
-                muted
-                className="w-full h-full object-cover scale-x-[-1]"
-              />
-
-              {/* Biometric Oval Cutout Mask */}
-              <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                <div className="relative w-52 sm:w-60 h-64 sm:h-72 rounded-[50%] border-2 border-dashed border-orange-400/90 shadow-[0_0_0_9999px_rgba(0,0,0,0.65)] flex items-center justify-center">
-                  
-                  {/* Subtle alignment crosshair / dots */}
-                  <div className="absolute w-2 h-2 rounded-full bg-orange-400/50 -top-1" />
-                  <div className="absolute w-2 h-2 rounded-full bg-orange-400/50 -bottom-1" />
-                  <div className="absolute w-2 h-2 rounded-full bg-orange-400/50 -left-1" />
-                  <div className="absolute w-2 h-2 rounded-full bg-orange-400/50 -right-1" />
-
-                  {/* Pulsing ring */}
-                  <div className="absolute inset-0 rounded-[50%] border border-cyan-400/40 animate-ping opacity-25" />
-
-                  {/* Countdown overlay if active */}
-                  {countdown !== null && (
-                    <div className="w-20 h-20 rounded-full bg-orange-500/90 text-white font-black text-4xl flex items-center justify-center shadow-2xl animate-bounce">
-                      {countdown}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Top Guidance Banner */}
-              <div className="absolute top-3 inset-x-3 text-center pointer-events-none z-20">
-                <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-bold text-orange-300 border border-orange-500/30 shadow">
-                  Position your face inside the biometric oval & look straight
-                </span>
-              </div>
-
-              {/* Bottom Controls */}
-              <div className="absolute bottom-4 inset-x-4 flex items-center justify-center gap-3 z-20">
-                {/* 3-Second Auto Countdown Trigger */}
-                <button
-                  type="button"
-                  onClick={triggerCountdownCapture}
-                  disabled={isCapturing || countdown !== null}
-                  className="px-5 py-2.5 rounded-full bg-black/70 hover:bg-black/90 backdrop-blur-md text-orange-300 border border-orange-500/40 text-xs font-bold shadow-lg transition"
-                >
-                  {countdown !== null ? `Capturing in ${countdown}s...` : "⏱ 3s Timer"}
-                </button>
-
-                {/* Instant Snap Button */}
-                <button
-                  type="button"
-                  onClick={executeSnapshot}
-                  disabled={isCapturing}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-black text-xs flex items-center gap-2 shadow-xl shadow-orange-500/40 active:scale-95 transition"
-                >
-                  <Zap className="w-4 h-4 fill-white" />
-                  <span>SNAP SELFIE</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            /* Trigger Camera View */
-            <div className="p-8 text-center space-y-3 bg-gradient-to-b from-slate-900 to-black text-white">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 shadow-inner">
-                <ScanFace className="w-7 h-7 text-orange-400 animate-pulse" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-white">Live Facial Biometric Verification</h4>
-                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                  Click below to open your front camera with biometric face oval guidance and live human detection.
-                </p>
-              </div>
-              {cameraError && (
-                <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2 max-w-sm mx-auto text-left">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{cameraError}</span>
-                </div>
-              )}
-              <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center items-center">
-                <button
-                  type="button"
-                  onClick={() => startCamera()}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-orange-500/30 transition"
-                >
-                  <Camera className="w-4 h-4" />
-                  <span>Start Live Face Camera</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("upload")}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 font-semibold text-xs transition"
-                >
-                  Upload Selfie File
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
-        /* CASE 3: Upload Selfie Dropzone */
-        <div className="relative border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl p-6 text-center hover:border-orange-500 transition cursor-pointer bg-slate-50/50 dark:bg-black/20">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="absolute inset-0 opacity-0 cursor-pointer"
-          />
-          <div className="space-y-2 py-2">
-            <Upload className="w-8 h-8 mx-auto text-orange-500" />
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-              Choose Direct Face Photo
-            </span>
-            <span className="text-[10px] text-slate-400 block">
-              Good lighting, no sunglasses or caps. Verified by Python CV face detector.
-            </span>
+        /* STATE 2: Empty Card with Big Full Camera Trigger */
+        <div className="p-6 rounded-xl border-2 border-dashed border-slate-200 dark:border-white/15 bg-slate-50/70 dark:bg-black/20 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-orange-500/20 to-rose-500/20 border border-orange-500/40 flex items-center justify-center text-orange-500 shadow-sm">
+            <Camera className="w-8 h-8" />
           </div>
+
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              Take a Clear Facial Selfie
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+              Button dabane par poora front camera biometric oval guide ke saath open ho jayega.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+            {/* Primary Action: Open Full Selfie Camera */}
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 transition"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Open Selfie Camera</span>
+            </button>
+
+            {/* Secondary Action: Upload from Gallery */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full sm:w-auto px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Upload from Gallery</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          FULL-SCREEN IMMERSIVE PORTRAIT SELFIE CAMERA MODAL (NOT JUST A CARD)
+      ========================================================================= */}
+      {isScannerOpen && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between">
+          
+          {/* Top Control Strip */}
+          <div className="relative z-20 px-4 py-3.5 bg-gradient-to-b from-black/90 to-transparent flex items-center justify-between text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-orange-400">
+                Face Biometric Verification
+              </span>
+              <span className="text-[11px] text-slate-300">• Full Selfie Camera</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Flip camera */}
+              {!capturedPreview && (
+                <button
+                  type="button"
+                  onClick={toggleCameraFacing}
+                  className="p-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white transition"
+                  title="Switch Camera"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              )}
+              {/* Close scanner */}
+              <button
+                type="button"
+                onClick={handleCloseScanner}
+                className="p-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white transition"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Central Full Portrait Viewport */}
+          <div className="relative flex-1 flex items-center justify-center overflow-hidden bg-black">
+            {capturedPreview ? (
+              /* Review Captured Snapshot */
+              <div className="relative max-h-full max-w-full p-4 flex flex-col items-center justify-center">
+                <img
+                  src={capturedPreview}
+                  alt="Captured selfie"
+                  className="max-h-[70vh] w-auto object-contain rounded-2xl border border-white/20 shadow-2xl"
+                />
+                <span className="mt-3 text-xs text-white/90 font-medium">
+                  Selfie check: Kiya chehra bilkul saaf aur seedha dikh raha hai?
+                </span>
+              </div>
+            ) : cameraError ? (
+              /* Error State */
+              <div className="p-6 text-center space-y-3 max-w-xs text-white">
+                <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
+                <p className="text-xs text-slate-300">{cameraError}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCloseScanner();
+                    fileInputRef.current?.click();
+                  }}
+                  className="px-4 py-2 rounded-lg bg-orange-500 text-white text-xs font-bold"
+                >
+                  Choose from Gallery
+                </button>
+              </div>
+            ) : (
+              /* Live Video Viewfinder with Portrait Face Biometric Oval */
+              <div className="relative w-full h-full flex items-center justify-center">
+                <video
+                  ref={handleVideoRef}
+                  playsInline
+                  autoPlay
+                  muted
+                  className={`w-full h-full object-cover ${cameraFacing === "user" ? "scale-x-[-1]" : ""}`}
+                />
+
+                {/* Biometric Face Oval Guide (Vertical / Human Head Shape) */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-6">
+                  <div className="relative w-64 sm:w-72 h-80 sm:h-92 rounded-[50%] border-2 border-dashed border-orange-400 shadow-[0_0_0_9999px_rgba(0,0,0,0.65)] flex items-center justify-center">
+                    
+                    {/* Pulsing Target Ring */}
+                    <div className="absolute inset-0 rounded-[50%] border border-cyan-400/40 animate-ping opacity-25" />
+
+                    {/* Countdown Overlay */}
+                    {countdown !== null && (
+                      <div className="w-20 h-20 rounded-full bg-orange-500 text-white font-black text-4xl flex items-center justify-center shadow-2xl animate-bounce">
+                        {countdown}
+                      </div>
+                    )}
+
+                    <div className="absolute -bottom-8 inset-x-0 text-center">
+                      <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-bold text-orange-300 border border-orange-500/40">
+                        Position face inside oval &amp; look directly at camera
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Action Bar */}
+          <div className="relative z-20 p-5 bg-gradient-to-t from-black/95 to-transparent flex items-center justify-center gap-4">
+            {capturedPreview ? (
+              /* Actions after capturing */
+              <div className="flex items-center gap-3 w-full max-w-sm">
+                <button
+                  type="button"
+                  onClick={handleRetakeInModal}
+                  className="flex-1 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Retake Selfie</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmCaptured}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/30 transition"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Use This Selfie</span>
+                </button>
+              </div>
+            ) : (
+              /* Shutter Controls */
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={handleCountdownCapture}
+                  disabled={isStartingCamera || !!cameraError || countdown !== null}
+                  className="px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-semibold backdrop-blur-md transition"
+                >
+                  3s Timer
+                </button>
+
+                {/* Main Shutter Button */}
+                <button
+                  type="button"
+                  onClick={handleCapture}
+                  disabled={isStartingCamera || !!cameraError || countdown !== null}
+                  className="w-18 h-18 rounded-full border-4 border-white/80 bg-gradient-to-tr from-orange-500 to-rose-500 p-1 flex items-center justify-center shadow-2xl active:scale-95 transition disabled:opacity-50"
+                >
+                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-orange-600">
+                    <Camera className="w-6 h-6" />
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
         </div>
       )}
     </div>

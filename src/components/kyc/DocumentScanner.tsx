@@ -6,13 +6,10 @@ import {
   Upload, 
   RefreshCw, 
   CheckCircle2, 
-  AlertTriangle, 
-  Sparkles, 
-  Scan, 
+  X, 
   RotateCcw,
-  Zap,
-  ShieldCheck,
-  Loader2
+  Check,
+  AlertCircle
 } from "lucide-react";
 
 interface DocumentScannerProps {
@@ -32,108 +29,115 @@ export default function DocumentScanner({
   value,
   onChange
 }: DocumentScannerProps) {
-  const [mode, setMode] = useState<"camera" | "upload">("camera");
-  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("environment");
   const [cameraError, setCameraError] = useState<string>("");
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [flashActive, setFlashActive] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [capturedPreview, setCapturedPreview] = useState<string | null>(null);
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Stop camera helper
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach((track) => {
+        try { track.stop(); } catch (e) {}
+      });
       streamRef.current = null;
     }
-    setIsCameraActive(false);
   }, []);
 
-  // Start camera helper
+  // Start camera helper with multi-level mobile browser fallbacks
   const startCamera = useCallback(async (facing: "environment" | "user" = cameraFacing) => {
     stopCamera();
     setCameraError("");
-    try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Camera API is not supported by your browser. Please use the Upload Photo option.");
-      }
+    setIsStartingCamera(true);
 
-      const constraints: MediaStreamConstraints = {
+    if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setCameraError("Camera is not supported on this browser. Please use the 'Upload from Gallery' option.");
+      setIsStartingCamera(false);
+      return;
+    }
+
+    let stream: MediaStream | null = null;
+
+    // Attempt 1: High-res environment camera
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
           facingMode: { ideal: facing },
           width: { ideal: 1920 },
           height: { ideal: 1080 }
         }
-      };
+      });
+    } catch (e1) {
+      // Attempt 2: Standard resolution
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { facingMode: facing }
+        });
+      } catch (e2) {
+        // Attempt 3: Any video device
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true
+          });
+        } catch (e3: any) {
+          console.warn("All camera attempts failed:", e3);
+          setCameraError(e3.message || "Could not access camera. Please allow camera permissions or upload a photo.");
+          setIsStartingCamera(false);
+          return;
+        }
+      }
+    }
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    if (stream) {
       streamRef.current = stream;
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(() => {});
+        videoRef.current.play().catch((err) => console.warn("Video play error:", err));
       }
-      setIsCameraActive(true);
-    } catch (err: any) {
-      console.warn("Camera start error:", err);
-      setCameraError(err.message || "Could not access camera. Please allow camera permissions or upload an image file.");
-      setIsCameraActive(false);
     }
+    setIsStartingCamera(false);
   }, [cameraFacing, stopCamera]);
 
-  // Clean up stream on unmount
+  // When scanner modal opens, automatically start camera
   useEffect(() => {
+    if (isScannerOpen) {
+      setCapturedPreview(null);
+      startCamera(cameraFacing);
+    } else {
+      stopCamera();
+    }
     return () => {
       stopCamera();
     };
-  }, [stopCamera]);
+  }, [isScannerOpen, cameraFacing, startCamera, stopCamera]);
 
-  // Switch camera facing
+  // Ensure stream attaches as soon as the video element mounts
+  const handleVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (node && streamRef.current && node.srcObject !== streamRef.current) {
+      node.srcObject = streamRef.current;
+      node.play().catch((err) => console.warn("Ref play error:", err));
+    }
+  }, []);
+
+  // Toggle front vs rear camera
   const toggleCameraFacing = () => {
     const nextFacing = cameraFacing === "environment" ? "user" : "environment";
     setCameraFacing(nextFacing);
-    if (isCameraActive) {
-      startCamera(nextFacing);
-    }
+    startCamera(nextFacing);
   };
 
-  // Analyze captured or uploaded image via Python KYC Engine
-  const analyzeImageWithPythonEngine = async (dataUrl: string) => {
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
-    try {
-      const res = await fetch("/api/kyc/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "document",
-          image: dataUrl,
-          documentType,
-          side
-        })
-      });
-      const json = await res.json();
-      if (json.success && json.data) {
-        setAnalysisResult(json.data);
-      }
-    } catch (err) {
-      console.warn("Analysis check error:", err);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  // Capture frame from video feed
-  const captureFrame = () => {
+  // Capture current frame from video stream
+  const handleCapture = () => {
     if (!videoRef.current) return;
-    setIsCapturing(true);
-    setFlashActive(true);
-
     try {
       const video = videoRef.current;
       const canvas = document.createElement("canvas");
@@ -143,20 +147,38 @@ export default function DocumentScanner({
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-        onChange(dataUrl);
+        setCapturedPreview(dataUrl);
         stopCamera();
-        analyzeImageWithPythonEngine(dataUrl);
       }
     } catch (e) {
       console.error("Frame capture error:", e);
-    } finally {
-      setTimeout(() => setFlashActive(false), 200);
-      setIsCapturing(false);
     }
   };
 
-  // Handle standard file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // User accepts captured photo
+  const handleConfirmCaptured = () => {
+    if (capturedPreview) {
+      onChange(capturedPreview);
+      setIsScannerOpen(false);
+      setCapturedPreview(null);
+    }
+  };
+
+  // User retakes photo
+  const handleRetakeInModal = () => {
+    setCapturedPreview(null);
+    startCamera(cameraFacing);
+  };
+
+  // Close scanner modal
+  const handleCloseScanner = () => {
+    stopCamera();
+    setIsScannerOpen(false);
+    setCapturedPreview(null);
+  };
+
+  // Handle standard file upload from disk or gallery
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
@@ -165,254 +187,246 @@ export default function DocumentScanner({
     }
     const reader = new FileReader();
     reader.onload = () => {
-      const dataUrl = reader.result as string;
-      onChange(dataUrl);
-      analyzeImageWithPythonEngine(dataUrl);
+      onChange(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRetake = () => {
-    onChange("");
-    setAnalysisResult(null);
-    if (mode === "camera") {
-      startCamera();
-    }
-  };
-
   return (
-    <div className="space-y-3">
-      {/* Label and Subheading */}
+    <div className="space-y-2.5">
+      {/* Hidden native file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {/* Label and Sub-header */}
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
             {label}
           </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400">
             {subLabel}
           </span>
         </div>
-
-        {/* Mode Toggle Pills (Live Scanner vs Upload) */}
-        {!value && (
-          <div className="inline-flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] font-semibold">
-            <button
-              type="button"
-              onClick={() => {
-                setMode("camera");
-                startCamera();
-              }}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
-                mode === "camera"
-                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              <Camera className="w-3 h-3" />
-              <span>Live Scanner</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMode("upload");
-                stopCamera();
-              }}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 ${
-                mode === "upload"
-                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              <Upload className="w-3 h-3" />
-              <span>Upload File</span>
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* CASE 1: Document Already Captured / Selected */}
+      {/* STATE 1: Already Captured / Uploaded Photo Preview Card */}
       {value ? (
-        <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-3.5 space-y-3">
-          <div className="relative rounded-xl overflow-hidden bg-black/60 border border-slate-200 dark:border-white/10 flex items-center justify-center max-h-56">
+        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 space-y-3">
+          <div className="relative rounded-lg overflow-hidden bg-black/60 border border-slate-200 dark:border-white/10 flex items-center justify-center max-h-56">
             <img 
               src={value} 
               alt={label} 
-              className="max-h-52 w-auto object-contain rounded-lg shadow-md"
+              className="max-h-52 w-auto object-contain rounded-md shadow-sm"
             />
-            <div className="absolute top-2 right-2 bg-emerald-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md flex items-center gap-1 shadow">
+            <div className="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
               <CheckCircle2 className="w-3 h-3" />
               <span>Captured</span>
             </div>
           </div>
 
-          {/* Real-time Python Engine Computer Vision Telemetry */}
-          {isAnalyzing ? (
-            <div className="p-3 rounded-xl bg-orange-500/5 border border-orange-500/20 flex items-center gap-2.5 text-xs text-orange-600 dark:text-orange-400">
-              <Loader2 className="w-4 h-4 animate-spin shrink-0 text-orange-500" />
-              <span>Ekonnet Python Engine analyzing document sharpness & edge alignment...</span>
-            </div>
-          ) : analysisResult ? (
-            <div className="p-3 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                  <span>Python Computer Vision Check: PASSED</span>
-                </span>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
-                  Clarity {analysisResult.clarity_score || 94}%
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 dark:text-slate-400 pt-1 border-t border-emerald-500/10">
-                <div>• Edge Detection: <strong className="text-slate-900 dark:text-white">{analysisResult.edges_aligned ? "Sharp Borders" : "Framing OK"}</strong></div>
-                <div>• Lighting: <strong className="text-slate-900 dark:text-white">{analysisResult.lighting_status || "Optimal"}</strong></div>
-                <div>• Resolution: <strong className="text-slate-900 dark:text-white font-mono">{analysisResult.resolution || "HD Ready"}</strong></div>
-                <div>• Mode: <strong className="text-slate-900 dark:text-white">Tier-1 Manual Ready</strong></div>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Action buttons */}
           <div className="flex items-center justify-between pt-1">
-            <button
-              type="button"
-              onClick={handleRetake}
-              className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 transition"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Retake / Change Photo</span>
-            </button>
-            <span className="text-[10px] text-slate-400 font-mono">
-              Ready for Submission
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <Check className="w-4 h-4" />
+              <span>Photo ready for verification</span>
             </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                className="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline px-2.5 py-1 rounded-lg bg-orange-500/10 flex items-center gap-1"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Retake</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:underline px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center gap-1"
+              >
+                <Upload className="w-3 h-3" />
+                <span>Upload File</span>
+              </button>
+            </div>
           </div>
         </div>
-      ) : mode === "camera" ? (
-        /* CASE 2: Professional Live Document Camera Scanner Viewfinder */
-        <div className="relative rounded-2xl overflow-hidden bg-black border border-orange-500/30 shadow-xl">
-          {/* Flash animation */}
-          {flashActive && (
-            <div className="absolute inset-0 bg-white z-50 pointer-events-none animate-ping opacity-90" />
-          )}
+      ) : (
+        /* STATE 2: Empty Card with Clean Actions */
+        <div className="p-4 rounded-xl border-2 border-dashed border-slate-200 dark:border-white/15 bg-slate-50/70 dark:bg-black/20 text-center space-y-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            {/* Primary Action: Open Full Live Scanner */}
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Scan with Camera</span>
+            </button>
 
-          {isCameraActive ? (
-            <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-black flex items-center justify-center overflow-hidden">
-              <video
-                ref={videoRef}
-                playsInline
-                autoPlay
-                muted
-                className="w-full h-full object-cover"
-              />
+            {/* Secondary Action: Upload from Disk / Gallery */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload from Gallery</span>
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-400">
+            Smart CNIC, Passport, ya Driving License ki saaf photo upload karein
+          </p>
+        </div>
+      )}
 
-              {/* Viewfinder Dark Mask with Rounded Card Cutout (1.58:1 Ratio) */}
-              <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-4">
-                <div className="relative w-full max-w-[90%] aspect-[1.58/1] rounded-2xl border-2 border-orange-500/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]">
-                  
-                  {/* Corner Reticles */}
-                  <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-orange-400 rounded-tl-lg" />
-                  <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-orange-400 rounded-tr-lg" />
-                  <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-orange-400 rounded-bl-lg" />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-orange-400 rounded-br-lg" />
+      {/* =========================================================================
+          FULL-SCREEN IMMERSIVE LIVE CAMERA SCANNER MODAL
+      ========================================================================= */}
+      {isScannerOpen && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between">
+          
+          {/* Top Control Strip */}
+          <div className="relative z-20 px-4 py-3.5 bg-gradient-to-b from-black/90 to-transparent flex items-center justify-between text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-orange-400">
+                {documentType.toUpperCase()} {side.toUpperCase()}
+              </span>
+              <span className="text-[11px] text-slate-300">• Scanner</span>
+            </div>
 
-                  {/* High-tech Animated Scanline Laser */}
-                  <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_8px_#22d3ee] animate-pulse top-1/2 -translate-y-1/2" />
-                  
-                  {/* Centered Guidance HUD Text */}
-                  <div className="absolute inset-x-0 bottom-2 text-center">
-                    <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-bold text-orange-300 border border-orange-500/30 shadow">
-                      Align entire {documentType.toUpperCase()} {side.toUpperCase()} inside frame
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Camera Controls Bar */}
-              <div className="absolute bottom-3 inset-x-3 flex items-center justify-between z-20">
+            <div className="flex items-center gap-2">
+              {/* Flip camera */}
+              {!capturedPreview && (
                 <button
                   type="button"
                   onClick={toggleCameraFacing}
-                  className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/20 transition shadow-lg"
-                  title="Switch Front/Rear Camera"
+                  className="p-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white transition"
+                  title="Switch Camera"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
-
-                {/* Main Shutter Button */}
-                <button
-                  type="button"
-                  onClick={captureFrame}
-                  disabled={isCapturing}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-black text-xs flex items-center gap-2 shadow-xl shadow-orange-500/40 active:scale-95 transition"
-                >
-                  <Zap className="w-4 h-4 fill-white" />
-                  <span>CAPTURE PHOTO</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={stopCamera}
-                  className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-slate-300 border border-white/20 text-[10px] font-bold"
-                >
-                  Pause
-                </button>
-              </div>
-            </div>
-          ) : (
-            /* Camera Inactive / Trigger Button */
-            <div className="p-8 text-center space-y-3 bg-gradient-to-b from-slate-900 to-black text-white">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 shadow-inner">
-                <Scan className="w-7 h-7 text-orange-400 animate-pulse" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-white">Institutional Document Scanner</h4>
-                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                  Click below to open your camera with automated card-boundary alignment and computer vision clarity check.
-                </p>
-              </div>
-              {cameraError && (
-                <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2 max-w-sm mx-auto text-left">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                  <span>{cameraError}</span>
-                </div>
               )}
-              <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center items-center">
+              {/* Close scanner */}
+              <button
+                type="button"
+                onClick={handleCloseScanner}
+                className="p-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white transition"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Central Camera Viewport / Preview */}
+          <div className="relative flex-1 flex items-center justify-center overflow-hidden bg-black">
+            {capturedPreview ? (
+              /* Review Captured Snapshot */
+              <div className="relative max-h-full max-w-full p-4 flex flex-col items-center justify-center">
+                <img
+                  src={capturedPreview}
+                  alt="Captured document"
+                  className="max-h-[70vh] w-auto object-contain rounded-xl border border-white/20 shadow-2xl"
+                />
+                <span className="mt-3 text-xs text-white/90 font-medium">
+                  Check photo clarity: Kiya tamam text saaf parha ja raha hai?
+                </span>
+              </div>
+            ) : cameraError ? (
+              /* Error State */
+              <div className="p-6 text-center space-y-3 max-w-xs text-white">
+                <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
+                <p className="text-xs text-slate-300">{cameraError}</p>
                 <button
                   type="button"
-                  onClick={() => startCamera()}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-orange-500/30 transition"
+                  onClick={() => {
+                    handleCloseScanner();
+                    fileInputRef.current?.click();
+                  }}
+                  className="px-4 py-2 rounded-lg bg-orange-500 text-white text-xs font-bold"
                 >
-                  <Camera className="w-4 h-4" />
-                  <span>Start Live Camera Scanner</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("upload")}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 font-semibold text-xs transition"
-                >
-                  Upload File Instead
+                  Choose from Gallery
                 </button>
               </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        /* CASE 3: Standard File Upload Dropzone */
-        <div className="relative border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl p-6 text-center hover:border-orange-500 transition cursor-pointer bg-slate-50/50 dark:bg-black/20">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="absolute inset-0 opacity-0 cursor-pointer"
-          />
-          <div className="space-y-2 py-2">
-            <Upload className="w-8 h-8 mx-auto text-orange-500" />
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-              Choose High-Resolution Document File
-            </span>
-            <span className="text-[10px] text-slate-400 block">
-              JPG, PNG, or WEBP up to 10MB. Document will be verified by Python CV engine.
-            </span>
+            ) : (
+              /* Live Video Viewfinder with Card Frame Guide */
+              <div className="relative w-full h-full flex items-center justify-center">
+                <video
+                  ref={handleVideoRef}
+                  playsInline
+                  autoPlay
+                  muted
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Card Outline Guide (1.58:1 Ratio) */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-4">
+                  <div className="relative w-full max-w-[92%] sm:max-w-md aspect-[1.58/1] rounded-xl border-2 border-orange-500/90 shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] flex items-center justify-center">
+                    
+                    {/* Corner Reticles */}
+                    <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-orange-400 rounded-tl-lg" />
+                    <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-orange-400 rounded-tr-lg" />
+                    <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-orange-400 rounded-bl-lg" />
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-orange-400 rounded-br-lg" />
+
+                    {/* Laser Alignment Line */}
+                    <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_8px_#22d3ee] animate-pulse" />
+
+                    <div className="absolute -bottom-8 inset-x-0 text-center">
+                      <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-bold text-orange-300 border border-orange-500/40">
+                        Align card completely inside this frame
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Bottom Action Bar */}
+          <div className="relative z-20 p-5 bg-gradient-to-t from-black/95 to-transparent flex items-center justify-center gap-4">
+            {capturedPreview ? (
+              /* Actions after capturing */
+              <div className="flex items-center gap-3 w-full max-w-sm">
+                <button
+                  type="button"
+                  onClick={handleRetakeInModal}
+                  className="flex-1 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Retake Photo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmCaptured}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/30 transition"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Use This Photo</span>
+                </button>
+              </div>
+            ) : (
+              /* Shutter Button */
+              <button
+                type="button"
+                onClick={handleCapture}
+                disabled={isStartingCamera || !!cameraError}
+                className="w-18 h-18 rounded-full border-4 border-white/80 bg-gradient-to-tr from-orange-500 to-rose-500 p-1 flex items-center justify-center shadow-2xl active:scale-95 transition disabled:opacity-50"
+              >
+                <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-orange-600">
+                  <Camera className="w-6 h-6" />
+                </div>
+              </button>
+            )}
+          </div>
+
         </div>
       )}
     </div>
