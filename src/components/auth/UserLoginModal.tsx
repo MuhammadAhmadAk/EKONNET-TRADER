@@ -301,30 +301,30 @@ export default function UserLoginModal({ isOpen, onClose, onSuccess }: UserLogin
 
           </form>
 
-          {/* Quick Demo Pre-fill Links for Testing */}
+          {/* Quick Demo Customer Accounts for Testing */}
           <div className="mt-6 pt-4 border-t border-slate-200/80 dark:border-white/10">
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-2 font-mono">Quick Test Accounts:</span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-2 font-mono">Quick Customer Test Accounts:</span>
             <div className="flex flex-wrap gap-2 text-[11px]">
               <button 
                 type="button"
-                onClick={() => fillQuickDemo("master_admin", "Ekonnet2026!")}
+                onClick={() => fillQuickDemo("alex_trader", "Ekonnet2026!")}
                 className="px-2.5 py-1 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 transition font-mono font-medium"
               >
-                Master Admin
+                Alex Vance (Individual)
               </button>
               <button 
                 type="button"
-                onClick={() => fillQuickDemo("manager_sarah", "Ekonnet2026!")}
+                onClick={() => fillQuickDemo("elena_crypto", "Ekonnet2026!")}
                 className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition font-mono font-medium"
               >
-                Management
+                Elena Rostova (Pro)
               </button>
               <button 
                 type="button"
-                onClick={() => fillQuickDemo("staff_alex", "Ekonnet2026!")}
+                onClick={() => fillQuickDemo("tariq_fx", "Ekonnet2026!")}
                 className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition font-mono font-medium"
               >
-                Staff (Alex)
+                Tariq FX (Institutional)
               </button>
             </div>
           </div>

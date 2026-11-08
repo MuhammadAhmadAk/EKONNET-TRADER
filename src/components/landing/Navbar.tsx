@@ -499,7 +499,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             ) : (
               <div className="hidden sm:flex items-center gap-2">
                 <Link
-                  href="/admin"
+                  href="/admin/login"
                   className="px-2.5 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-[11px] text-slate-600 dark:text-slate-300 font-semibold tracking-wide flex items-center gap-1.5 transition"
                   title="Enterprise Admin Management Console"
                 >
@@ -625,7 +625,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               • Security & 2FA Protocols
             </Link>
             <Link 
-              href="/admin" 
+              href="/admin/login" 
               className="block text-xs font-semibold text-orange-600 dark:text-orange-400 py-1.5 px-2 rounded-lg hover:bg-orange-50 dark:hover:bg-white/5"
               onClick={() => setMobileMenuOpen(false)}
             >

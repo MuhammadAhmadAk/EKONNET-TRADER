@@ -75,7 +75,7 @@ export default function Footer() {
           <div className="space-y-2.5">
             <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Governance & Auth</h4>
             <ul className="space-y-1.5 text-slate-600 dark:text-slate-400 text-xs">
-              <li><Link href="/admin" className="text-orange-600 dark:text-orange-400 hover:text-orange-700 font-semibold transition">Management Admin Portal</Link></li>
+              <li><Link href="/admin/login" className="text-orange-600 dark:text-orange-400 hover:text-orange-700 font-semibold transition">Management Admin Portal</Link></li>
               <li><a href="#security-protocols" className="hover:text-orange-500 transition">Terms & Conditions (Sec 35)</a></li>
               <li><a href="#security-protocols" className="hover:text-orange-500 transition">Privacy & AML Policy</a></li>
               <li><a href="#support-desk" className="hover:text-orange-500 transition">Gorelo AI Support Desk</a></li>

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Activity,
@@ -26,6 +27,8 @@ import {
   LogOut,
   Menu,
   Moon,
+  Sun,
+  Loader2,
   RefreshCw,
   Search,
   Server,
@@ -77,15 +80,62 @@ interface SystemService {
 }
 
 export default function AdminPortalPage() {
+  const router = useRouter();
   const [activeNav, setActiveNav] = useState<NavKey>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [userRoleFilter, setUserRoleFilter] = useState<string>("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [currentAdmin, setCurrentAdmin] = useState<any>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   
   // Platform state
   const [emergencyLockActive, setEmergencyLockActive] = useState(false);
   const [platformStatuses, setPlatformStatuses] = useState<TradingPlatformStatus[]>(INITIAL_PLATFORM_STATUSES);
+
+  useEffect(() => {
+    // 1. Theme sync
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "dark" : "light");
+
+    // 2. Administrative Authentication Guard
+    try {
+      const stored = localStorage.getItem("ekonnet_user");
+      if (!stored) {
+        router.push("/admin/login?error=unauthorized");
+        return;
+      }
+      const u = JSON.parse(stored);
+      if (u.role !== "master_admin" && u.role !== "management" && u.role !== "staff") {
+        router.push("/admin/login?error=restricted");
+        return;
+      }
+      setCurrentAdmin(u);
+      setIsAuthChecking(false);
+    } catch (e) {
+      router.push("/admin/login");
+    }
+  }, [router]);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    if (next === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("ekonnet_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("ekonnet_theme", "light");
+    }
+    window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: next } }));
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem("ekonnet_user");
+    window.dispatchEvent(new Event("auth-changed"));
+    router.push("/admin/login");
+  };
 
   React.useEffect(() => {
     setPlatformStatuses(INITIAL_PLATFORM_STATUSES.map(p => ({
@@ -274,8 +324,25 @@ export default function AdminPortalPage() {
   const pendingKycCount = users.filter((u) => u.kycStatus === "pending").length;
   const openTicketsCount = tickets.filter((t) => t.status.toLowerCase() === "open").length;
 
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] flex flex-col items-center justify-center p-6 select-none font-sans">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-xl shadow-orange-500/30 mb-4 animate-bounce">
+          <Layers className="w-7 h-7" />
+        </div>
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+          <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+          <span>Verifying Administrative Security Clearance Level 3+...</span>
+        </div>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-mono">
+          Ekonnet Proprietary Core Governance Engine
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-transparent text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 selection:bg-orange-500 selection:text-white">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-bottom-4">
@@ -290,19 +357,19 @@ export default function AdminPortalPage() {
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } transition-all duration-300 ease-in-out shrink-0 bg-slate-950/60 backdrop-blur-2xl border-r border-white/10 flex flex-col justify-between z-40 select-none`}
+        } transition-all duration-300 ease-in-out shrink-0 bg-white/95 dark:bg-[#0c1222]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 flex flex-col justify-between z-40 select-none`}
       >
         {/* Sidebar Header & Brand */}
         <div>
-          <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+          <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200/80 dark:border-white/10">
             <Link href="/" className="flex items-center gap-3 overflow-hidden">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
                 EK
               </div>
               {sidebarOpen && (
                 <div className="truncate">
                   <div className="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
-                    Ekonnet <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Root</span>
+                    Ekonnet <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Root</span>
                   </div>
                   <span className="text-[10px] text-slate-400 font-mono">v1.0.0 &bull; Cluster OK</span>
                 </div>
@@ -331,8 +398,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("overview")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "overview"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="Overview Dashboard"
               >
@@ -344,8 +411,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("telemetry")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "telemetry"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="System Telemetry"
               >
@@ -357,8 +424,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("reserves")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "reserves"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="5 Base Pairs Reserves"
               >
@@ -378,8 +445,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("users")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "users"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="User Accounts & RBAC"
               >
@@ -391,8 +458,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("kyc")}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "kyc"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="KYC Photo Verification"
               >
@@ -419,8 +486,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("permissions")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "permissions"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="Staff Permissions Matrix"
               >
@@ -432,8 +499,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("audit")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "audit"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="Immutable Audit Logs"
               >
@@ -453,8 +520,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("tickets")}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "tickets"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="Gorelo AI Support Tickets"
               >
@@ -463,7 +530,7 @@ export default function AdminPortalPage() {
                   {sidebarOpen && <span>Gorelo AI Tickets</span>}
                 </div>
                 {sidebarOpen && openTicketsCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500 text-white">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white">
                     {openTicketsCount}
                   </span>
                 )}
@@ -473,8 +540,8 @@ export default function AdminPortalPage() {
                 onClick={() => setActiveNav("settings")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                   activeNav === "settings"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
                 title="Platform Settings"
               >
@@ -486,24 +553,30 @@ export default function AdminPortalPage() {
         </div>
 
         {/* Sidebar Footer User Card */}
-        <div className="p-3 border-t border-white/10 bg-transparent">
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.03] border border-white/10">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
-              MA
+        <div className="p-3 border-t border-slate-200/80 dark:border-white/10 bg-transparent">
+          <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-sm">
+              {currentAdmin?.fullName?.charAt(0) || "A"}
             </div>
             {sidebarOpen && (
               <div className="flex-1 truncate">
-                <div className="text-xs font-bold text-white truncate">Muhammad Ahmad</div>
-                <div className="text-[10px] text-emerald-400 flex items-center gap-1 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Super Administrator
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  {currentAdmin?.fullName || "Muhammad Ahmad"}
+                </div>
+                <div className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-mono uppercase font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  {currentAdmin?.role?.replace('_', ' ') || "SUPER ADMIN"}
                 </div>
               </div>
             )}
             {sidebarOpen && (
-              <Link href="/" title="Exit to Public Trader" className="text-slate-400 hover:text-white p-1">
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
+              <button 
+                onClick={handleAdminLogout} 
+                title="Log Out of Administration" 
+                className="text-slate-400 hover:text-rose-500 p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             )}
           </div>
         </div>
@@ -515,21 +588,21 @@ export default function AdminPortalPage() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-transparent">
         
         {/* Top App Bar */}
-        <header className="h-16 border-b border-white/10 bg-slate-950/40 backdrop-blur-xl px-6 flex items-center justify-between shrink-0 z-30">
+        <header className="h-16 border-b border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c1222]/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between shrink-0 z-30 transition-colors">
           {/* Breadcrumb Trail */}
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-            <Link href="/" className="hover:text-white transition">Platform Root</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-            <span className="text-slate-300">Admin Console</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-            <span className="text-blue-400 capitalize font-semibold">{activeNav}</span>
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+            <Link href="/" className="hover:text-orange-500 transition">Platform Root</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
+            <span className="text-slate-700 dark:text-slate-300">Admin Console</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
+            <span className="text-orange-600 dark:text-orange-400 capitalize font-bold">{activeNav}</span>
           </div>
 
           {/* Quick Actions & Telemetry Badges */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-300">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
-              <span>Base Liquidity: <strong className="text-emerald-400 font-mono">$1,280,450</strong></span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300">
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              <span>Base Liquidity: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">$1,280,450</strong></span>
             </div>
 
             {/* Emergency Freeze Button */}
@@ -538,36 +611,59 @@ export default function AdminPortalPage() {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                 emergencyLockActive 
                   ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse" 
-                  : "bg-slate-800 hover:bg-rose-950 hover:text-rose-400 text-slate-300 border border-slate-700"
+                  : "bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700"
               }`}
               title="EMERGENCY Platform Freeze"
             >
               <AlertTriangle className="w-3.5 h-3.5" />
-              <span>{emergencyLockActive ? "LIFT FREEZE" : "EMERGENCY FREEZE"}</span>
+              <span className="hidden sm:inline">{emergencyLockActive ? "LIFT FREEZE" : "EMERGENCY FREEZE"}</span>
             </button>
 
+            {/* Theme Toggle Button */}
             <button
-              onClick={() => showToast("Cache flushed & secondary database mirror synchronized.")}
-              className="px-3 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-white/10 transition"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle theme"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
-              Flush Cache
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-700" />
+              )}
             </button>
+
+            {/* Administrator Profile Pill */}
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-500 to-rose-500 text-white font-bold flex items-center justify-center text-[10px] shadow-sm">
+                {currentAdmin?.fullName?.charAt(0) || "A"}
+              </div>
+              <div className="flex flex-col text-left leading-tight">
+                <span className="font-bold text-slate-900 dark:text-white text-[11px] truncate max-w-[120px]">
+                  {currentAdmin?.fullName || currentAdmin?.username || "Super Admin"}
+                </span>
+                <span className="text-[9px] text-orange-600 dark:text-orange-400 font-mono uppercase font-bold">
+                  {currentAdmin?.role?.replace('_', ' ') || "MASTER ADMIN"}
+                </span>
+              </div>
+            </div>
 
             <Link
               href="/"
-              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-blue-600/30 transition"
+              className="hidden sm:flex px-3 py-1.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold items-center gap-1.5 shadow-md shadow-orange-500/25 transition"
             >
               <Globe className="w-3.5 h-3.5" />
-              Public Site ↗
+              <span>Public Site ↗</span>
             </Link>
 
+            {/* Logout Management Button */}
             <button
-              onClick={() => showToast("All system alert monitors nominal.")}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition relative"
+              onClick={handleAdminLogout}
+              className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition"
+              title="Lock Terminal & Log Out"
             >
-              <Bell className="w-4 h-4" />
-              <span className="w-2 h-2 rounded-full bg-blue-500 absolute top-2 right-2"></span>
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </header>
@@ -598,10 +694,10 @@ export default function AdminPortalPage() {
             <div className="space-y-6 max-w-7xl mx-auto">
               {/* Stat Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
+                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>Total Registered Users</span>
-                    <Users className="w-4 h-4 text-blue-400" />
+                    <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div className="text-2xl font-black text-white font-mono">1,428</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
@@ -609,7 +705,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
+                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>24h Platform Volume</span>
                     <BarChart3 className="w-4 h-4 text-purple-400" />
@@ -620,7 +716,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
+                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>Pending KYC Verifications</span>
                     <FileCheck className="w-4 h-4 text-amber-400" />
@@ -631,7 +727,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-2">
+                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>System Health & Node Status</span>
                     <Server className="w-4 h-4 text-emerald-400" />
@@ -644,10 +740,10 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Service Cluster Health Matrix */}
-              <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
+              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-blue-400" />
+                    <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                     <span>Microservice Cluster & Secondary Node Status </span>
                   </h3>
                   <span className="text-xs text-slate-400 font-mono">Autoscaling Active</span>
@@ -655,7 +751,7 @@ export default function AdminPortalPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {services.map((svc) => (
-                    <div key={svc.name} className="p-4 rounded-2xl bg-white/[0.02] dark:bg-black/20 border border-white/10 space-y-2">
+                    <div key={svc.name} className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-xs font-bold text-white">{svc.name}</div>
@@ -675,7 +771,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Recent Audit Stream */}
-              <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
+              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
@@ -683,7 +779,7 @@ export default function AdminPortalPage() {
                   </h3>
                   <button 
                     onClick={() => setActiveNav("audit")}
-                    className="text-xs text-blue-400 hover:text-blue-300 font-semibold"
+                    className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-400 font-semibold"
                   >
                     View All Logs &rarr;
                   </button>
@@ -704,7 +800,7 @@ export default function AdminPortalPage() {
                     <tbody className="divide-y divide-white/5">
                       {auditLogs.slice(0, 5).map((log) => (
                         <tr key={log.id} className="hover:bg-white/[0.03] transition">
-                          <td className="py-2 px-3 text-blue-400 font-bold">{log.id}</td>
+                          <td className="py-2 px-3 text-orange-600 dark:text-orange-400 font-bold">{log.id}</td>
                           <td className="py-2 px-3 text-slate-400">{log.timestamp.split("T")[1]?.slice(0, 8)}</td>
                           <td className="py-2 px-3 text-white font-bold">{log.userId}</td>
                           <td className="py-2 px-3 text-slate-300">{log.actionType}</td>
@@ -735,14 +831,14 @@ export default function AdminPortalPage() {
                 </div>
                 <button
                   onClick={() => showToast("Health heartbeat ping dispatched to all 6 nodes.")}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Ping Nodes
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-white">Primary Node: VPS-Plesk-EU #01</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE MASTER</span>
@@ -755,10 +851,10 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-3">
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-white">Secondary Backup Node: VPS-Plesk-US #02</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">STANDBY REPLICA</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">STANDBY REPLICA</span>
                   </div>
                   <div className="space-y-2 text-xs font-mono text-slate-400">
                     <div className="flex justify-between"><span>Replication Latency:</span><span className="text-emerald-400 font-bold">18ms</span></div>
@@ -826,7 +922,7 @@ export default function AdminPortalPage() {
                       placeholder="Search EKON-ID, name, email..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 rounded-xl bg-white/[0.03] dark:bg-black/25 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 w-64"
+                      className="pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-64"
                     />
                   </div>
                   <select
@@ -843,7 +939,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Users Table */}
-              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden">
+              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead className="bg-white/[0.02] dark:bg-black/20 text-slate-400 uppercase text-[10px] font-mono border-b border-white/10">
@@ -893,7 +989,7 @@ export default function AdminPortalPage() {
                           <td className="py-3 px-4 text-right space-x-2">
                             <button
                               onClick={() => setSelectedNoteUser(u)}
-                              className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-[11px] text-blue-400 border border-blue-500/20 transition"
+                              className="px-2.5 py-1 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-[11px] text-orange-600 dark:text-orange-400 border border-orange-500/20 transition"
                             >
                               Notes
                             </button>
@@ -983,7 +1079,7 @@ export default function AdminPortalPage() {
               {/* Header and 4-Tier Badges */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/40 border border-white/10 backdrop-blur-xl">
                 <div>
-                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-2">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold mb-2">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>SECTION 27.[1] & 27.[2] 4-TIER ACCESS DELEGATION</span>
                   </div>
@@ -996,7 +1092,7 @@ export default function AdminPortalPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSaveStaffPermissions()}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/30 transition flex items-center space-x-2"
+                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-orange-500/25 transition flex items-center space-x-2"
                   >
                     <Check className="w-4 h-4" />
                     <span>Save All to MongoDB</span>
@@ -1011,10 +1107,10 @@ export default function AdminPortalPage() {
                   <div className="text-lg font-black text-white mt-1">1 Account</div>
                   <span className="text-[11px] text-purple-300 font-mono">EKON-000001 (Root)</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-blue-950/20 border border-blue-800/30">
-                  <span className="text-[10px] text-blue-400 uppercase font-bold tracking-wider block">Tier 2: Management</span>
+                <div className="p-4 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20">
+                  <span className="text-[10px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider block">Tier 2: Management</span>
                   <div className="text-lg font-black text-white mt-1">1 Sub-Admin</div>
-                  <span className="text-[11px] text-blue-300 font-mono">EKON-749201</span>
+                  <span className="text-[11px] text-orange-600 dark:text-orange-400 font-mono">EKON-749201</span>
                 </div>
                 <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-800/30">
                   <span className="text-[10px] text-cyan-400 uppercase font-bold tracking-wider block">Tier 3: Employee Staff</span>
@@ -1029,7 +1125,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Staff Accounts Table with Row-Click Drawer Opening */}
-              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden shadow-2xl">
+              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden shadow-2xl">
                 <div className="p-4 border-b border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <span>💡 Tip: Click any row or &quot;Inspect Account&quot; to open the dedicated permission drawer.</span>
                   <span className="font-mono text-emerald-400 flex items-center gap-1">
@@ -1057,16 +1153,16 @@ export default function AdminPortalPage() {
                       {permissions.map((p) => (
                         <tr 
                           key={p.staffId} 
-                          className="hover:bg-blue-600/10 cursor-pointer transition-colors"
+                          className="hover:bg-orange-500/10 cursor-pointer transition-colors"
                           onClick={() => setSelectedStaffForModal(p)}
                         >
                           <td className="py-3.5 px-4 font-bold text-white font-sans">
                             <div className="flex items-center space-x-2">
-                              <span className="w-7 h-7 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-black text-xs">
+                              <span className="w-7 h-7 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs">
                                 {p.staffName.charAt(0)}
                               </span>
                               <div>
-                                <div className="text-white hover:text-blue-400 transition">{p.staffName}</div>
+                                <div className="text-white hover:text-orange-600 dark:text-orange-400 transition">{p.staffName}</div>
                                 <div className="text-[10px] text-slate-400 font-mono">{p.staffId}</div>
                               </div>
                             </div>
@@ -1077,7 +1173,7 @@ export default function AdminPortalPage() {
                               type="checkbox" 
                               checked={p.canViewUsers} 
                               onChange={() => handleToggleStaffPermission(p.staffId, "canViewUsers")} 
-                              className="rounded accent-blue-600 cursor-pointer w-4 h-4" 
+                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
                             />
                           </td>
                           <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1085,7 +1181,7 @@ export default function AdminPortalPage() {
                               type="checkbox" 
                               checked={p.canApproveKYC} 
                               onChange={() => handleToggleStaffPermission(p.staffId, "canApproveKYC")} 
-                              className="rounded accent-blue-600 cursor-pointer w-4 h-4" 
+                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
                             />
                           </td>
                           <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1101,7 +1197,7 @@ export default function AdminPortalPage() {
                               type="checkbox" 
                               checked={p.canManageTickets} 
                               onChange={() => handleToggleStaffPermission(p.staffId, "canManageTickets")} 
-                              className="rounded accent-blue-600 cursor-pointer w-4 h-4" 
+                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
                             />
                           </td>
                           <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1109,7 +1205,7 @@ export default function AdminPortalPage() {
                               type="checkbox" 
                               checked={p.canAccessLiveChat} 
                               onChange={() => handleToggleStaffPermission(p.staffId, "canAccessLiveChat")} 
-                              className="rounded accent-blue-600 cursor-pointer w-4 h-4" 
+                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
                             />
                           </td>
                           <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1125,7 +1221,7 @@ export default function AdminPortalPage() {
                               type="checkbox" 
                               checked={p.canViewAuditLogs} 
                               onChange={() => handleToggleStaffPermission(p.staffId, "canViewAuditLogs")} 
-                              className="rounded accent-blue-600 cursor-pointer w-4 h-4" 
+                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
                             />
                           </td>
                           <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1140,7 +1236,7 @@ export default function AdminPortalPage() {
                           <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => setSelectedStaffForModal(p)}
-                              className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-[11px] font-sans font-semibold transition"
+                              className="px-2.5 py-1 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 text-[11px] font-sans font-semibold transition"
                             >
                               Inspect Account &rarr;
                             </button>
@@ -1172,14 +1268,14 @@ export default function AdminPortalPage() {
                       onClick={() => setActiveTicket(t)}
                       className={`p-3.5 rounded-xl border cursor-pointer transition ${
                         activeTicket?.id === t.id
-                          ? "bg-blue-600/10 border-blue-500/50"
+                          ? "bg-orange-500/10 border-orange-500/40"
                           : "bg-slate-900/60 border-slate-800 hover:bg-slate-800/50"
                       }`}
                     >
                       <div className="flex justify-between items-center text-xs mb-1">
                         <span className="font-bold text-white font-mono">{t.id}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-blue-500/10 text-blue-400"
+                          t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-orange-500/10 text-orange-600 dark:text-orange-400"
                         }`}>
                           {t.priority.toUpperCase()}
                         </span>
@@ -1191,7 +1287,7 @@ export default function AdminPortalPage() {
                 </div>
 
                 {activeTicket && (
-                  <div className="lg:col-span-7 p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
+                  <div className="lg:col-span-7 p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                     <div className="flex justify-between items-start pb-3 border-b border-slate-800">
                       <div>
                         <div className="text-sm font-bold text-white">{activeTicket.subject}</div>
@@ -1221,7 +1317,7 @@ export default function AdminPortalPage() {
                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                       {activeTicket.messages.map((m, idx) => (
                         <div key={idx} className={`p-3 rounded-xl text-xs space-y-1 ${
-                          m.senderRole === "user" ? "bg-white/[0.02] dark:bg-black/20 border border-white/10" : "bg-blue-950/30 border border-blue-800/40"
+                          m.senderRole === "user" ? "bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10" : "bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20"
                         }`}>
                           <div className="flex justify-between text-[10px] font-mono text-slate-400">
                             <span className="font-bold text-slate-300">{m.senderName} ({m.senderRole})</span>
@@ -1247,7 +1343,7 @@ export default function AdminPortalPage() {
                 <p className="text-xs text-slate-400">Cryptographically verifiable log of all administrative actions, logins, and trades.</p>
               </div>
 
-              <div className="rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl overflow-hidden">
+              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
                     <tr>
@@ -1262,7 +1358,7 @@ export default function AdminPortalPage() {
                   <tbody className="divide-y divide-white/5">
                     {auditLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-white/[0.03] transition">
-                        <td className="py-2.5 px-4 text-blue-400 font-bold">{log.id}</td>
+                        <td className="py-2.5 px-4 text-orange-600 dark:text-orange-400 font-bold">{log.id}</td>
                         <td className="py-2.5 px-4 text-slate-400">{log.timestamp.replace("T", " ").slice(0, 19)}</td>
                         <td className="py-2.5 px-4 text-white font-bold">{log.userId}</td>
                         <td className="py-2.5 px-4 text-emerald-400">{log.actionType}</td>
@@ -1287,7 +1383,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <ShieldAlert className="w-4 h-4 text-rose-400" />
                     <span>Emergency Master Killswitch </span>
@@ -1307,9 +1403,9 @@ export default function AdminPortalPage() {
                   </button>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/20 border border-white/10 backdrop-blur-xl space-y-4">
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
-                    <Lock className="w-4 h-4 text-blue-400" />
+                    <Lock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                     <span>Security & 2FA Enforcement </span>
                   </div>
                   <p className="text-xs text-slate-400">
@@ -1336,7 +1432,7 @@ export default function AdminPortalPage() {
             {/* Modal Header */}
             <div className="flex justify-between items-start border-b border-slate-800 pb-4">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-mono font-bold uppercase mb-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold uppercase mb-1">
                   <span>Staff Account Profile</span>
                 </div>
                 <h3 className="text-lg font-black text-white">{selectedStaffForModal.staffName}</h3>
@@ -1351,8 +1447,8 @@ export default function AdminPortalPage() {
             </div>
 
             {/* Role & Authority Banner */}
-            <div className="p-3.5 rounded-2xl bg-blue-950/30 border border-blue-800/40 flex items-center justify-between text-xs">
-              <span className="text-blue-300 font-medium">Delegated by: <strong className="text-white">{selectedStaffForModal.lastUpdatedBy}</strong></span>
+            <div className="p-3.5 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 flex items-center justify-between text-xs">
+              <span className="text-orange-600 dark:text-orange-400 font-medium">Delegated by: <strong className="text-white">{selectedStaffForModal.lastUpdatedBy}</strong></span>
               <span className="text-emerald-400 font-mono text-[11px] font-semibold">Active Staff Node</span>
             </div>
 
@@ -1481,7 +1577,7 @@ export default function AdminPortalPage() {
                 </button>
                 <button
                   onClick={() => handleSaveStaffPermissions(selectedStaffForModal)}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-xs font-bold text-white shadow-lg shadow-blue-600/30 transition flex items-center space-x-1.5"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-xs font-bold text-white shadow-lg shadow-orange-500/25 transition flex items-center space-x-1.5"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Permissions</span>
@@ -1507,7 +1603,7 @@ export default function AdminPortalPage() {
               value={internalNoteText}
               onChange={(e) => setInternalNoteText(e.target.value)}
               placeholder="Record confidential staff observation ..."
-              className="w-full rounded-xl bg-white/[0.02] dark:bg-black/20 border border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
             />
             <div className="flex justify-end gap-2">
               <button
@@ -1518,7 +1614,7 @@ export default function AdminPortalPage() {
               </button>
               <button
                 onClick={handleSaveInternalNote}
-                className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white"
+                className="px-4 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-500 text-xs font-bold text-white"
               >
                 Save Note
               </button>
