@@ -36,6 +36,7 @@ export default function UserDashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [kycUrl, setKycUrl] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -54,8 +55,11 @@ export default function UserDashboardPage() {
         // Check localStorage as temporary backup
         const stored = localStorage.getItem("ekonnet_user");
         if (stored) {
-          setUser(JSON.parse(stored));
-          return;
+          try {
+            const parsed = JSON.parse(stored);
+            setUser(parsed);
+            return;
+          } catch (err) {}
         }
 
         // Unauthenticated -> Redirect immediately to login
@@ -72,6 +76,29 @@ export default function UserDashboardPage() {
     return () => window.removeEventListener("auth-changed", loadSession);
   }, [router]);
 
+  useEffect(() => {
+    if (user?.id) {
+      setKycUrl(`https://ekonnet.com/kyc/verify?userId=${user.id}`);
+      fetch("/api/kyc/ticket")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.kycUrl) {
+            setKycUrl(data.kycUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user?.id]);
+
+  const copyKycLink = () => {
+    const linkToCopy = kycUrl || (user?.id ? `https://ekonnet.com/kyc/verify?userId=${user.id}` : "https://ekonnet.com/kyc/verify");
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(linkToCopy);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    }
+  };
+
   if (!mounted || !user) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] flex items-center justify-center font-mono text-xs text-slate-500">
@@ -80,30 +107,8 @@ export default function UserDashboardPage() {
     );
   }
 
-  const [kycUrl, setKycUrl] = useState(`https://ekonnet.com/kyc/verify?userId=${user.id}`);
-
-  useEffect(() => {
-    if (user?.id) {
-      fetch("/api/kyc/ticket")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.kycUrl) {
-            setKycUrl(data.kycUrl);
-          }
-        })
-        .catch(() => {});
-    }
-  }, [user?.id]);
-
-  const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(kycUrl)}`;
-
-  const copyKycLink = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(kycUrl);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
+  const activeKycUrl = kycUrl || `https://ekonnet.com/kyc/verify?userId=${user.id}`;
+  const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(activeKycUrl)}`;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-gray-100 flex flex-col font-sans transition-colors duration-300">
@@ -214,7 +219,7 @@ export default function UserDashboardPage() {
                 </div>
               </div>
               <Link
-                href={kycUrl}
+                href={activeKycUrl}
                 className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition shrink-0"
               >
                 <Camera className="w-4 h-4" />
@@ -253,7 +258,7 @@ export default function UserDashboardPage() {
                     <span>{copiedLink ? "Link Copied" : "Copy Link"}</span>
                   </button>
                   <Link
-                    href={kycUrl}
+                    href={activeKycUrl}
                     className="flex-1 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center justify-center gap-1 transition"
                   >
                     <span>Direct Open</span>
