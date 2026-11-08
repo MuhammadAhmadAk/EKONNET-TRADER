@@ -15,12 +15,14 @@ import {
   User, 
   Calendar, 
   MapPin, 
-  Sparkles,
-  Layers,
-  Lock,
-  Loader2,
-  FileCheck
+  Sparkles, 
+  Layers, 
+  Lock, 
+  Loader2, 
+  FileCheck 
 } from "lucide-react";
+import DocumentScanner from "@/components/kyc/DocumentScanner";
+import LiveSelfieScanner from "@/components/kyc/LiveSelfieScanner";
 
 function KYCVerifyContent() {
   const searchParams = useSearchParams();
@@ -385,62 +387,26 @@ function KYCVerifyContent() {
               />
             </div>
 
-            {/* Front Photo Upload */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
-                Front Side Photo (Original ID)
-              </label>
-              <div className="relative border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl p-4 text-center hover:border-orange-500 transition cursor-pointer bg-slate-50/50 dark:bg-black/20">
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={(e) => handleFileUpload(e, setFrontImage)}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-                {frontImage ? (
-                  <div className="space-y-2">
-                    <img src={frontImage} alt="ID Front" className="max-h-36 mx-auto rounded-lg object-contain shadow" />
-                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">✓ Front Photo Selected (Click to change)</span>
-                  </div>
-                ) : (
-                  <div className="space-y-1 py-3">
-                    <Camera className="w-7 h-7 mx-auto text-orange-500" />
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Tap to Open Camera or Choose Photo</span>
-                    <span className="text-[10px] text-slate-400">Clear, bright photo showing all 4 corners</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Front Photo Scanner */}
+            <DocumentScanner
+              label="Front Side Photo (Original ID)"
+              subLabel={`Hold ${documentType === "cnic" ? "Smart CNIC" : documentType === "passport" ? "Passport Bio Page" : "Driving License"} inside frame`}
+              documentType={documentType}
+              side="front"
+              value={frontImage}
+              onChange={setFrontImage}
+            />
 
-            {/* Back Photo Upload (Passport doesn't strictly need back) */}
+            {/* Back Photo Scanner (Passport doesn't strictly need back) */}
             {documentType !== "passport" && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
-                  Back Side Photo (Original ID)
-                </label>
-                <div className="relative border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl p-4 text-center hover:border-orange-500 transition cursor-pointer bg-slate-50/50 dark:bg-black/20">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={(e) => handleFileUpload(e, setBackImage)}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                  />
-                  {backImage ? (
-                    <div className="space-y-2">
-                      <img src={backImage} alt="ID Back" className="max-h-36 mx-auto rounded-lg object-contain shadow" />
-                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">✓ Back Photo Selected (Click to change)</span>
-                    </div>
-                  ) : (
-                    <div className="space-y-1 py-3">
-                      <Camera className="w-7 h-7 mx-auto text-orange-500" />
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Tap to Take/Upload Back Photo</span>
-                      <span className="text-[10px] text-slate-400">Barcode and address must be readable</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <DocumentScanner
+                label="Back Side Photo (Original ID)"
+                subLabel="Ensure barcode and official government stamp are clearly visible"
+                documentType={documentType}
+                side="back"
+                value={backImage}
+                onChange={setBackImage}
+              />
             )}
 
             <div className="flex gap-2.5 pt-2">
@@ -476,40 +442,11 @@ function KYCVerifyContent() {
               </p>
             </div>
 
-            {/* Selfie Capture Box */}
-            <div className="relative border-2 border-dashed border-orange-500/40 rounded-3xl p-6 text-center hover:border-orange-500 transition cursor-pointer bg-orange-500/[0.02]">
-              <input
-                type="file"
-                accept="image/*"
-                capture="user"
-                onChange={(e) => handleFileUpload(e, setSelfieImage)}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              {selfieImage ? (
-                <div className="space-y-3">
-                  <div className="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-emerald-500 shadow-xl">
-                    <img src={selfieImage} alt="Live Selfie" className="w-full h-full object-cover" />
-                  </div>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold block">
-                    ✓ Face Verified (Tap to Retake)
-                  </span>
-                </div>
-              ) : (
-                <div className="space-y-3 py-6">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500">
-                    <Camera className="w-10 h-10" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block">
-                      Tap to Open Front Camera
-                    </span>
-                    <span className="text-xs text-slate-400 block mt-1">
-                      Look directly at camera and keep a neutral expression
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Live Facial Biometric Scanner Component */}
+            <LiveSelfieScanner
+              value={selfieImage}
+              onChange={setSelfieImage}
+            />
 
             <div className="flex gap-2.5 pt-2">
               <button
