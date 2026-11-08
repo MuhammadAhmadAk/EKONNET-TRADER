@@ -43,7 +43,8 @@ export default function AdminManagementLoginPage() {
   }, [router]);
 
   const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    const next = isCurrentlyDark ? "light" : "dark";
     setTheme(next);
     if (next === "dark") {
       document.documentElement.classList.add("dark");
@@ -124,8 +125,17 @@ export default function AdminManagementLoginPage() {
       {/* Top Bar with Brand Logo and Theme Switcher */}
       <header className="relative z-20 flex items-center justify-between w-full max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
-            <Layers className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 group-hover:scale-105 transition transform">
+            <picture>
+              <source srcSet="/images/ekonnet-logo-96.webp" type="image/webp" />
+              <img
+                src="/images/ekonnet-logo-96.png"
+                alt="Ekonnet Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
+            </picture>
           </div>
           <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
             Ekonnet <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded-[6px] bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Admin</span>

@@ -95,9 +95,23 @@ export default function AdminPortalPage() {
   const [platformStatuses, setPlatformStatuses] = useState<TradingPlatformStatus[]>(INITIAL_PLATFORM_STATUSES);
 
   useEffect(() => {
-    // 1. Theme sync
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
+    // 1. Theme sync with persistence
+    try {
+      const savedTheme = localStorage.getItem("ekonnet_theme");
+      if (savedTheme === "light") {
+        document.documentElement.classList.remove("dark");
+        setTheme("light");
+      } else {
+        document.documentElement.classList.add("dark");
+        setTheme("dark");
+      }
+    } catch (e) {}
+
+    const handleThemeChange = (e: any) => {
+      const t = e.detail?.theme || (document.documentElement.classList.contains("dark") ? "dark" : "light");
+      setTheme(t);
+    };
+    window.addEventListener("theme-changed", handleThemeChange);
 
     // 2. Administrative Authentication Guard
     try {
@@ -116,10 +130,15 @@ export default function AdminPortalPage() {
     } catch (e) {
       router.push("/admin/login");
     }
+
+    return () => {
+      window.removeEventListener("theme-changed", handleThemeChange);
+    };
   }, [router]);
 
   const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    const next = isCurrentlyDark ? "light" : "dark";
     setTheme(next);
     if (next === "dark") {
       document.documentElement.classList.add("dark");
@@ -333,7 +352,7 @@ export default function AdminPortalPage() {
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-xl shadow-orange-500/30 mb-4 animate-bounce">
           <Layers className="w-7 h-7" />
         </div>
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200">
           <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
           <span>Verifying Administrative Security Clearance Level 3+...</span>
         </div>
@@ -366,15 +385,24 @@ export default function AdminPortalPage() {
         <div>
           <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200/80 dark:border-white/10">
             <Link href="/" className="flex items-center gap-3 overflow-hidden">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white font-black text-sm shadow-md shrink-0">
-                EK
+              <div className="w-9 h-9 rounded-full overflow-hidden p-[1px] shadow-sm shadow-orange-500/20 shrink-0">
+                <picture>
+                  <source srcSet="/images/ekonnet-logo-96.webp" type="image/webp" />
+                  <img
+                    src="/images/ekonnet-logo-96.png"
+                    alt="Ekonnet Logo"
+                    width={36}
+                    height={36}
+                    className="w-full h-full object-contain"
+                  />
+                </picture>
               </div>
               {sidebarOpen && (
                 <div className="truncate">
-                  <div className="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
-                    Ekonnet <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Root</span>
+                  <div className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                    Ekonnet <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Root</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-mono">v1.0.0 &bull; Cluster OK</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">v1.0.0 &bull; Cluster OK</span>
                 </div>
               )}
             </Link>
@@ -596,14 +624,14 @@ export default function AdminPortalPage() {
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
             <Link href="/" className="hover:text-orange-500 transition">Platform Root</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
-            <span className="text-slate-700 dark:text-slate-300">Admin Console</span>
+            <span className="text-slate-700 dark:text-slate-700 dark:text-slate-300">Admin Console</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
             <span className="text-orange-600 dark:text-orange-400 capitalize font-bold">{activeNav}</span>
           </div>
 
           {/* Quick Actions & Telemetry Badges */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300">
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-700 dark:text-slate-300">
               <Zap className="w-3.5 h-3.5 text-amber-500" />
               <span>Base Liquidity: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">$1,280,450</strong></span>
             </div>
@@ -614,7 +642,7 @@ export default function AdminPortalPage() {
               className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                 emergencyLockActive 
                   ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse" 
-                  : "bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700"
+                  : "bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700"
               }`}
               title="EMERGENCY Platform Freeze"
             >
@@ -625,7 +653,7 @@ export default function AdminPortalPage() {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle theme"
             >
@@ -702,7 +730,7 @@ export default function AdminPortalPage() {
                     <span>Total Registered Users</span>
                     <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <div className="text-2xl font-black text-white font-mono">1,428</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">1,428</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
                     <TrendingUp className="w-3 h-3" /> +14.2% this month
                   </div>
@@ -713,7 +741,7 @@ export default function AdminPortalPage() {
                     <span>24h Platform Volume</span>
                     <BarChart3 className="w-4 h-4 text-purple-400" />
                   </div>
-                  <div className="text-2xl font-black text-white font-mono">$4,892,100</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">$4,892,100</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
                     <TrendingUp className="w-3 h-3" /> +8.7% vs yesterday
                   </div>
@@ -724,7 +752,7 @@ export default function AdminPortalPage() {
                     <span>Pending KYC Verifications</span>
                     <FileCheck className="w-4 h-4 text-amber-400" />
                   </div>
-                  <div className="text-2xl font-black text-white font-mono">{pendingKycCount} Dossiers</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">{pendingKycCount} Dossiers</div>
                   <div className="text-[11px] text-amber-400 font-semibold">
                     Handwritten notes await review
                   </div>
@@ -745,7 +773,7 @@ export default function AdminPortalPage() {
               {/* Service Cluster Health Matrix */}
               <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                     <span>Microservice Cluster & Secondary Node Status </span>
                   </h3>
@@ -757,15 +785,15 @@ export default function AdminPortalPage() {
                     <div key={svc.name} className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="text-xs font-bold text-white">{svc.name}</div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-white">{svc.name}</div>
                           <div className="text-[10px] text-slate-400 font-mono">{svc.type} &bull; Port {svc.port}</div>
                         </div>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           {svc.status}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 border-t border-slate-800/80 pt-2">
-                        <span>Latency: <strong className="text-slate-200">{svc.latency}</strong></span>
+                      <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 border-t border-slate-200 dark:border-white/10/80 pt-2">
+                        <span>Latency: <strong className="text-slate-800 dark:text-slate-200">{svc.latency}</strong></span>
                         <span>Uptime: <strong className="text-emerald-400">{svc.uptime}</strong></span>
                       </div>
                     </div>
@@ -776,7 +804,7 @@ export default function AdminPortalPage() {
               {/* Recent Audit Stream */}
               <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
                     <span>Recent Immutable Audit Events </span>
                   </h3>
@@ -790,7 +818,7 @@ export default function AdminPortalPage() {
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-white/[0.02] dark:bg-black/20 text-slate-400 uppercase text-[10px] border-b border-white/10">
+                    <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
                       <tr>
                         <th className="py-2.5 px-3">Event ID</th>
                         <th className="py-2.5 px-3">Timestamp</th>
@@ -800,13 +828,13 @@ export default function AdminPortalPage() {
                         <th className="py-2.5 px-3">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                       {auditLogs.slice(0, 5).map((log) => (
-                        <tr key={log.id} className="hover:bg-white/[0.03] transition">
+                        <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                           <td className="py-2 px-3 text-orange-600 dark:text-orange-400 font-bold">{log.id}</td>
                           <td className="py-2 px-3 text-slate-400">{log.timestamp.split("T")[1]?.slice(0, 8)}</td>
-                          <td className="py-2 px-3 text-white font-bold">{log.userId}</td>
-                          <td className="py-2 px-3 text-slate-300">{log.actionType}</td>
+                          <td className="py-2 px-3 text-slate-900 dark:text-white font-bold">{log.userId}</td>
+                          <td className="py-2 px-3 text-slate-700 dark:text-slate-300">{log.actionType}</td>
                           <td className="py-2 px-3 text-slate-400">{log.ipAddress}</td>
                           <td className="py-2 px-3">
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -829,7 +857,7 @@ export default function AdminPortalPage() {
             <div className="space-y-6 max-w-7xl mx-auto">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-base font-bold text-white">Live Cluster Telemetry & Failover Mirror</h2>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">Live Cluster Telemetry & Failover Mirror</h2>
                   <p className="text-xs text-slate-400">High-availability secondary backup server synchronization.</p>
                 </div>
                 <button
@@ -843,27 +871,27 @@ export default function AdminPortalPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-white">Primary Node: VPS-Plesk-EU #01</span>
+                    <span className="font-bold text-slate-900 dark:text-white">Primary Node: VPS-Plesk-EU #01</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE MASTER</span>
                   </div>
                   <div className="space-y-2 text-xs font-mono text-slate-400">
-                    <div className="flex justify-between"><span>CPU Core Usage (8 vCPU):</span><span className="text-white font-bold">24.2%</span></div>
-                    <div className="flex justify-between"><span>RAM Allocated (32 GB):</span><span className="text-white font-bold">11.4 GB (35%)</span></div>
-                    <div className="flex justify-between"><span>NVMe Disk IOPS:</span><span className="text-white font-bold">14,200 IOPS</span></div>
+                    <div className="flex justify-between"><span>CPU Core Usage (8 vCPU):</span><span className="text-slate-900 dark:text-white font-bold">24.2%</span></div>
+                    <div className="flex justify-between"><span>RAM Allocated (32 GB):</span><span className="text-slate-900 dark:text-white font-bold">11.4 GB (35%)</span></div>
+                    <div className="flex justify-between"><span>NVMe Disk IOPS:</span><span className="text-slate-900 dark:text-white font-bold">14,200 IOPS</span></div>
                     <div className="flex justify-between"><span>Database WAL Sync Delay:</span><span className="text-emerald-400 font-bold">0.00ms</span></div>
                   </div>
                 </div>
 
                 <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-white">Secondary Backup Node: VPS-Plesk-US #02</span>
+                    <span className="font-bold text-slate-900 dark:text-white">Secondary Backup Node: VPS-Plesk-US #02</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">STANDBY REPLICA</span>
                   </div>
                   <div className="space-y-2 text-xs font-mono text-slate-400">
                     <div className="flex justify-between"><span>Replication Latency:</span><span className="text-emerald-400 font-bold">18ms</span></div>
                     <div className="flex justify-between"><span>Hot Standby Readiness:</span><span className="text-emerald-400 font-bold">100%</span></div>
-                    <div className="flex justify-between"><span>Automated Failover Trigger:</span><span className="text-white font-bold">&lt; 30 seconds</span></div>
-                    <div className="flex justify-between"><span>Nightly Cold Archive:</span><span className="text-slate-300 font-bold">02:00 UTC (Encrypted)</span></div>
+                    <div className="flex justify-between"><span>Automated Failover Trigger:</span><span className="text-slate-900 dark:text-white font-bold">&lt; 30 seconds</span></div>
+                    <div className="flex justify-between"><span>Nightly Cold Archive:</span><span className="text-slate-700 dark:text-slate-300 font-bold">02:00 UTC (Encrypted)</span></div>
                   </div>
                 </div>
               </div>
@@ -876,7 +904,7 @@ export default function AdminPortalPage() {
           {activeNav === "reserves" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">5 Core Base Pairs Liquidity Reserves</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">5 Core Base Pairs Liquidity Reserves</h2>
                 <p className="text-xs text-slate-400">All trades execute strictly across USD, BTC, XRP, ETH, and BCH liquidity pools.</p>
               </div>
 
@@ -888,16 +916,16 @@ export default function AdminPortalPage() {
                   { pair: "ETH", name: "Ethereum Pool", balance: "94.2000 ETH", hot: "20%", cold: "80%", color: "text-purple-400" },
                   { pair: "BCH", name: "Bitcoin Cash", balance: "340.500 BCH", hot: "25%", cold: "75%", color: "text-emerald-300" },
                 ].map((pool) => (
-                  <div key={pool.pair} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                  <div key={pool.pair} className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                     <div className="flex justify-between items-center">
                       <span className={`text-base font-black font-mono ${pool.color}`}>{pool.pair}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Sec 19</span>
                     </div>
                     <div>
                       <div className="text-xs text-slate-400">{pool.name}</div>
-                      <div className="text-sm font-bold text-white font-mono mt-0.5">{pool.balance}</div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white font-mono mt-0.5">{pool.balance}</div>
                     </div>
-                    <div className="pt-2 border-t border-slate-800 text-[10px] font-mono text-slate-400 flex justify-between">
+                    <div className="pt-2 border-t border-slate-200 dark:border-white/10 text-[10px] font-mono text-slate-400 flex justify-between">
                       <span>Hot: {pool.hot}</span>
                       <span>Cold: {pool.cold}</span>
                     </div>
@@ -914,7 +942,7 @@ export default function AdminPortalPage() {
             <div className="space-y-6 max-w-7xl mx-auto">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-white">User Accounts Directory & RBAC</h2>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">User Accounts Directory & RBAC</h2>
                   <p className="text-xs text-slate-400">Search by User ID, verify age 18+, freeze accounts, or view internal staff notes.</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -931,7 +959,7 @@ export default function AdminPortalPage() {
                   <select
                     value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
-                    className="py-1.5 px-3 rounded-xl bg-white/[0.04] dark:bg-black/25 border border-white/10 text-xs text-slate-200 focus:outline-none"
+                    className="py-1.5 px-3 rounded-xl bg-white/[0.04] dark:bg-black/25 border border-white/10 text-xs text-slate-800 dark:text-slate-200 focus:outline-none"
                   >
                     <option value="all">All Tiers</option>
                     <option value="free">Free</option>
@@ -945,7 +973,7 @@ export default function AdminPortalPage() {
               <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-white/[0.02] dark:bg-black/20 text-slate-400 uppercase text-[10px] font-mono border-b border-white/10">
+                    <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-mono border-b border-slate-200 dark:border-white/10">
                       <tr>
                         <th className="py-3 px-4">User ID & Username</th>
                         <th className="py-3 px-4">Full Name & Age (18+)</th>
@@ -956,18 +984,18 @@ export default function AdminPortalPage() {
                         <th className="py-3 px-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                       {filteredUsers.map((u) => (
-                        <tr key={u.id} className="hover:bg-white/[0.03] transition">
+                        <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                           <td className="py-3 px-4 font-mono">
                             <span className="text-emerald-400 font-bold">{u.id}</span>
                             <div className="text-[11px] text-slate-400">@{u.username}</div>
                           </td>
                           <td className="py-3 px-4">
-                            <div className="font-bold text-white">{u.fullName}</div>
+                            <div className="font-bold text-slate-900 dark:text-white">{u.fullName}</div>
                             <div className="text-[10px] text-slate-400 font-mono">Age: {u.age} yrs (Born {u.dateOfBirth})</div>
                           </td>
-                          <td className="py-3 px-4 text-slate-300">
+                          <td className="py-3 px-4 text-slate-700 dark:text-slate-300">
                             {u.city}, {u.country}
                           </td>
                           <td className="py-3 px-4">
@@ -979,7 +1007,7 @@ export default function AdminPortalPage() {
                               {u.kycStatus.toUpperCase()}
                             </span>
                           </td>
-                          <td className="py-3 px-4 font-mono text-slate-300">
+                          <td className="py-3 px-4 font-mono text-slate-700 dark:text-slate-300">
                             {u.packageTier}
                           </td>
                           <td className="py-3 px-4">
@@ -1022,31 +1050,31 @@ export default function AdminPortalPage() {
           {activeNav === "kyc" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">Mandatory KYC Verification Queue</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Mandatory KYC Verification Queue</h2>
                 <p className="text-xs text-slate-400">Strict compliance with Verification of official photo holding handwritten note (&quot;Full Name, Ekonnet, Date&quot;) and strict age 18+ enforcement.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {users.filter(u => u.kycStatus === "pending").map((u) => (
-                  <div key={u.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                  <div key={u.id} className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-white font-mono">{u.id}</span>
+                      <span className="font-bold text-slate-900 dark:text-white font-mono">{u.id}</span>
                       <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">PENDING REVIEW</span>
                     </div>
 
                     {u.kycDocumentUrl && (
-                      <div className="rounded-xl overflow-hidden border border-slate-800 h-40 bg-slate-950">
+                      <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 h-40 bg-slate-950">
                         <img src={u.kycDocumentUrl} alt="KYC Document" className="w-full h-full object-cover" />
                       </div>
                     )}
 
                     <div className="space-y-1 text-xs">
-                      <div className="font-bold text-white">{u.fullName}</div>
+                      <div className="font-bold text-slate-900 dark:text-white">{u.fullName}</div>
                       <div className="text-[11px] text-slate-400 font-mono">Age: {u.age} yrs &bull; {u.country}</div>
                       <div className="text-[10px] text-emerald-400 font-mono">Note: &quot;{u.fullName}, Ekonnet, {u.createdAt.split('T')[0]}&quot;</div>
                     </div>
 
-                    <div className="flex gap-2 pt-2 border-t border-slate-800">
+                    <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-white/10">
                       <button
                         onClick={() => handleUpdateKYC(u.id, "rejected")}
                         className="flex-1 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-bold transition"
@@ -1064,9 +1092,9 @@ export default function AdminPortalPage() {
                 ))}
 
                 {users.filter(u => u.kycStatus === "pending").length === 0 && (
-                  <div className="col-span-3 p-12 text-center rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 space-y-2">
+                  <div className="col-span-3 p-12 text-center rounded-2xl bg-slate-900/40 border border-dashed border-slate-200 dark:border-white/10 space-y-2">
                     <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-                    <div className="text-sm font-bold text-white">All KYC Submissions Cleared!</div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">All KYC Submissions Cleared!</div>
                     <div className="text-xs text-slate-400">No pending verification queues. New submissions will notify staff in real-time.</div>
                   </div>
                 )}
@@ -1086,7 +1114,7 @@ export default function AdminPortalPage() {
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>SECTION 27.[1] & 27.[2] 4-TIER ACCESS DELEGATION</span>
                   </div>
-                  <h2 className="text-xl font-black text-white">Staff Operational Permissions Matrix</h2>
+                  <h2 className="text-xl font-black text-slate-900 dark:text-white">Staff Operational Permissions Matrix</h2>
                   <p className="text-xs text-slate-400 mt-1 max-w-2xl">
                     Click on any staff member to open their individual account drawer and assign specific jobs by ticking boxes.
                   </p>
@@ -1107,22 +1135,22 @@ export default function AdminPortalPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-800/30">
                   <span className="text-[10px] text-purple-400 uppercase font-bold tracking-wider block">Tier 1: Master Admin</span>
-                  <div className="text-lg font-black text-white mt-1">1 Account</div>
+                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Account</div>
                   <span className="text-[11px] text-purple-300 font-mono">EKON-000001 (Root)</span>
                 </div>
                 <div className="p-4 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20">
                   <span className="text-[10px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider block">Tier 2: Management</span>
-                  <div className="text-lg font-black text-white mt-1">1 Sub-Admin</div>
+                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Sub-Admin</div>
                   <span className="text-[11px] text-orange-600 dark:text-orange-400 font-mono">EKON-749201</span>
                 </div>
                 <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-800/30">
                   <span className="text-[10px] text-cyan-400 uppercase font-bold tracking-wider block">Tier 3: Employee Staff</span>
-                  <div className="text-lg font-black text-white mt-1">{permissions.length} Staff</div>
+                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{permissions.length} Staff</div>
                   <span className="text-[11px] text-cyan-300 font-mono">Compliance & Support</span>
                 </div>
                 <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-800/30">
                   <span className="text-[10px] text-emerald-400 uppercase font-bold tracking-wider block">Tier 4: Traders / Users</span>
-                  <div className="text-lg font-black text-white mt-1">{users.filter(u => u.role === 'user').length} Registered</div>
+                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{users.filter(u => u.role === 'user').length} Registered</div>
                   <span className="text-[11px] text-emerald-300 font-mono">Active On-Chain</span>
                 </div>
               </div>
@@ -1138,7 +1166,7 @@ export default function AdminPortalPage() {
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                    <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
                       <tr>
                         <th className="py-3.5 px-4 font-sans">Staff Member & ID</th>
                         <th className="py-3.5 px-2 text-center">Users</th>
@@ -1152,20 +1180,20 @@ export default function AdminPortalPage() {
                         <th className="py-3.5 px-4 text-right font-sans">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                       {permissions.map((p) => (
                         <tr 
                           key={p.staffId} 
                           className="hover:bg-orange-500/10 cursor-pointer transition-colors"
                           onClick={() => setSelectedStaffForModal(p)}
                         >
-                          <td className="py-3.5 px-4 font-bold text-white font-sans">
+                          <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white font-sans">
                             <div className="flex items-center space-x-2">
                               <span className="w-7 h-7 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs">
                                 {p.staffName.charAt(0)}
                               </span>
                               <div>
-                                <div className="text-white hover:text-orange-600 dark:text-orange-400 transition">{p.staffName}</div>
+                                <div className="text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition">{p.staffName}</div>
                                 <div className="text-[10px] text-slate-400 font-mono">{p.staffId}</div>
                               </div>
                             </div>
@@ -1259,7 +1287,7 @@ export default function AdminPortalPage() {
           {activeNav === "tickets" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">Gorelo-Style AI Support Desk</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Gorelo-Style AI Support Desk</h2>
                 <p className="text-xs text-slate-400">Support ticketing system with Gorelo-style AI conversation summarization.</p>
               </div>
 
@@ -1272,18 +1300,18 @@ export default function AdminPortalPage() {
                       className={`p-3.5 rounded-xl border cursor-pointer transition ${
                         activeTicket?.id === t.id
                           ? "bg-orange-500/10 border-orange-500/40"
-                          : "bg-slate-900/60 border-slate-800 hover:bg-slate-800/50"
+                          : "bg-white dark:bg-[#0c1222]/90 border-slate-200/80 dark:border-white/10 shadow-sm hover:bg-slate-50 dark:hover:bg-white/5"
                       }`}
                     >
                       <div className="flex justify-between items-center text-xs mb-1">
-                        <span className="font-bold text-white font-mono">{t.id}</span>
+                        <span className="font-bold text-slate-900 dark:text-white font-mono">{t.id}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-orange-500/10 text-orange-600 dark:text-orange-400"
                         }`}>
                           {t.priority.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-xs font-semibold text-slate-200 truncate">{t.subject}</div>
+                      <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{t.subject}</div>
                       <div className="text-[10px] text-slate-400 font-mono mt-1">User: {t.userId}</div>
                     </div>
                   ))}
@@ -1291,9 +1319,9 @@ export default function AdminPortalPage() {
 
                 {activeTicket && (
                   <div className="lg:col-span-7 p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
-                    <div className="flex justify-between items-start pb-3 border-b border-slate-800">
+                    <div className="flex justify-between items-start pb-3 border-b border-slate-200 dark:border-white/10">
                       <div>
-                        <div className="text-sm font-bold text-white">{activeTicket.subject}</div>
+                        <div className="text-sm font-bold text-slate-900 dark:text-white">{activeTicket.subject}</div>
                         <div className="text-xs text-slate-400 font-mono">Ticket ID: {activeTicket.id} &bull; Category: {activeTicket.category}</div>
                       </div>
                       <button
@@ -1323,10 +1351,10 @@ export default function AdminPortalPage() {
                           m.senderRole === "user" ? "bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10" : "bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20"
                         }`}>
                           <div className="flex justify-between text-[10px] font-mono text-slate-400">
-                            <span className="font-bold text-slate-300">{m.senderName} ({m.senderRole})</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">{m.senderName} ({m.senderRole})</span>
                             <span>{m.timestamp.split("T")[1]?.slice(0, 5)}</span>
                           </div>
-                          <p className="text-slate-200 text-xs">{m.text}</p>
+                          <p className="text-slate-800 dark:text-slate-200 text-xs">{m.text}</p>
                         </div>
                       ))}
                     </div>
@@ -1342,13 +1370,13 @@ export default function AdminPortalPage() {
           {activeNav === "audit" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">Immutable Audit Trail</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Immutable Audit Trail</h2>
                 <p className="text-xs text-slate-400">Cryptographically verifiable log of all administrative actions, logins, and trades.</p>
               </div>
 
               <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                  <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
                     <tr>
                       <th className="py-3 px-4">Event ID</th>
                       <th className="py-3 px-4">Timestamp</th>
@@ -1358,14 +1386,14 @@ export default function AdminPortalPage() {
                       <th className="py-3 px-4">IP & Location</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                     {auditLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-white/[0.03] transition">
+                      <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                         <td className="py-2.5 px-4 text-orange-600 dark:text-orange-400 font-bold">{log.id}</td>
                         <td className="py-2.5 px-4 text-slate-400">{log.timestamp.replace("T", " ").slice(0, 19)}</td>
-                        <td className="py-2.5 px-4 text-white font-bold">{log.userId}</td>
+                        <td className="py-2.5 px-4 text-slate-900 dark:text-white font-bold">{log.userId}</td>
                         <td className="py-2.5 px-4 text-emerald-400">{log.actionType}</td>
-                        <td className="py-2.5 px-4 text-slate-300">{log.description}</td>
+                        <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300">{log.description}</td>
                         <td className="py-2.5 px-4 text-slate-400">{log.ipAddress}</td>
                       </tr>
                     ))}
@@ -1381,7 +1409,7 @@ export default function AdminPortalPage() {
           {activeNav === "settings" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               <div>
-                <h2 className="text-base font-bold text-white">Platform Settings & Emergency Lockdown Controls</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Platform Settings & Emergency Lockdown Controls</h2>
                 <p className="text-xs text-slate-400">EMERGENCY killswitches, 2FA hardware policies, and Plesk server failovers.</p>
               </div>
 
@@ -1416,7 +1444,7 @@ export default function AdminPortalPage() {
                   </p>
                   <button
                     onClick={() => showToast("Strict 2FA enforcement confirmed active across all staff.")}
-                    className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition"
+                    className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs border border-slate-700 transition"
                   >
                     Enforce Staff 2FA Policy
                   </button>
@@ -1431,19 +1459,19 @@ export default function AdminPortalPage() {
       {/* Clickable Staff Account Inspection & Permission Assignment Drawer */}
       {selectedStaffForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-xl rounded-3xl bg-slate-900 border border-slate-700/80 p-6 space-y-5 shadow-2xl">
+          <div className="w-full max-w-xl rounded-3xl bg-white dark:bg-[#0c1222] border border-slate-200 dark:border-white/10 p-6 space-y-5 shadow-2xl text-slate-900 dark:text-white">
             {/* Modal Header */}
-            <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+            <div className="flex justify-between items-start border-b border-slate-200 dark:border-white/10 pb-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-[10px] font-mono font-bold uppercase mb-1">
                   <span>Staff Account Profile</span>
                 </div>
-                <h3 className="text-lg font-black text-white">{selectedStaffForModal.staffName}</h3>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">{selectedStaffForModal.staffName}</h3>
                 <span className="text-xs text-slate-400 font-mono">Staff ID: {selectedStaffForModal.staffId} &bull; Updated: {selectedStaffForModal.updatedAt}</span>
               </div>
               <button 
                 onClick={() => setSelectedStaffForModal(null)} 
-                className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition"
+                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-700 transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1451,7 +1479,7 @@ export default function AdminPortalPage() {
 
             {/* Role & Authority Banner */}
             <div className="p-3.5 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 flex items-center justify-between text-xs">
-              <span className="text-orange-600 dark:text-orange-400 font-medium">Delegated by: <strong className="text-white">{selectedStaffForModal.lastUpdatedBy}</strong></span>
+              <span className="text-orange-600 dark:text-orange-400 font-medium">Delegated by: <strong className="text-slate-900 dark:text-white">{selectedStaffForModal.lastUpdatedBy}</strong></span>
               <span className="text-emerald-400 font-mono text-[11px] font-semibold">Active Staff Node</span>
             </div>
 
@@ -1462,7 +1490,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canViewUsers}
@@ -1470,12 +1498,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">View Users</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">View Users</span>
                     <span className="text-[10px] text-slate-400">Access registered profiles</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canApproveKYC}
@@ -1483,12 +1511,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Approve KYC</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Approve KYC</span>
                     <span className="text-[10px] text-slate-400">Verify 18+ handwritten selfies</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canFreezeAccounts}
@@ -1496,12 +1524,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-rose-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Freeze Accounts</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Freeze Accounts</span>
                     <span className="text-[10px] text-slate-400">Security lockouts & suspensions</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canManageTickets}
@@ -1509,12 +1537,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Handle Tickets</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Handle Tickets</span>
                     <span className="text-[10px] text-slate-400">Resolve customer issues</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canAccessLiveChat}
@@ -1522,12 +1550,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Live Chat Operator</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Live Chat Operator</span>
                     <span className="text-[10px] text-slate-400">Real-time messaging desk</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canWriteInternalNotes}
@@ -1535,12 +1563,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-purple-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Internal Notes</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Internal Notes</span>
                     <span className="text-[10px] text-slate-400">Confidential staff notes</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canViewAuditLogs}
@@ -1548,12 +1576,12 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">View Audit Logs</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">View Audit Logs</span>
                     <span className="text-[10px] text-slate-400">Immutable security logs</span>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canExecuteReimbursements}
@@ -1561,7 +1589,7 @@ export default function AdminPortalPage() {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-600 focus:ring-0 cursor-pointer"
                   />
                   <div>
-                    <span className="font-bold text-white block">Reimbursements</span>
+                    <span className="font-bold text-slate-900 dark:text-white block">Reimbursements</span>
                     <span className="text-[10px] text-slate-400">Execute settlement refunds</span>
                   </div>
                 </label>
@@ -1569,12 +1597,12 @@ export default function AdminPortalPage() {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex justify-between items-center pt-3 border-t border-slate-800">
+            <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-white/10">
               <span className="text-[11px] text-slate-400">Changes persist to MongoDB cluster</span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedStaffForModal(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition"
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-white transition"
                 >
                   Cancel
                 </button>
@@ -1594,9 +1622,9 @@ export default function AdminPortalPage() {
       {/* Internal Staff Notes Modal  */}
       {selectedNoteUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-200 dark:border-white/10 p-5 space-y-4 shadow-2xl">
             <div className="flex justify-between items-center">
-              <h3 className="text-sm font-bold text-white">Staff Internal Notes: @{selectedNoteUser.username}</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Staff Internal Notes: @{selectedNoteUser.username}</h3>
               <button onClick={() => setSelectedNoteUser(null)} className="p-1 text-slate-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
@@ -1611,7 +1639,7 @@ export default function AdminPortalPage() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setSelectedNoteUser(null)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-300 hover:text-white"
+                className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
               >
                 Cancel
               </button>
