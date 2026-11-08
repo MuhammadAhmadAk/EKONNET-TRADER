@@ -225,7 +225,7 @@ export default function BigFeatureAdvertisements({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Billboard 1 */}
-          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-blue-500/30 hover:border-blue-500/60 dark:hover:border-blue-400 transition-all duration-300 shadow-lg dark:shadow-2xl flex flex-col justify-between group overflow-hidden">
+          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-blue-500/30 hover:border-blue-500/60 dark:hover:border-blue-400 transition-all duration-300 flex flex-col justify-between group overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all" />
             <div className="space-y-5">
               <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
@@ -262,7 +262,7 @@ export default function BigFeatureAdvertisements({
           </div>
 
           {/* Billboard 2 */}
-          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-emerald-500/30 hover:border-emerald-500/60 dark:hover:border-emerald-400 transition-all duration-300 shadow-lg dark:shadow-2xl flex flex-col justify-between group overflow-hidden">
+          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-emerald-500/30 hover:border-emerald-500/60 dark:hover:border-emerald-400 transition-all duration-300 flex flex-col justify-between group overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
             <div className="space-y-5">
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
@@ -299,7 +299,7 @@ export default function BigFeatureAdvertisements({
           </div>
 
           {/* Billboard 3 */}
-          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-purple-500/30 hover:border-purple-500/60 dark:hover:border-purple-400 transition-all duration-300 shadow-lg dark:shadow-2xl flex flex-col justify-between group overflow-hidden">
+          <div className="relative rounded-2xl p-8 bg-white/90 dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-purple-500/30 hover:border-purple-500/60 dark:hover:border-purple-400 transition-all duration-300 flex flex-col justify-between group overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all" />
             <div className="space-y-5">
               <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
@@ -414,7 +414,7 @@ export default function BigFeatureAdvertisements({
         {/* =====================================================================
             HOW TO USE IN 3 STEPS (SIMPLE WALKTHROUGH FOR GENERAL USERS)
         ===================================================================== */}
-        <div className="rounded-2xl p-8 sm:p-12 bg-white/90 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg dark:shadow-xl space-y-10">
+        <div className="rounded-2xl p-8 sm:p-12 bg-white/90 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Clear & Transparent User Guide</span>
             <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">How to Trade on Ekonnet in 60 Seconds</h3>
@@ -494,7 +494,7 @@ export default function BigFeatureAdvertisements({
         {/* =====================================================================
             BENCHMARK COMPARISON TABLE
         ===================================================================== */}
-        <div className="rounded-2xl p-8 sm:p-10 bg-white/90 dark:bg-slate-900/40 border border-slate-200/80 dark:border-white/10 shadow-lg dark:shadow-xl overflow-hidden space-y-6">
+        <div className="rounded-2xl p-8 sm:p-10 bg-white/90 dark:bg-slate-900/40 border border-slate-200/80 dark:border-white/10 overflow-hidden space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Competitive Benchmark Matrix</span>

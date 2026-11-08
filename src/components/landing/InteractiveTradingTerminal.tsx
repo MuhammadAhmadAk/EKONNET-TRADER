@@ -231,7 +231,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               onClick={() => setTradingMode("demo")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 tradingMode === "demo"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20 ring-1 ring-emerald-400"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white ring-1 ring-emerald-400"
                   : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-white/10"
               }`}
             >
@@ -244,7 +244,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               onClick={() => setTradingMode("live")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 tradingMode === "live"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20 ring-1 ring-blue-400"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white ring-1 ring-blue-400"
                   : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-white/10"
               }`}
             >
@@ -263,7 +263,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
         </div>
 
         {/* Institutional Trading HUD Window */}
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-[#070B14]/95 backdrop-blur-2xl shadow-xl dark:shadow-2xl overflow-hidden ring-1 ring-slate-200/60 dark:ring-white/5 relative">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-[#070B14]/95 backdrop-blur-2xl overflow-hidden relative">
           
           {/* Top Platform Navigation Strip (Matches Bitfinex Screenshot 3 & 4) */}
           <div className="px-5 py-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
@@ -385,7 +385,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
               </div>
 
               {/* Dynamic Visual Candlestick Chart */}
-              <div className="relative h-64 rounded-2xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col justify-between overflow-hidden shadow-inner transition-colors">
+              <div className="relative h-64 rounded-2xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 p-4 flex flex-col justify-between overflow-hidden transition-colors">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_24px] pointer-events-none" />
 
                 <div className="flex items-center justify-between text-[11px] font-mono text-slate-600 dark:text-slate-400 relative z-10">
@@ -397,7 +397,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     <span className="text-emerald-600 dark:text-emerald-400 font-bold">Bitfinex Liquidity Bridge</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] shadow-2xs">Indicators: RSI, MACD, Volume</span>
+                    <span className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px]">Indicators: RSI, MACD, Volume</span>
                   </div>
                 </div>
 
@@ -412,8 +412,8 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                           style={{ height: `${(val / 120) * 100}%` }}
                           className={`w-full rounded-xs transition-all duration-500 ${
                             isGreen 
-                              ? "bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-sm shadow-emerald-500/20" 
-                              : "bg-gradient-to-t from-rose-600 to-rose-400 shadow-sm shadow-rose-500/20"
+                              ? "bg-gradient-to-t from-emerald-600 to-emerald-400" 
+                              : "bg-gradient-to-t from-rose-600 to-rose-400"
                           }`}
                         />
                         <div className={`w-[1px] h-2 ${isGreen ? "bg-emerald-500" : "bg-rose-500"}`} />
@@ -532,7 +532,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     onClick={() => setSide("buy")}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       side === "buy"
-                        ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400"
+                        ? "bg-emerald-600 text-white ring-1 ring-emerald-400"
                         : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
@@ -543,7 +543,7 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                     onClick={() => setSide("sell")}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       side === "sell"
-                        ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-1 ring-rose-400"
+                        ? "bg-rose-600 text-white ring-1 ring-rose-400"
                         : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
@@ -711,10 +711,10 @@ export default function InteractiveTradingTerminal({ onOpenRegister }: Interacti
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       side === "buy"
-                        ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white shadow-emerald-600/30"
-                        : "bg-gradient-to-r from-rose-600 to-pink-600 hover:opacity-90 text-white shadow-rose-600/30"
+                        ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white"
+                        : "bg-gradient-to-r from-rose-600 to-pink-600 hover:opacity-90 text-white"
                     }`}
                   >
                     {tradingMode === "demo" ? (

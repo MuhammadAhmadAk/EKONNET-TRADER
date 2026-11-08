@@ -51,7 +51,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
               <button
                 onClick={onOpenRegister}
-                className="w-full sm:w-auto px-7 py-3 rounded-full bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold text-sm shadow-md shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3 rounded-full bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold text-sm shadow-sm hover:shadow hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2"
               >
                 <span>Start Trading</span>
                 <ArrowRight className="w-4 h-4" />
@@ -95,7 +95,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
         {/* Row of 4 Quick Feature Cards (Browzzit Exact Placement & Rounded-2xl Style) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-12">
           
-          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
+          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-colors">
             <div className="w-11 h-11 rounded-2xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5 text-orange-500" />
             </div>
@@ -105,7 +105,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
+          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-colors">
             <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center shrink-0">
               <Zap className="w-5 h-5 text-amber-500" />
             </div>
@@ -115,7 +115,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
+          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-colors">
             <div className="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center shrink-0">
               <Headphones className="w-5 h-5 text-rose-500" />
             </div>
@@ -125,7 +125,7 @@ export default function HeroSection({ onOpenRegister, onOpenLogin }: HeroSection
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
+          <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-colors">
             <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 flex items-center justify-center shrink-0">
               <Globe2 className="w-5 h-5 text-blue-500" />
             </div>

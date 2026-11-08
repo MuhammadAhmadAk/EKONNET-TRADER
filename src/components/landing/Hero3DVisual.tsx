@@ -70,8 +70,8 @@ export default function Hero3DVisual() {
 
       {/* Floating 3D Bitcoin (Top Left) */}
       <div className="absolute top-[8%] left-[12%] animate-float-slow z-20">
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-200 p-[2px] shadow-[0_12px_30px_rgba(245,158,11,0.4)]">
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-black font-sans shadow-inner">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-200 p-[2px] shadow-sm">
+          <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-black font-sans">
             ₿
           </div>
         </div>
@@ -79,8 +79,8 @@ export default function Hero3DVisual() {
 
       {/* Floating 3D Ethereum (Top Right) */}
       <div className="absolute top-[5%] right-[10%] animate-float-reverse z-20">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-blue-300 via-indigo-400 to-slate-100 p-[2px] shadow-[0_12px_30px_rgba(99,102,241,0.4)]">
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white text-xl sm:text-2xl font-black shadow-inner">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-blue-300 via-indigo-400 to-slate-100 p-[2px] shadow-sm">
+          <div className="w-full h-full rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white text-xl sm:text-2xl font-black">
             Ξ
           </div>
         </div>
@@ -88,8 +88,8 @@ export default function Hero3DVisual() {
 
       {/* Floating 3D Solana (Mid Right) */}
       <div className="absolute top-[48%] right-[2%] animate-float-slow z-20">
-        <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-400 p-[2px] shadow-[0_12px_28px_rgba(168,85,247,0.4)]">
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center text-cyan-300 text-lg font-black shadow-inner">
+        <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-400 p-[2px] shadow-sm">
+          <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center text-cyan-300 text-lg font-black">
             ◎
           </div>
         </div>
@@ -99,17 +99,17 @@ export default function Hero3DVisual() {
       <div className="relative flex flex-col items-center justify-center mt-12 z-10">
         
         {/* Neon Orange Glowing Base Ring */}
-        <div className="absolute -bottom-8 w-[280px] sm:w-[360px] h-[70px] rounded-[100%] border-2 border-orange-500/70 shadow-[0_0_40px_rgba(249,115,22,0.6)] bg-gradient-to-b from-orange-500/10 to-transparent blur-[1px]" />
+        <div className="absolute -bottom-8 w-[280px] sm:w-[360px] h-[70px] rounded-[100%] border border-orange-500/40 bg-gradient-to-b from-orange-500/10 to-transparent blur-[1px]" />
         
         {/* Sleek Metallic Pedestal */}
-        <div className="relative w-[220px] sm:w-[280px] h-[48px] rounded-[100%] bg-gradient-to-b from-slate-200 via-slate-400 to-slate-600 dark:from-slate-700 dark:via-slate-850 dark:to-slate-900 shadow-[0_20px_40px_rgba(0,0,0,0.35)] border-t border-white/40 flex items-center justify-center">
-          <div className="w-[85%] h-[75%] rounded-[100%] bg-gradient-to-b from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950 shadow-inner" />
+        <div className="relative w-[220px] sm:w-[280px] h-[48px] rounded-[100%] bg-gradient-to-b from-slate-200 via-slate-400 to-slate-600 dark:from-slate-700 dark:via-slate-850 dark:to-slate-900 border-t border-white/40 flex items-center justify-center">
+          <div className="w-[85%] h-[75%] rounded-[100%] bg-gradient-to-b from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950" />
         </div>
 
         {/* Central 3D Glowing Official Ekonnet Logo Emblem */}
         <div className="relative -mt-44 sm:-mt-52 w-48 h-48 sm:w-60 sm:h-60 flex items-center justify-center animate-float-slow z-20">
           {/* Subtle warm ambient illumination behind emblem */}
-          <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-orange-600/30 via-red-500/30 to-amber-400/20 blur-2xl -z-10" />
+          <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-orange-600/20 via-red-500/20 to-amber-400/10 blur-xl -z-10" />
           
           <picture className="w-full h-full flex items-center justify-center">
             <source srcSet="/images/ekonnet-hero-512.webp" type="image/webp" />
@@ -121,7 +121,7 @@ export default function Hero3DVisual() {
               loading="eager"
               fetchPriority="high"
               decoding="async"
-              className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(249,115,22,0.4)]"
+              className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(249,115,22,0.2)]"
             />
           </picture>
         </div>

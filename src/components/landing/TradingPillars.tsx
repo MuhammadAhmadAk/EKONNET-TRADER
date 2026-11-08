@@ -77,7 +77,7 @@ export default function TradingPillars() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           {/* Pillar 1: Direct Internal Liquidity */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] space-y-4 hover:border-orange-500/40 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] space-y-4 hover:border-orange-500/50 transition-all flex flex-col justify-between">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center">
                 <ArrowLeftRight className="w-5 h-5" />
@@ -111,7 +111,7 @@ export default function TradingPillars() {
           </div>
 
           {/* Pillar 2: Direct P2P Settlement Protocol */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] space-y-4 hover:border-emerald-500/40 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] space-y-4 hover:border-emerald-500/50 transition-all flex flex-col justify-between">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center">
                 <Users className="w-5 h-5" />
@@ -145,7 +145,7 @@ export default function TradingPillars() {
           </div>
 
           {/* Pillar 3: 3rd-Party CEX Order Routing */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] space-y-4 hover:border-purple-500/40 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] space-y-4 hover:border-purple-500/50 transition-all flex flex-col justify-between">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-500 flex items-center justify-center">
                 <Network className="w-5 h-5" />

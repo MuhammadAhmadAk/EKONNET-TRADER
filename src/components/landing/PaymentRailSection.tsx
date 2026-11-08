@@ -71,7 +71,7 @@ export default function PaymentRailSection() {
         </div>
 
         {/* FX Transfer Calculator Widget (Rounded-2xl with clean border) */}
-        <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-100 dark:border-white/[0.08] p-5 sm:p-7 max-w-2xl mx-auto shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
+        <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/70 dark:border-white/[0.08] p-5 sm:p-7 max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100 dark:border-white/[0.06]">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">

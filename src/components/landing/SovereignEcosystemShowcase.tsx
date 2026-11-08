@@ -265,7 +265,7 @@ export default function SovereignEcosystemShowcase({
       </div>
 
       {/* INTERACTIVE DEEP INSPECTOR PANE */}
-      <div className="p-6 sm:p-10 rounded-2xl border bg-white/95 dark:bg-slate-950/70 border-slate-200/80 dark:border-slate-800/80 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl transition-all">
+      <div className="p-6 sm:p-10 rounded-2xl border bg-white/95 dark:bg-slate-950/70 border-slate-200/80 dark:border-slate-800/80 text-slate-900 dark:text-white transition-all">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           <div className="lg:col-span-7 space-y-6">

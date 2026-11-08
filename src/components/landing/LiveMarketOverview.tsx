@@ -56,7 +56,7 @@ export default function LiveMarketOverview() {
               <Link
                 key={coin.symbol}
                 href={`/trades/crypto/direct?pair=${coin.symbol}_USD`}
-                className="group p-4 rounded-2xl bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-orange-500/30 dark:hover:border-orange-500/30 transition-all duration-200 flex flex-col justify-between relative overflow-hidden"
+                className="group p-4 rounded-2xl bg-white/80 dark:bg-[#0c1222]/80 border border-slate-200/60 dark:border-white/[0.08] hover:border-orange-500/40 dark:hover:border-orange-500/40 transition-all duration-200 flex flex-col justify-between relative overflow-hidden"
               >
                 {/* Subtle top edge glow on active price tick */}
                 <div 

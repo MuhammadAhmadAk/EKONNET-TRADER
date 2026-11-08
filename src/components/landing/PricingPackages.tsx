@@ -62,7 +62,7 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
                 key={pkg.name}
                 className={`p-6 rounded-2xl transition-all duration-200 flex flex-col justify-between ${
                   isPopular
-                    ? "bg-white dark:bg-[#0c1222] border-2 border-orange-500 shadow-md relative"
+                    ? "bg-white dark:bg-[#0c1222] border-2 border-orange-500 relative"
                     : "bg-white dark:bg-[#0c1222]/80 border border-slate-100 dark:border-white/[0.08] hover:border-orange-500/30 hover:shadow-sm shadow-xs"
                 }`}
               >
@@ -109,7 +109,7 @@ export default function PricingPackages({ onSelectPackage }: PricingPackagesProp
                     onClick={() => onSelectPackage(pkg.name)}
                     className={`w-full py-2.5 rounded-full font-semibold text-xs transition flex items-center justify-center gap-1.5 ${
                       isPopular
-                        ? "bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-md shadow-orange-500/20"
+                        ? "bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-sm"
                         : "bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10"
                     }`}
                   >

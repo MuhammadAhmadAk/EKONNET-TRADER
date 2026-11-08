@@ -102,7 +102,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/85 dark:bg-[#070b14]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 transition-colors duration-300 select-none shadow-xs dark:shadow-2xl">
+    <header className="sticky top-0 z-50 w-full bg-white/85 dark:bg-[#070b14]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 transition-colors duration-300 select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4 lg:gap-6">
           
@@ -162,7 +162,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               </button>
 
               {investDropdownOpen && (
-                <div className="absolute left-0 mt-1 w-80 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute left-0 mt-1 w-80 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-lg p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/5">
                     Invest in Markets (Section 14 & CMC Markets)
                   </div>
@@ -263,7 +263,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               </button>
 
               {toolsDropdownOpen && (
-                <div className="absolute left-0 mt-1 w-72 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute left-0 mt-1 w-72 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-lg p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/5">
                     Platform Engines
                   </div>
@@ -341,7 +341,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               </button>
 
               {academyDropdownOpen && (
-                <div className="absolute left-0 mt-1 w-72 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute left-0 mt-1 w-72 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 shadow-lg p-3 space-y-1 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/5">
                     Learning & Trust
                   </div>
@@ -453,7 +453,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
 
                   {/* Dropdown Menu */}
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-white/10 shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 text-xs space-y-3">
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-white/10 shadow-lg p-3 z-50 animate-in fade-in slide-in-from-top-2 text-xs space-y-3">
                       <div className="border-b border-slate-100 dark:border-white/10 pb-2.5">
                         <div className="font-bold text-slate-900 dark:text-white text-xs">{currentUser.fullName}</div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{currentUser.id} • @{currentUser.username}</div>

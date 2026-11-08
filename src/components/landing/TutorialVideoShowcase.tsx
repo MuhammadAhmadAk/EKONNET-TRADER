@@ -202,7 +202,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
           
           {/* Left: Video Player Screen (8 Cols) */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 shadow-xl dark:shadow-2xl group transition-colors">
+            <div className="relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 group transition-colors">
               
               {/* Simulated Video Canvas / Live Demonstration Screen */}
               <div className="relative w-full aspect-video bg-gradient-to-br from-slate-100 via-white to-slate-50 dark:from-slate-950 dark:via-[#0B101E] dark:to-slate-900 flex flex-col justify-between p-6 overflow-hidden">
@@ -228,7 +228,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
 
                 {/* Interactive Dynamic Center Graphic: Simulating Real Platform Action */}
                 <div className="relative z-10 my-auto text-center space-y-4 max-w-lg mx-auto">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 border border-emerald-500/40 mx-auto flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-lg shadow-emerald-500/20">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 border border-emerald-500/40 mx-auto flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                     {isPlaying ? (
                       <Sliders className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin-slow" />
                     ) : (
@@ -328,7 +328,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
             </div>
 
             {/* Accompanying Lesson Written Instructions */}
-            <div className="rounded-2xl p-6 sm:p-8 bg-white/95 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-md dark:shadow-xl">
+            <div className="rounded-2xl p-6 sm:p-8 bg-white/95 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-6">
               <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/5 pb-4">
                 <div>
                   <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Step-by-Step Written Guide</span>
@@ -380,7 +380,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
 
           {/* Right: Lesson Selector & Academy Chapters (4 Cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="rounded-2xl p-6 bg-white/95 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 shadow-md dark:shadow-xl space-y-4">
+            <div className="rounded-2xl p-6 bg-white/95 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-3">
                 <div className="flex items-center gap-2">
                   <Video className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />

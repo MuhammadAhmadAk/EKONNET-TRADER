@@ -42,7 +42,7 @@ export default function AdvancedTradingSection({
             <div className="pt-2">
               <button
                 onClick={onOpenRegister}
-                className="w-full sm:w-auto px-7 py-3 rounded-full bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold text-sm shadow-md shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] transition inline-flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3 rounded-full bg-gradient-to-r from-orange-500 via-rose-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold text-sm shadow-sm hover:shadow hover:scale-[1.02] transition inline-flex items-center justify-center gap-2"
               >
                 <span>Start Trading Now</span>
                 <ArrowRight className="w-4 h-4" />
@@ -52,7 +52,7 @@ export default function AdvancedTradingSection({
 
           {/* Right Column: Browzzit Advanced Trading Terminal Card */}
           <div className="lg:col-span-7">
-            <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-100 dark:border-white/[0.08] p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+            <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/70 dark:border-white/[0.08] p-5 sm:p-6">
               
               {/* Header: BTC/USDT + Timeframe Pills */}
               <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-100 dark:border-white/[0.06] gap-3">
@@ -241,7 +241,7 @@ export default function AdvancedTradingSection({
                   {/* Execution CTA Button (Browzzit Solid Green Pill) */}
                   <button
                     onClick={onOpenRegister}
-                    className="w-full py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/35 transition flex items-center justify-center gap-1.5 mt-2"
+                    className="w-full py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center justify-center gap-1.5 mt-2"
                   >
                     <span>Buy BTC</span>
                   </button>
