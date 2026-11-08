@@ -73,18 +73,21 @@ export default function LandingPage() {
           onOpenLogin={() => setIsLoginOpen(true)}
         />
         
-        <TradingPillars />
+        {/* Commented out per request: Multi-Asset Trading Engine */}
+        {/* <TradingPillars /> */}
         
         <PaymentRailSection />
         
-        <PricingPackages 
+        {/* Commented out per request: Flexible Account Tiers & Deals Packages */}
+        {/* <PricingPackages 
           onSelectPackage={() => setIsRegisterOpen(true)}
-        />
+        /> */}
         
-        <BigFeatureAdvertisements 
+        {/* Commented out per request: Stop Installing Clunky Softwares. Trade Direct in Your Browser */}
+        {/* <BigFeatureAdvertisements 
           onOpenRegister={() => setIsRegisterOpen(true)}
           onOpenLogin={() => setIsLoginOpen(true)}
-        />
+        /> */}
 
         {/* 5-PLATFORM SOVEREIGN ECOSYSTEM MASTER ADVERTISEMENT BILLBOARD */}
         <SovereignEcosystemShowcase 
