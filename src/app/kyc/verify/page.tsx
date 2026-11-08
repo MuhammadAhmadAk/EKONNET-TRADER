@@ -59,26 +59,40 @@ function KYCVerifyContent() {
       setUserId(qUserId);
     }
 
-    // Authenticated session detection
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          const u = data.user;
-          setUserId(u.id);
-          if (u.fullName) setFullName(u.fullName);
-          if (u.dateOfBirth) setDob(u.dateOfBirth);
-          if (u.country) setCountry(u.country);
-          if (u.city) setCity(u.city);
-        } else if (!qUserId) {
-          router.replace("/?auth=login&from=/kyc/verify");
-        }
-      })
-      .catch(() => {
-        if (!qUserId) {
-          router.replace("/?auth=login&from=/kyc/verify");
-        }
-      });
+    const checkAndPoll = () => {
+      fetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.authenticated && data.user) {
+            const u = data.user;
+            setUserId(u.id);
+            if (u.fullName) setFullName(u.fullName);
+            if (u.dateOfBirth) setDob(u.dateOfBirth);
+            if (u.country) setCountry(u.country);
+            if (u.city) setCity(u.city);
+
+            // AUTO-REDIRECT TO HOMEPAGE ONCE APPROVED BY ADMIN
+            if (u.kycStatus === "approved") {
+              localStorage.setItem("ekonnet_user", JSON.stringify(u));
+              router.replace("/?kyc=approved");
+              return;
+            }
+          } else if (!qUserId) {
+            router.replace("/?auth=login&from=/kyc/verify");
+          }
+        })
+        .catch(() => {
+          if (!qUserId) {
+            router.replace("/?auth=login&from=/kyc/verify");
+          }
+        });
+    };
+
+    checkAndPoll();
+
+    // Live auto-polling every 2.5 seconds
+    const interval = setInterval(checkAndPoll, 2500);
+    return () => clearInterval(interval);
   }, [router, searchParams]);
 
   // Helper to handle image file to Data URL

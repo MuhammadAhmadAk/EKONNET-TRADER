@@ -26,12 +26,19 @@ export default function LandingPage() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [activeNotification, setActiveNotification] = useState("");
 
-  // Check URL query parameters or hash to open login/register modals automatically
+  // Check URL query parameters or hash to open login/register modals automatically or display KYC approved alert
   React.useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const authAction = params.get("auth");
+      const kycStatus = params.get("kyc");
       const hash = window.location.hash;
+
+      if (kycStatus === "approved") {
+        setActiveNotification("✓ Identity Verified! Your KYC has been successfully approved by Compliance.");
+        setTimeout(() => setActiveNotification(""), 8000);
+      }
+
       if (authAction === "login" || hash === "#login") {
         setIsLoginOpen(true);
       } else if (authAction === "register" || hash === "#register") {

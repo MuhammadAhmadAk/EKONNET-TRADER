@@ -30,16 +30,32 @@ export default function AdminManagementLoginPage() {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
-    // Check if already authenticated as admin
+    // Check if already authenticated as admin via localStorage or server session
     try {
-      const stored = localStorage.getItem("ekonnet_user");
+      const stored = localStorage.getItem("ekonnet_admin_user") || localStorage.getItem("ekonnet_user");
       if (stored) {
         const u = JSON.parse(stored);
         if (u.role === "master_admin" || u.role === "management" || u.role === "staff") {
           router.push("/admin");
+          return;
         }
       }
     } catch (e) {}
+
+    // Verify server session
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          const role = data.user.role;
+          if (role === "master_admin" || role === "management" || role === "staff") {
+            localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
+            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+            router.push("/admin");
+          }
+        }
+      })
+      .catch(() => {});
   }, [router]);
 
   const toggleTheme = () => {
@@ -97,7 +113,8 @@ export default function AdminManagementLoginPage() {
         return;
       }
 
-      // Store authenticated session
+      // Store authenticated session in both admin storage and general user storage
+      localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
       localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-changed"));
       router.push("/admin");

@@ -30,13 +30,24 @@ import Footer from "@/components/landing/Footer";
 
 export default function UserDashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("ekonnet_user");
+        return stored ? JSON.parse(stored) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
   const [copiedLink, setCopiedLink] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [kycUrl, setKycUrl] = useState("");
 
   useEffect(() => {
     setMounted(true);
+
     const loadSession = async () => {
       try {
         const res = await fetch("/api/auth/me");
@@ -45,6 +56,12 @@ export default function UserDashboardPage() {
           if (data.authenticated && data.user) {
             setUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+
+            // Instant auto-redirect to homepage if already approved
+            if (data.user.kycStatus === "approved") {
+              router.replace("/?kyc=approved");
+              return;
+            }
             return;
           }
         }
@@ -55,6 +72,9 @@ export default function UserDashboardPage() {
           try {
             const parsed = JSON.parse(stored);
             setUser(parsed);
+            if (parsed.kycStatus === "approved") {
+              router.replace("/?kyc=approved");
+            }
             return;
           } catch (err) {}
         }
@@ -70,7 +90,29 @@ export default function UserDashboardPage() {
 
     loadSession();
     window.addEventListener("auth-changed", loadSession);
-    return () => window.removeEventListener("auth-changed", loadSession);
+
+    // Auto-poll every 2.5 seconds to detect real-time Admin KYC Approval
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setUser(data.user);
+            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+            if (data.user.kycStatus === "approved") {
+              clearInterval(pollInterval);
+              router.replace("/?kyc=approved");
+            }
+          }
+        }
+      } catch (e) {}
+    }, 2500);
+
+    return () => {
+      window.removeEventListener("auth-changed", loadSession);
+      clearInterval(pollInterval);
+    };
   }, [router]);
 
   useEffect(() => {
@@ -96,12 +138,14 @@ export default function UserDashboardPage() {
     }
   };
 
+  // No blocking loader - Render cleanly
   if (!mounted || !user) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] flex items-center justify-center font-mono text-xs text-slate-500">
-        Loading Sovereign Trading Dashboard...
-      </div>
-    );
+    return <div className="min-h-screen bg-slate-50 dark:bg-[#070b14]" />;
+  }
+
+  // If approved, don't show QR page - redirect immediately
+  if (user.kycStatus === "approved") {
+    return <div className="min-h-screen bg-slate-50 dark:bg-[#070b14]" />;
   }
 
   const activeKycUrl = kycUrl || `https://ekonnet.com/kyc/verify?userId=${user.id}`;

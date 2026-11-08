@@ -118,24 +118,57 @@ export default function AdminPortalPage() {
     };
     window.addEventListener("theme-changed", handleThemeChange);
 
-    // 2. Administrative Authentication Guard
-    try {
-      const stored = localStorage.getItem("ekonnet_user");
-      if (!stored) {
+    // 2. Administrative Authentication Guard - Resilient session persistence across refreshes
+    const verifyAdminSession = async () => {
+      try {
+        // Fast local recovery first (so no blank screen on refresh)
+        const stored = localStorage.getItem("ekonnet_admin_user") || localStorage.getItem("ekonnet_user");
+        let localAdmin = null;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.role === "master_admin" || parsed.role === "management" || parsed.role === "staff") {
+              localAdmin = parsed;
+              setCurrentAdmin(parsed);
+              setIsAuthChecking(false);
+              loadDeposits();
+            }
+          } catch (e) {}
+        }
+
+        // Verify with /api/auth/me (validates server-side httpOnly JWT cookie)
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user && (data.user.role === "master_admin" || data.user.role === "management" || data.user.role === "staff")) {
+            setCurrentAdmin(data.user);
+            localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
+            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+            setIsAuthChecking(false);
+            loadDeposits();
+            return;
+          }
+        }
+
+        // If local admin was already verified, don't kick user out on temporary network glitch
+        if (localAdmin) {
+          setIsAuthChecking(false);
+          loadDeposits();
+          return;
+        }
+
         router.push("/admin/login?error=unauthorized");
-        return;
+      } catch (e) {
+        const stored = localStorage.getItem("ekonnet_admin_user");
+        if (!stored) {
+          router.push("/admin/login");
+        } else {
+          setIsAuthChecking(false);
+        }
       }
-      const u = JSON.parse(stored);
-      if (u.role !== "master_admin" && u.role !== "management" && u.role !== "staff") {
-        router.push("/admin/login?error=restricted");
-        return;
-      }
-      setCurrentAdmin(u);
-      setIsAuthChecking(false);
-      loadDeposits();
-    } catch (e) {
-      router.push("/admin/login");
-    }
+    };
+
+    verifyAdminSession();
 
     return () => {
       window.removeEventListener("theme-changed", handleThemeChange);
@@ -161,6 +194,7 @@ export default function AdminPortalPage() {
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (e) {}
     localStorage.removeItem("ekonnet_user");
+    localStorage.removeItem("ekonnet_admin_user");
     window.dispatchEvent(new Event("auth-changed"));
     router.push("/admin/login");
   };
@@ -290,30 +324,80 @@ export default function AdminPortalPage() {
     }
   };
 
-  const handleToggleFreeze = (userId: string) => {
+  const handleToggleFreeze = async (userId: string) => {
+    const target = users.find((u) => u.id === userId);
+    if (!target) return;
+    const nextState = !target.isLocked;
+
+    // Optimistic UI update
     setUsers((prev) =>
       prev.map((u) => {
         if (u.id === userId) {
-          const nextState = !u.isLocked;
-          showToast(`Account ${u.username} (${u.id}) has been ${nextState ? "SUSPENDED" : "REACTIVATED"} .`);
           return { ...u, isLocked: nextState };
         }
         return u;
       })
     );
+    showToast(`Account ${target.username} (${userId}) ${nextState ? "SUSPENDED" : "REACTIVATED"}...`);
+
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          isLocked: nextState,
+          executedBy: currentAdmin?.fullName || currentAdmin?.username || "Master Admin"
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        if (data.data) setUsers(data.data);
+        showToast(`Account ${target.username} (${userId}) saved to MongoDB: ${nextState ? "SUSPENDED" : "REACTIVATED"}!`);
+      } else {
+        showToast(`Failed to update freeze status in DB: ${data.error || "Error"}`);
+      }
+    } catch (err) {
+      showToast("Network error updating lock status.");
+    }
   };
 
-  const handleUpdateKYC = (userId: string, status: "approved" | "rejected") => {
+  const handleUpdateKYC = async (userId: string, status: "approved" | "rejected") => {
+    const target = users.find((u) => u.id === userId);
+    const targetName = target?.fullName || userId;
+
+    // Optimistic UI update
     setUsers((prev) =>
       prev.map((u) => {
         if (u.id === userId) {
-          showToast(`KYC for ${u.fullName} marked as ${status.toUpperCase()} .`);
           return { ...u, kycStatus: status };
         }
         return u;
       })
     );
+    showToast(`KYC for ${targetName} updating to ${status.toUpperCase()}...`);
     setSelectedKycUser(null);
+
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          kycStatus: status,
+          executedBy: currentAdmin?.fullName || currentAdmin?.username || "Master Admin"
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        if (data.data) setUsers(data.data);
+        showToast(`✓ KYC for ${targetName} successfully ${status.toUpperCase()} in database!`);
+      } else {
+        showToast(`Failed to update KYC in DB: ${data.error || "Error"}`);
+      }
+    } catch (err) {
+      showToast("Network error updating KYC status.");
+    }
   };
 
   const handleEmergencyFreezeToggle = () => {
