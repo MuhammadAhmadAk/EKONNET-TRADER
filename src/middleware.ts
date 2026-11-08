@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyAuthToken, AUTH_COOKIE_NAME } from "@/lib/jwt";
+import { verifyAuthToken, AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "@/lib/jwt";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -111,6 +111,22 @@ export async function middleware(request: NextRequest) {
 
   // 6. Protect KYC Dossier Verification: /kyc and subpaths
   if (pathname === "/kyc" || pathname.startsWith("/kyc/")) {
+    // 6a. Check for mobile QR one-time transfer ticket
+    const ticket = request.nextUrl.searchParams.get("ticket");
+    if (ticket) {
+      const ticketPayload = await verifyAuthToken(ticket);
+      if (ticketPayload) {
+        // Valid ticket! Issue auth cookie directly to the mobile browser and redirect cleanly without ticket param
+        const cleanUrl = new URL(pathname, request.url);
+        request.nextUrl.searchParams.forEach((val, key) => {
+          if (key !== "ticket") cleanUrl.searchParams.set(key, val);
+        });
+        const response = NextResponse.redirect(cleanUrl);
+        response.cookies.set(AUTH_COOKIE_NAME, ticket, AUTH_COOKIE_OPTIONS);
+        return response;
+      }
+    }
+
     const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
     if (!token) {
       const homeUrl = new URL("/", request.url);

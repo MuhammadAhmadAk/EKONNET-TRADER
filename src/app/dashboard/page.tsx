@@ -25,7 +25,8 @@ import {
   Clock, 
   CheckCircle2,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  Camera
 } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -79,7 +80,21 @@ export default function UserDashboardPage() {
     );
   }
 
-  const kycUrl = `https://ekonnet.com/kyc/verify?userId=${user.id}`;
+  const [kycUrl, setKycUrl] = useState(`https://ekonnet.com/kyc/verify?userId=${user.id}`);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch("/api/kyc/ticket")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.kycUrl) {
+            setKycUrl(data.kycUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user?.id]);
+
   const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(kycUrl)}`;
 
   const copyKycLink = () => {
@@ -170,10 +185,10 @@ export default function UserDashboardPage() {
                   <span>Instant Mobile KYC Verification Flow</span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                  Verify Your Identity on Mobile Camera
+                  Verify Your Identity &amp; Unlock Full Trading
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
-                  Apne smartphone ke camera se niche QR code scan karein taake bina kisi download ke foran mobile browser mein KYC upload ho sake.
+                  Aap isi device se direct camera aur documents upload kar sakte hain, ya laptop/PC par hain toh smartphone se QR code scan kar ke auto-verify kar sakte hain.
                 </p>
               </div>
 
@@ -181,6 +196,31 @@ export default function UserDashboardPage() {
                 <span className="text-[11px] font-mono text-slate-400">KYC Requirement:</span>
                 <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Sirf 4 Zaroori Cheezein</div>
               </div>
+            </div>
+
+            {/* Direct 1-Click Verification Banner for Current Device */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#070b14] border border-orange-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-orange-500/20">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Agar aap pehle se mobile ya computer par hain:
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Kisi QR code ko scan karne ki zaroorat nahi — seedha verification flow shuru karein.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={kycUrl}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition shrink-0"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Start KYC on This Device</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -196,11 +236,11 @@ export default function UserDashboardPage() {
                 </div>
                 <div className="space-y-1">
                   <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center justify-center gap-1.5">
-                    <Smartphone className="w-4 h-4 text-orange-500" />
-                    <span>Scan with Mobile Camera</span>
+                    <QrCode className="w-4 h-4 text-orange-500" />
+                    <span>PC Se Mobile Par Scan Karein</span>
                   </div>
-                  <p className="text-[10px] text-slate-400 max-w-[200px] leading-relaxed">
-                    Direct mobile browser khul jayega aur camera se live photo upload hogi.
+                  <p className="text-[10px] text-slate-400 max-w-[220px] leading-relaxed">
+                    Mobile camera se scan karte hi direct auto-login ke saath verification screen khul jayegi.
                   </p>
                 </div>
 
@@ -213,10 +253,10 @@ export default function UserDashboardPage() {
                     <span>{copiedLink ? "Link Copied" : "Copy Link"}</span>
                   </button>
                   <Link
-                    href={`/kyc/verify?userId=${user.id}`}
+                    href={kycUrl}
                     className="flex-1 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center justify-center gap-1 transition"
                   >
-                    <span>Open on PC</span>
+                    <span>Direct Open</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Link>
                 </div>

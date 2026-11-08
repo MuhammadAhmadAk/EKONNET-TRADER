@@ -54,6 +54,11 @@ function KYCVerifyContent() {
   const [skipProofOfAddress, setSkipProofOfAddress] = useState(false);
 
   useEffect(() => {
+    const qUserId = searchParams.get("userId");
+    if (qUserId) {
+      setUserId(qUserId);
+    }
+
     // Authenticated session detection
     fetch("/api/auth/me")
       .then((res) => res.json())
@@ -65,14 +70,16 @@ function KYCVerifyContent() {
           if (u.dateOfBirth) setDob(u.dateOfBirth);
           if (u.country) setCountry(u.country);
           if (u.city) setCity(u.city);
-        } else {
+        } else if (!qUserId) {
           router.replace("/?auth=login&from=/kyc/verify");
         }
       })
       .catch(() => {
-        router.replace("/?auth=login&from=/kyc/verify");
+        if (!qUserId) {
+          router.replace("/?auth=login&from=/kyc/verify");
+        }
       });
-  }, [router]);
+  }, [router, searchParams]);
 
   // Helper to handle image file to Data URL
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {

@@ -43,13 +43,19 @@ export default function LandingPage() {
   const handleRegisterSuccess = (newUser: any) => {
     setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete mobile KYC.`);
     setTimeout(() => setActiveNotification(""), 6000);
-    router.push("/dashboard");
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get("from");
+    const destination = fromParam && fromParam.startsWith("/") ? fromParam : "/dashboard";
+    router.push(destination);
   };
 
   const handleLoginSuccess = (user?: any) => {
     setActiveNotification(`Welcome back${user?.fullName ? ', ' + user.fullName : ''}! Authentication successful.`);
     setTimeout(() => setActiveNotification(""), 5000);
-    router.push("/dashboard");
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get("from");
+    const destination = fromParam && fromParam.startsWith("/") ? fromParam : "/dashboard";
+    router.push(destination);
   };
 
   return (
