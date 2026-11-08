@@ -26,6 +26,20 @@ export default function LandingPage() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [activeNotification, setActiveNotification] = useState("");
 
+  // Check URL query parameters or hash to open login/register modals automatically
+  React.useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const authAction = params.get("auth");
+      const hash = window.location.hash;
+      if (authAction === "login" || hash === "#login") {
+        setIsLoginOpen(true);
+      } else if (authAction === "register" || hash === "#register") {
+        setIsRegisterOpen(true);
+      }
+    } catch (e) {}
+  }, []);
+
   const handleRegisterSuccess = (newUser: any) => {
     setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete mobile KYC.`);
     setTimeout(() => setActiveNotification(""), 6000);

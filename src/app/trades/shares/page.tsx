@@ -8,6 +8,7 @@ import {
   ChevronRight, 
   ShieldCheck, 
   Zap, 
+  Lock,
   BarChart2, 
   DollarSign,
   PieChart,
@@ -41,6 +42,7 @@ const EQUITY_SHARES: EquityShare[] = [
 ];
 
 export default function SharesInvestmentPage() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [selectedStock, setSelectedStock] = useState<EquityShare>(EQUITY_SHARES[0]);
   const [investMode, setInvestMode] = useState<"fractional" | "shares">("fractional");
@@ -50,6 +52,15 @@ export default function SharesInvestmentPage() {
     if (getPlatformStatus("shares") === "Maintenance") {
       setIsMaintenance(true);
     }
+
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   if (isMaintenance) {
@@ -216,12 +227,22 @@ export default function SharesInvestmentPage() {
               </div>
             </div>
 
-            <button
-              onClick={() => alert(`Executed investment in ${selectedStock.ticker} for ${investAmount} (${investMode}). Direct custody confirmed.`)}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase font-mono shadow-md shadow-orange-500/20 transition-all"
-            >
-              Confirm Equity Order
-            </button>
+            {!currentUser ? (
+              <Link
+                href="/?auth=login&from=/trades/shares"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase font-mono shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 transition-all"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Sign In to Invest</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => alert(`Executed investment in ${selectedStock.ticker} for ${investAmount} (${investMode}). Direct custody confirmed.`)}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase font-mono shadow-md shadow-orange-500/20 transition-all"
+              >
+                Confirm Equity Order
+              </button>
+            )}
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />

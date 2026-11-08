@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import { getUsers, updateUser, createAuditLog } from "@/lib/dbService";
+import { getSessionPayload, requireAdminSession } from "@/lib/session";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const admin = await requireAdminSession();
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Forbidden: Administrative clearance required to access KYC records." },
+        { status: 403 }
+      );
+    }
+
     const users = await getUsers();
     const pending = users.filter(u => u.kycStatus === "pending" || u.kycStatus === "unverified");
     return NextResponse.json({
@@ -16,9 +27,16 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSessionPayload();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Please log in before submitting KYC verification." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { 
-      userId, 
       fullName,
       dob,
       residentialAddress,
@@ -30,9 +48,8 @@ export async function POST(request: Request) {
       proofOfAddressUrl
     } = body;
 
-    if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
-    }
+    // Cryptographically bound to the authenticated user
+    const userId = session.userId;
 
     if (!documentFrontUrl || !selfieUrl) {
       return NextResponse.json({ 
@@ -64,7 +81,7 @@ export async function POST(request: Request) {
 
     await createAuditLog({
       userId,
-      userName: fullName || userId,
+      userName: fullName || session.fullName || session.username,
       role: "user",
       actionType: "KYC_REVIEW",
       description: `User submitted 4-step KYC dossier (${documentType.toUpperCase()}) with live selfie via mobile/browser portal.`,
@@ -84,14 +101,24 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const admin = await requireAdminSession();
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Forbidden: Administrative compliance privileges required to review KYC." },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
-    const { userId, action, staffId = "STAFF-101", staffName = "Compliance Officer", reason = "" } = body;
+    const { userId, action, reason = "" } = body;
 
     if (!userId || !action || !["approve", "reject"].includes(action)) {
       return NextResponse.json({ error: "userId and action ('approve' | 'reject') are required" }, { status: 400 });
     }
 
     const newStatus = action === "approve" ? "approved" : "rejected";
+    const staffId = admin.userId;
+    const staffName = admin.fullName || admin.username || "Compliance Officer";
 
     await updateUser(userId, {
       kycStatus: newStatus,
@@ -101,7 +128,7 @@ export async function PATCH(request: Request) {
     await createAuditLog({
       userId: staffId,
       userName: staffName,
-      role: "staff",
+      role: admin.role,
       actionType: "KYC_REVIEW",
       description: `Staff ${staffName} (${staffId}) set KYC status for user ${userId} to ${newStatus.toUpperCase()}.${reason ? " Note: " + reason : ""}`,
       ipAddress: "82.165.10.77",

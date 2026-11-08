@@ -109,6 +109,11 @@ export default function PaymentsPage() {
     setErrorMsg("");
     setSubmissionResult(null);
 
+    if (!currentUser) {
+      setErrorMsg("Authentication required. Please sign in to submit deposit slips.");
+      return;
+    }
+
     if (!amount || amount <= 0) {
       setErrorMsg("Please enter a valid deposit amount.");
       return;
@@ -125,8 +130,8 @@ export default function PaymentsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: currentUser?.id || "EKON-419836",
-          userName: senderAccountName || currentUser?.fullName || "Active Trader",
+          userId: currentUser.id,
+          userName: currentUser.fullName || currentUser.username,
           amount: Number(amount),
           currency,
           paymentRail: getPaymentRailName(selectedMethod),
@@ -173,6 +178,37 @@ export default function PaymentsPage() {
       <Navbar />
 
       {/* Main Body */}
+      {!currentUser ? (
+        <main className="p-6 sm:p-12 max-w-md mx-auto w-full flex-1 flex items-center justify-center">
+          <div className="w-full rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200 dark:border-white/10 shadow-xl p-8 text-center space-y-5">
+            <div className="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center mx-auto">
+              <Lock className="w-7 h-7" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-slate-900 dark:text-white">
+                Authentication Required
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Please sign in to your verified Ekonnet account to view custody balances, initiate bank deposits, and access institutional clearing rails.
+              </p>
+            </div>
+            <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/?auth=login&from=/payments"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-rose-600 transition"
+              >
+                Sign In to Account
+              </Link>
+              <Link
+                href="/?auth=register&from=/payments"
+                className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 font-bold text-xs hover:bg-slate-200 dark:hover:bg-white/20 transition"
+              >
+                Register
+              </Link>
+            </div>
+          </div>
+        </main>
+      ) : (
       <main className="p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6 flex-1">
         
         {/* Breadcrumb & Title */}
@@ -218,7 +254,7 @@ export default function PaymentsPage() {
           <div className="p-5 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Available USD Custody</span>
             <div className="text-2xl font-black font-mono text-slate-900 dark:text-white">
-              ${(currentUser?.walletBalances?.USD || 14250.00).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              ${Number(currentUser.walletBalances?.USD || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </div>
             <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" /> Instant Trading &amp; P2P Ready
@@ -228,10 +264,10 @@ export default function PaymentsPage() {
           <div className="p-5 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Crypto Reserves</span>
             <div className="text-2xl font-black font-mono text-orange-600 dark:text-orange-400">
-              {(currentUser?.walletBalances?.BTC || 0.85).toFixed(4)} BTC
+              {Number(currentUser.walletBalances?.BTC || 0).toFixed(4)} BTC
             </div>
             <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-              ≈ ${( (currentUser?.walletBalances?.BTC || 0.85) * 67450 ).toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
+              ≈ ${( Number(currentUser.walletBalances?.BTC || 0) * 67450 ).toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
             </div>
           </div>
 
@@ -557,6 +593,7 @@ export default function PaymentsPage() {
         )}
 
       </main>
+      )}
 
       {/* Universal Footer */}
       <Footer />

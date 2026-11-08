@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSettlementOffers, createSettlementOffer, advanceSettlementState, createAuditLog } from "@/lib/dbService";
+import { getSessionPayload } from "@/lib/session";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -15,11 +18,17 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSessionPayload();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Please log in to create settlement offers." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { 
       offerType, 
-      creatorId, 
-      creatorName, 
       cryptoSymbol, 
       fiatCurrency = "USD", 
       amount, 
@@ -27,16 +36,18 @@ export async function POST(request: Request) {
       paymentRail 
     } = body;
 
-    if (!offerType || !creatorId || !cryptoSymbol || !amount || !pricePerUnit || !paymentRail) {
+    if (!offerType || !cryptoSymbol || !amount || !pricePerUnit || !paymentRail) {
       return NextResponse.json({ error: "Missing required offer fields" }, { status: 400 });
     }
 
     const totalFiat = Number((amount * pricePerUnit).toFixed(2));
+    const creatorId = session.userId;
+    const creatorName = session.fullName || session.username || "Trader";
 
     const newOffer = await createSettlementOffer({
       offerType,
       creatorId,
-      creatorName: creatorName || "Trader",
+      creatorName,
       cryptoSymbol,
       fiatCurrency,
       amount,
@@ -47,8 +58,8 @@ export async function POST(request: Request) {
 
     await createAuditLog({
       userId: creatorId,
-      userName: creatorName || "Trader",
-      role: "user",
+      userName: creatorName,
+      role: session.role,
       actionType: "SETTLEMENT",
       description: `Offer created: ${offerType} ${amount} ${cryptoSymbol} at ${pricePerUnit} USD via ${paymentRail}`,
       ipAddress: "82.165.10.77",
@@ -68,17 +79,28 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const body = await request.json();
-    const { offerId, action, actorId, actorName } = body;
+    const session = await getSessionPayload();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Please log in to advance settlement state." },
+        { status: 401 }
+      );
+    }
 
-    if (!offerId || !action || !actorId) {
-      return NextResponse.json({ error: "offerId, action, and actorId are required" }, { status: 400 });
+    const body = await request.json();
+    const { offerId, action } = body;
+
+    if (!offerId || !action) {
+      return NextResponse.json({ error: "offerId and action are required" }, { status: 400 });
     }
 
     const validActions = ["lock", "confirm_payment", "release", "dispute"];
     if (!validActions.includes(action)) {
       return NextResponse.json({ error: `Action must be one of: ${validActions.join(", ")}` }, { status: 400 });
     }
+
+    const actorId = session.userId;
+    const actorName = session.fullName || session.username || "Trader";
 
     const result = await advanceSettlementState(offerId, action, actorId, actorName);
 
@@ -88,8 +110,8 @@ export async function PUT(request: Request) {
 
     await createAuditLog({
       userId: actorId,
-      userName: actorName || actorId,
-      role: "user",
+      userName: actorName,
+      role: session.role,
       actionType: "SETTLEMENT",
       description: `Settlement action '${action}' executed on trade ${offerId}`,
       ipAddress: "82.165.10.77",

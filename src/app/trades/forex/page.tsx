@@ -38,6 +38,7 @@ const FOREX_PAIRS: ForexPair[] = [
 ];
 
 export default function ForexTradingPage() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [activePair, setActivePair] = useState<ForexPair>(FOREX_PAIRS[0]);
   const [lotSize, setLotSize] = useState<number>(1.0);
@@ -47,6 +48,15 @@ export default function ForexTradingPage() {
     if (getPlatformStatus("forex") === "Maintenance") {
       setIsMaintenance(true);
     }
+
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   if (isMaintenance) {
@@ -187,20 +197,32 @@ export default function ForexTradingPage() {
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <button
-                onClick={() => alert(`Executed SELL ${lotSize} Lots on ${activePair.symbol} at ${activePair.bid}.`)}
-                className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-rose-600/20 transition"
-              >
-                Sell (Bid) {activePair.bid}
-              </button>
-              <button
-                onClick={() => alert(`Executed BUY ${lotSize} Lots on ${activePair.symbol} at ${activePair.ask}.`)}
-                className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-emerald-600/20 transition"
-              >
-                Buy (Ask) {activePair.ask}
-              </button>
-            </div>
+            {!currentUser ? (
+              <div className="pt-2">
+                <Link
+                  href="/?auth=login&from=/trades/forex"
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Sign In to Trade Forex</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => alert(`Executed SELL ${lotSize} Lots on ${activePair.symbol} at ${activePair.bid}.`)}
+                  className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-rose-600/20 transition"
+                >
+                  Sell (Bid) {activePair.bid}
+                </button>
+                <button
+                  onClick={() => alert(`Executed BUY ${lotSize} Lots on ${activePair.symbol} at ${activePair.ask}.`)}
+                  className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase font-mono shadow-sm shadow-emerald-600/20 transition"
+                >
+                  Buy (Ask) {activePair.ask}
+                </button>
+              </div>
+            )}
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />

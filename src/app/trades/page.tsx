@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   TrendingUp, 
@@ -11,6 +11,7 @@ import {
   ArrowDownRight,
   ShieldCheck, 
   Zap, 
+  Lock,
   BarChart2, 
   ChevronRight, 
   Layers
@@ -22,9 +23,21 @@ import { INITIAL_MARKET_TICKERS, BASE_PAIRS } from "@/lib/mockData";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
 export default function TradesPage() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedBasePair, setSelectedBasePair] = useState<string>("USD");
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [orderAmount, setOrderAmount] = useState<number>(500);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-transparent text-slate-800 dark:text-gray-100 flex flex-col transition-colors duration-300">
@@ -230,16 +243,26 @@ export default function TradesPage() {
               </div>
             </div>
 
-            <button
-              onClick={() => alert(`Executed ${orderType.toUpperCase()} order for $${orderAmount}. Ekonnet fee of 0.15% deducted automatically.`)}
-              className={`w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${
-                orderType === "buy" 
-                  ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20" 
-                  : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/20"
-              }`}
-            >
-              Confirm {orderType.toUpperCase()} Order
-            </button>
+            {!currentUser ? (
+              <Link
+                href="/?auth=login&from=/trades"
+                className="w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 shadow-orange-500/20 flex items-center justify-center gap-2 transition-all"
+              >
+                <Lock className="w-4 h-4" />
+                <span>Sign In to Place Trade</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => alert(`Executed ${orderType.toUpperCase()} order for $${orderAmount}. Ekonnet fee of 0.15% deducted automatically.`)}
+                className={`w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${
+                  orderType === "buy" 
+                    ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20" 
+                    : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/20"
+                }`}
+              >
+                Confirm {orderType.toUpperCase()} Order
+              </button>
+            )}
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />

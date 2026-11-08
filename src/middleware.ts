@@ -67,19 +67,63 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. Protect Customer Dashboard: /dashboard
+  // 4. Protect Customer Dashboard: /dashboard and subpaths
   if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
     const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
     if (!token) {
       const homeUrl = new URL("/", request.url);
-      homeUrl.searchParams.set("auth", "required");
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("from", "/dashboard");
       return NextResponse.redirect(homeUrl);
     }
 
     const payload = await verifyAuthToken(token);
     if (!payload) {
       const homeUrl = new URL("/", request.url);
-      homeUrl.searchParams.set("auth", "expired");
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("error", "session_expired");
+      return NextResponse.redirect(homeUrl);
+    }
+
+    return NextResponse.next();
+  }
+
+  // 5. Protect Treasury & Payments: /payments and subpaths
+  if (pathname === "/payments" || pathname.startsWith("/payments/")) {
+    const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+    if (!token) {
+      const homeUrl = new URL("/", request.url);
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("from", "/payments");
+      return NextResponse.redirect(homeUrl);
+    }
+
+    const payload = await verifyAuthToken(token);
+    if (!payload) {
+      const homeUrl = new URL("/", request.url);
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("error", "session_expired");
+      return NextResponse.redirect(homeUrl);
+    }
+
+    return NextResponse.next();
+  }
+
+  // 6. Protect KYC Dossier Verification: /kyc and subpaths
+  if (pathname === "/kyc" || pathname.startsWith("/kyc/")) {
+    const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+    if (!token) {
+      const homeUrl = new URL("/", request.url);
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(homeUrl);
+    }
+
+    const payload = await verifyAuthToken(token);
+    if (!payload) {
+      const homeUrl = new URL("/", request.url);
+      homeUrl.searchParams.set("auth", "login");
+      homeUrl.searchParams.set("error", "session_expired");
       return NextResponse.redirect(homeUrl);
     }
 
@@ -95,6 +139,10 @@ export const config = {
     "/admin/:path*",
     "/api/admin/:path*",
     "/dashboard",
-    "/dashboard/:path*"
+    "/dashboard/:path*",
+    "/payments",
+    "/payments/:path*",
+    "/kyc",
+    "/kyc/:path*"
   ]
 };

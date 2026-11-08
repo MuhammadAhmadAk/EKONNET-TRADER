@@ -9,6 +9,7 @@ import {
   ChevronRight, 
   ShieldCheck, 
   Zap, 
+  Lock,
   CheckCircle2, 
   RefreshCw,
   Coins
@@ -37,6 +38,7 @@ const MOCK_POOLS: LiquidityPool[] = [
 ];
 
 export default function ThirdPartyCryptoPage() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [selectedPool, setSelectedPool] = useState<string>("1");
   const [routedAmount, setRoutedAmount] = useState<number>(25000);
@@ -45,6 +47,15 @@ export default function ThirdPartyCryptoPage() {
     if (getPlatformStatus("crypto-third-party") === "Maintenance") {
       setIsMaintenance(true);
     }
+
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   if (isMaintenance) {
@@ -166,12 +177,22 @@ export default function ThirdPartyCryptoPage() {
               </div>
             </div>
 
-            <button
-              onClick={() => alert(`Routed block order of $${routedAmount} across optimized liquidity venues.`)}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 transition-all"
-            >
-              Route Aggregated Order
-            </button>
+            {!currentUser ? (
+              <Link
+                href="/?auth=login&from=/trades/crypto/third-party"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 transition-all"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Sign In to Route Order</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => alert(`Routed block order of $${routedAmount} across optimized liquidity venues.`)}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 transition-all"
+              >
+                Route Aggregated Order
+              </button>
+            )}
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-gray-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />

@@ -12,7 +12,8 @@ import {
   Zap,
   RefreshCw,
   Coins,
-  DollarSign
+  DollarSign,
+  Lock
 } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import LiveTicker from "@/components/landing/LiveTicker";
@@ -38,6 +39,7 @@ interface P2POffer {
 }
 
 export default function P2PCryptoTradingPage() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [offers, setOffers] = useState<P2POffer[]>([]);
   const [asset, setAsset] = useState<"BTC" | "ETH" | "USDT">("BTC");
@@ -58,6 +60,15 @@ export default function P2PCryptoTradingPage() {
     if (getPlatformStatus("crypto-p2p") === "Maintenance") {
       setIsMaintenance(true);
     }
+
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Fetch live P2P offers from backend proxy
@@ -482,29 +493,49 @@ export default function P2PCryptoTradingPage() {
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setIsProcessingSettlement(true);
-                      setTimeout(() => {
-                        setIsProcessingSettlement(false);
-                        setSettlementStep("locked");
-                      }, 700);
-                    }}
-                    disabled={isProcessingSettlement}
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition cursor-pointer"
-                  >
-                    {isProcessingSettlement ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>Locking Crypto in Sovereign Vault...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShieldCheck className="w-4 h-4" />
-                        <span>Lock Sovereign Vault &amp; Confirm Contract</span>
-                      </>
-                    )}
-                  </button>
+                  {!currentUser ? (
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center space-y-3">
+                      <div className="flex justify-center text-amber-500">
+                        <Lock className="w-7 h-7" />
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 dark:text-white">
+                        Authentication Required for P2P Trading
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Please sign in to your verified Ekonnet account to lock crypto in escrow and proceed with settlement.
+                      </p>
+                      <Link
+                        href="/?auth=login&from=/trades/crypto/p2p"
+                        className="block w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/25 transition text-center"
+                      >
+                        Sign In to Execute P2P Order
+                      </Link>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsProcessingSettlement(true);
+                        setTimeout(() => {
+                          setIsProcessingSettlement(false);
+                          setSettlementStep("locked");
+                        }, 700);
+                      }}
+                      disabled={isProcessingSettlement}
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition cursor-pointer"
+                    >
+                      {isProcessingSettlement ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Locking Crypto in Sovereign Vault...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-4 h-4" />
+                          <span>Lock Sovereign Vault &amp; Confirm Contract</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               )}
 

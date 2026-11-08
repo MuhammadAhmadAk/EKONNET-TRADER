@@ -54,25 +54,25 @@ function KYCVerifyContent() {
   const [skipProofOfAddress, setSkipProofOfAddress] = useState(false);
 
   useEffect(() => {
-    // 1. Detect from URL parameter
-    const queryUserId = searchParams.get("userId");
-    if (queryUserId) {
-      setUserId(queryUserId);
-    }
-
-    // 2. Fallback to localStorage session
-    try {
-      const stored = localStorage.getItem("ekonnet_user");
-      if (stored) {
-        const u = JSON.parse(stored);
-        if (!queryUserId) setUserId(u.id || "EKON-USER");
-        if (u.fullName && !fullName) setFullName(u.fullName);
-        if (u.dateOfBirth && !dob) setDob(u.dateOfBirth);
-        if (u.country && !country) setCountry(u.country);
-        if (u.city && !city) setCity(u.city);
-      }
-    } catch (e) {}
-  }, [searchParams]);
+    // Authenticated session detection
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          const u = data.user;
+          setUserId(u.id);
+          if (u.fullName) setFullName(u.fullName);
+          if (u.dateOfBirth) setDob(u.dateOfBirth);
+          if (u.country) setCountry(u.country);
+          if (u.city) setCity(u.city);
+        } else {
+          router.replace("/?auth=login&from=/kyc/verify");
+        }
+      })
+      .catch(() => {
+        router.replace("/?auth=login&from=/kyc/verify");
+      });
+  }, [router]);
 
   // Helper to handle image file to Data URL
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {

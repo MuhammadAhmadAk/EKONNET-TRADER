@@ -7,7 +7,8 @@ import {
   Zap, 
   Activity,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Lock
 } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import LiveTicker from "@/components/landing/LiveTicker";
@@ -29,6 +30,7 @@ type SupportedAsset = "BTC" | "ETH" | "SOL" | "BNB" | "XRP";
 
 function DirectCryptoTradingContent() {
   const searchParams = useSearchParams();
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<SupportedAsset>("BTC");
   const [orderType, setOrderType] = useState<"limit" | "market" | "scaled">("limit");
@@ -56,6 +58,18 @@ function DirectCryptoTradingContent() {
       setPrice(currentCoinData.price);
     }
   }, [selectedAsset, currentCoinData?.price]);
+
+  // Auth check
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (getPlatformStatus("crypto-direct") === "Maintenance") {
@@ -285,16 +299,26 @@ function DirectCryptoTradingContent() {
               </div>
             </div>
 
-            <button
-              onClick={() => alert(`Executed Direct ${orderSide.toUpperCase()} for ${amount} ${selectedAsset} at $${price}.`)}
-              className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white shadow-md transition-all ${
-                orderSide === "buy" 
-                  ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/25" 
-                  : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/25"
-              }`}
-            >
-              Submit Direct {orderSide.toUpperCase()} Order
-            </button>
+            {!currentUser ? (
+              <Link
+                href="/?auth=login&from=/trades/crypto/direct"
+                className="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white shadow-md bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Sign In to Place Orders</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => alert(`Executed Direct ${orderSide.toUpperCase()} for ${amount} ${selectedAsset} at $${price}.`)}
+                className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white shadow-md transition-all ${
+                  orderSide === "buy" 
+                    ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/25" 
+                    : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/25"
+                }`}
+              >
+                Submit Direct {orderSide.toUpperCase()} Order
+              </button>
+            )}
           </div>
 
         </div>

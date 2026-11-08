@@ -38,48 +38,38 @@ export default function UserDashboardPage() {
 
   useEffect(() => {
     setMounted(true);
-    const loadSession = () => {
+    const loadSession = async () => {
       try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setUser(data.user);
+            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+            return;
+          }
+        }
+        
+        // Check localStorage as temporary backup
         const stored = localStorage.getItem("ekonnet_user");
         if (stored) {
           setUser(JSON.parse(stored));
-        } else {
-          // Provide demo user fallback for preview if not logged in
-          const demoUser = {
-            id: "EKON-749201",
-            username: "demo_trader",
-            fullName: "Verified Trader",
-            role: "user",
-            emails: ["trader.primary@ekonnet.com", "recovery@domain.com", "backup@domain.com"],
-            phones: ["+92-300-1234567", "+92-42-35890123"],
-            dateOfBirth: "2000-01-15",
-            age: 26,
-            country: "Pakistan",
-            city: "Lahore",
-            kycStatus: "unverified",
-            packageTier: "Pro Trader",
-            twoFactorEnabled: true,
-            twoFactorType: "totp",
-            walletBalances: {
-              USD: 14850.00,
-              BTC: 0.4520,
-              ETH: 4.820,
-              USDT: 25400.00,
-              XRP: 12500,
-              BCH: 18.5
-            }
-          };
-          setUser(demoUser);
+          return;
         }
+
+        // Unauthenticated -> Redirect immediately to login
+        setUser(null);
+        router.push("/?auth=login&from=/dashboard");
       } catch (e) {
         setUser(null);
+        router.push("/?auth=login&from=/dashboard");
       }
     };
 
     loadSession();
     window.addEventListener("auth-changed", loadSession);
     return () => window.removeEventListener("auth-changed", loadSession);
-  }, []);
+  }, [router]);
 
   if (!mounted || !user) {
     return (
