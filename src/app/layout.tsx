@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import EnterpriseBackground from "@/components/common/EnterpriseBackground";
+import LiveChatWidget from "@/components/common/LiveChatWidget";
 
 export const metadata: Metadata = {
   title: "Ekonnet Trader — Global Multi-Asset Trades & Payments Platform",
@@ -49,6 +50,7 @@ export default function RootLayout({
       <body className="bg-transparent text-slate-800 dark:text-gray-100 min-h-screen antialiased selection:bg-orange-500 selection:text-white relative transition-colors duration-300">
         <EnterpriseBackground />
         {children}
+        <LiveChatWidget />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/landing/Navbar";
 import LiveTicker from "@/components/landing/LiveTicker";
 import HeroSection from "@/components/landing/HeroSection";
@@ -20,18 +21,21 @@ import UserRegisterModal from "@/components/auth/UserRegisterModal";
 import { CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
+  const router = useRouter();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [activeNotification, setActiveNotification] = useState("");
 
   const handleRegisterSuccess = (newUser: any) => {
-    setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete photo note verification.`);
+    setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete mobile KYC.`);
     setTimeout(() => setActiveNotification(""), 6000);
+    router.push("/dashboard");
   };
 
   const handleLoginSuccess = (user?: any) => {
     setActiveNotification(`Welcome back${user?.fullName ? ', ' + user.fullName : ''}! Authentication successful.`);
     setTimeout(() => setActiveNotification(""), 5000);
+    router.push("/dashboard");
   };
 
   return (

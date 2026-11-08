@@ -474,6 +474,16 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
                         </div>
                       )}
 
+                      {/* User Account Dashboard Link */}
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="w-full py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                      >
+                        <User className="w-3.5 h-3.5" />
+                        <span>Account Dashboard & KYC</span>
+                      </Link>
+
                       {/* Sign Out Button */}
                       <button
                         onClick={handleSignOut}
