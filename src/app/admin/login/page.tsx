@@ -107,7 +107,7 @@ export default function AdminManagementLoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 font-sans selection:bg-orange-500 selection:text-white transition-colors duration-500 bg-gradient-to-b from-[#e3edf7] via-[#eef5fc] to-[#f4f9ff] dark:from-[#060913] dark:via-[#090e1f] dark:to-[#050811]">
+    <div className="h-screen max-h-screen w-full relative overflow-hidden flex flex-col justify-between p-4 sm:px-8 sm:py-4 font-sans selection:bg-orange-500 selection:text-white transition-colors duration-500 bg-gradient-to-b from-[#e3edf7] via-[#eef5fc] to-[#f4f9ff] dark:from-[#060913] dark:via-[#090e1f] dark:to-[#050811]">
       
       {/* Background Architectural Rings (exact match to reference image) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
@@ -148,40 +148,40 @@ export default function AdminManagementLoginPage() {
       </header>
 
       {/* Main Centered Floating Glass Card - Border Radius 8px */}
-      <main className="relative z-20 my-auto flex items-center justify-center py-6 sm:py-10">
-        <div className="w-full max-w-[420px] rounded-[8px] bg-white/80 dark:bg-[#0c1222]/90 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7)] p-7 sm:p-9 transition-all duration-300">
+      <main className="relative z-20 flex-1 flex items-center justify-center py-2 sm:py-4">
+        <div className="w-full max-w-[390px] rounded-[8px] bg-white/85 dark:bg-[#0c1222]/90 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7)] p-6 sm:p-7 transition-all duration-300">
           
           {/* Elevated Centered Top Icon Badge */}
-          <div className="flex justify-center -mt-2 mb-5">
-            <div className="w-13 h-13 p-3.5 rounded-[8px] bg-white/95 dark:bg-[#131b2e] border border-slate-100 dark:border-white/10 shadow-md shadow-slate-200/50 dark:shadow-black/40 flex items-center justify-center text-slate-800 dark:text-orange-400 transform hover:scale-105 transition-transform">
+          <div className="flex justify-center mb-3">
+            <div className="w-11 h-11 p-2.5 rounded-[8px] bg-white/95 dark:bg-[#131b2e] border border-slate-100 dark:border-white/10 shadow-md shadow-slate-200/50 dark:shadow-black/40 flex items-center justify-center text-slate-800 dark:text-orange-400 transform hover:scale-105 transition-transform">
               <LogIn className="w-5 h-5 text-slate-800 dark:text-orange-400 stroke-[2.2]" />
             </div>
           </div>
 
           {/* Header Title & Subtitle */}
-          <div className="text-center space-y-1.5 mb-6">
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <div className="text-center space-y-1 mb-4">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
               Sign in with credentials
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-[290px] mx-auto">
+            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-[280px] mx-auto">
               Privileged root management terminal for Ekonnet Executive &amp; Compliance Staff.
             </p>
           </div>
 
           {/* Error Banner */}
           {error && (
-            <div className="mb-4 p-3 rounded-[8px] bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-400 text-xs flex items-start gap-2 animate-in fade-in">
+            <div className="mb-3 p-2.5 rounded-[8px] bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-400 text-xs flex items-start gap-2 animate-in fade-in">
               <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
               <span className="leading-tight">{error}</span>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleAdminAuth} className="space-y-4">
+          <form onSubmit={handleAdminAuth} className="space-y-3">
             
             {/* Input 1: Admin Email / Username */}
             <div className="relative flex items-center">
-              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
+              <div className="absolute left-3.5 text-slate-400 dark:text-slate-500 pointer-events-none">
                 <Mail className="w-4 h-4" />
               </div>
               <input
@@ -190,13 +190,13 @@ export default function AdminManagementLoginPage() {
                 value={adminToken}
                 onChange={(e) => setAdminToken(e.target.value)}
                 placeholder="Email or Staff ID"
-                className="w-full pl-11 pr-4 py-3 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
               />
             </div>
 
             {/* Input 2: Password with Show/Hide Toggle */}
             <div className="relative flex items-center">
-              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
+              <div className="absolute left-3.5 text-slate-400 dark:text-slate-500 pointer-events-none">
                 <Lock className="w-4 h-4" />
               </div>
               <input
@@ -205,12 +205,12 @@ export default function AdminManagementLoginPage() {
                 value={rootKey}
                 onChange={(e) => setRootKey(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-11 pr-11 py-3 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
+                className="w-full pl-10 pr-10 py-2.5 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition p-1"
+                className="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition p-1"
                 title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -236,7 +236,7 @@ export default function AdminManagementLoginPage() {
             <button
               type="submit"
               disabled={isAuthorizing}
-              className="w-full py-3.5 rounded-[8px] bg-[#1e232e] hover:bg-black dark:bg-gradient-to-r dark:from-orange-500 dark:to-rose-500 dark:hover:from-orange-600 dark:hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-lg shadow-black/15 dark:shadow-orange-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-50 mt-2 cursor-pointer"
+              className="w-full py-3 rounded-[8px] bg-[#1e232e] hover:bg-black dark:bg-gradient-to-r dark:from-orange-500 dark:to-rose-500 dark:hover:from-orange-600 dark:hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-black/15 dark:shadow-orange-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-50 mt-1 cursor-pointer"
             >
               {isAuthorizing ? (
                 <>
@@ -251,7 +251,7 @@ export default function AdminManagementLoginPage() {
           </form>
 
           {/* Bottom Switch to Customer Portal */}
-          <div className="mt-6 pt-4 text-center border-t border-slate-100 dark:border-white/5">
+          <div className="mt-4 pt-3 text-center border-t border-slate-100 dark:border-white/5">
             <span className="text-[11px] text-slate-400 dark:text-slate-500">
               Are you a trader?{" "}
             </span>
@@ -267,7 +267,7 @@ export default function AdminManagementLoginPage() {
       </main>
 
       {/* Footer Info */}
-      <footer className="relative z-20 text-center text-[11px] text-slate-400 dark:text-slate-600 font-mono py-2">
+      <footer className="relative z-20 text-center text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-600 font-mono py-1">
         TLS 1.3 Hardware Enclave Encrypted &bull; Host Node VPS-DE-01 (82.165.10.77)
       </footer>
 
