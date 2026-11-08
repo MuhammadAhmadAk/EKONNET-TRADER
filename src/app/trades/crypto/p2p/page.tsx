@@ -47,6 +47,12 @@ export default function P2PCryptoTradingPage() {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"offers" | "screener" | "both">("both");
 
+  // P2P Direct Settlement Modal State (Phase 2)
+  const [selectedTradeOffer, setSelectedTradeOffer] = useState<P2POffer | null>(null);
+  const [tradeAmount, setTradeAmount] = useState<number>(500);
+  const [settlementStep, setSettlementStep] = useState<"details" | "locked" | "paid" | "completed">("details");
+  const [isProcessingSettlement, setIsProcessingSettlement] = useState(false);
+
   // Maintenance check
   useEffect(() => {
     if (getPlatformStatus("crypto-p2p") === "Maintenance") {
@@ -352,8 +358,12 @@ export default function P2PCryptoTradingPage() {
                       {/* 5. Action */}
                       <td className="py-4 pl-4 text-right">
                         <button
-                          onClick={() => alert(`Starting P2P ${tradeType} trade with ${offer.advertiserName} for ${offer.asset}. Smart settlement agreement prepared.`)}
-                          className={`inline-block rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all ${
+                          onClick={() => {
+                            setSelectedTradeOffer(offer);
+                            setTradeAmount(Math.max(Number(offer.minLimit) || 100, 250));
+                            setSettlementStep("details");
+                          }}
+                          className={`inline-block rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all cursor-pointer ${
                             tradeType === "BUY"
                               ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20"
                               : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/20"
@@ -369,6 +379,241 @@ export default function P2PCryptoTradingPage() {
             </table>
           </div>
         </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* DIRECT P2P SETTLEMENT VAULT MODAL (PHASE 2)                               */}
+        {/* ========================================================================= */}
+        {selectedTradeOffer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in">
+            <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-[#0c1222] border border-slate-200 dark:border-white/10 shadow-2xl p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white transition-all">
+              
+              {/* Modal Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400 font-bold">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">
+                      Direct P2P Settlement Contract
+                    </h3>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                      Counterparty: <span className="font-bold text-slate-800 dark:text-slate-200">{selectedTradeOffer.advertiserName}</span> ({selectedTradeOffer.monthFinishRate}% completion)
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedTradeOffer(null)}
+                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-500 dark:text-slate-400 flex items-center justify-center font-bold text-xs transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Step Progression Bar */}
+              <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
+                <div className={`p-2 rounded-xl border ${
+                  settlementStep === "details"
+                    ? "bg-orange-500/15 border-orange-500/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "bg-slate-100 dark:bg-white/5 border-transparent text-slate-400"
+                }`}>
+                  1. Order Specs
+                </div>
+                <div className={`p-2 rounded-xl border ${
+                  settlementStep === "locked"
+                    ? "bg-orange-500/15 border-orange-500/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : settlementStep === "paid" || settlementStep === "completed"
+                    ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold"
+                    : "bg-slate-100 dark:bg-white/5 border-transparent text-slate-400"
+                }`}>
+                  2. Vault Locked
+                </div>
+                <div className={`p-2 rounded-xl border ${
+                  settlementStep === "paid" || settlementStep === "completed"
+                    ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold"
+                    : "bg-slate-100 dark:bg-white/5 border-transparent text-slate-400"
+                }`}>
+                  3. Settlement
+                </div>
+              </div>
+
+              {/* STEP 1: Details & Vault Lock */}
+              {settlementStep === "details" && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 space-y-2 text-xs">
+                    <div className="flex justify-between font-mono">
+                      <span className="text-slate-500">Fixed Unit Price:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">
+                        {selectedTradeOffer.fiatSymbol}{selectedTradeOffer.price} {selectedTradeOffer.fiatUnit}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-mono">
+                      <span className="text-slate-500">Merchant Limits:</span>
+                      <span>{selectedTradeOffer.fiatSymbol}{selectedTradeOffer.minLimit} - {selectedTradeOffer.fiatSymbol}{selectedTradeOffer.maxLimit}</span>
+                    </div>
+                    <div className="flex justify-between font-mono">
+                      <span className="text-slate-500">Supported Rails:</span>
+                      <span className="font-semibold text-orange-600 dark:text-orange-400">{selectedTradeOffer.tradeMethods.join(", ")}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      I want to pay ({selectedTradeOffer.fiatUnit}):
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-400">
+                        {selectedTradeOffer.fiatSymbol}
+                      </span>
+                      <input
+                        type="number"
+                        value={tradeAmount}
+                        onChange={(e) => setTradeAmount(Math.max(1, Number(e.target.value)))}
+                        className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-sm font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-orange-500 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-600 dark:text-slate-300">Estimated Crypto Yield:</span>
+                    <span className="font-extrabold text-orange-600 dark:text-orange-400 text-sm">
+                      {(tradeAmount / (Number(selectedTradeOffer.price.replace(/,/g, "")) || 1)).toFixed(6)} {selectedTradeOffer.asset}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setIsProcessingSettlement(true);
+                      setTimeout(() => {
+                        setIsProcessingSettlement(false);
+                        setSettlementStep("locked");
+                      }, 700);
+                    }}
+                    disabled={isProcessingSettlement}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    {isProcessingSettlement ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Locking Crypto in Sovereign Vault...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>Lock Sovereign Vault &amp; Confirm Contract</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 2: Vault Locked & Fiat Payment */}
+              {settlementStep === "locked" && (
+                <div className="space-y-4">
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-400 text-xs flex items-center gap-2 font-bold">
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                    <span>Crypto Locked! Vault Sovereign Node #82.165.10.77</span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 space-y-2.5 text-xs font-mono">
+                    <div className="text-[10px] uppercase font-bold text-slate-400">Seller Payment Destination:</div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Method:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedTradeOffer.tradeMethods[0] || "Bank Transfer"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Account Title:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedTradeOffer.advertiserName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Account / IBAN:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">PK44SCBL0000003928192831</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Amount Due:</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{selectedTradeOffer.fiatSymbol}{tradeAmount.toLocaleString()} {selectedTradeOffer.fiatUnit}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Please transfer the exact amount using your banking app or Wise. Once dispatched, click below to notify counterparty.
+                  </p>
+
+                  <button
+                    onClick={() => setSettlementStep("paid")}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs tracking-wide shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>I Have Dispatched the Payment</span>
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 3: Payment Dispatched -> Release Crypto */}
+              {settlementStep === "paid" && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-700 dark:text-amber-400 text-xs space-y-1">
+                    <div className="font-bold flex items-center gap-1.5">
+                      <RefreshCw className="w-4 h-4 animate-spin text-amber-500" />
+                      <span>Payment Dispatched &bull; Awaiting Seller Confirmation</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Seller has been notified. Counterparty will check incoming bank credit and trigger release.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setIsProcessingSettlement(true);
+                      setTimeout(() => {
+                        setIsProcessingSettlement(false);
+                        setSettlementStep("completed");
+                      }, 800);
+                    }}
+                    disabled={isProcessingSettlement}
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    {isProcessingSettlement ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Verifying Bank Rail Settlement &amp; Crediting Wallet...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Coins className="w-4 h-4" />
+                        <span>Simulate Seller Confirm &amp; Release Crypto</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 4: Completed */}
+              {settlementStep === "completed" && (
+                <div className="space-y-4 text-center py-3">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                      P2P Settlement Successfully Cleared!
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {(tradeAmount / (Number(selectedTradeOffer.price.replace(/,/g, "")) || 1)).toFixed(6)} {selectedTradeOffer.asset} has been credited to your verified Ekonnet custody wallet.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedTradeOffer(null)}
+                    className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs shadow-md transition cursor-pointer"
+                  >
+                    Back to P2P Marketplace
+                  </button>
+                </div>
+              )}
+
+            </div>
+          </div>
         )}
 
       </main>
