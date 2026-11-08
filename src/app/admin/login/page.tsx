@@ -4,20 +4,20 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
-  ShieldAlert, 
   Lock, 
+  Mail, 
   KeyRound, 
-  Terminal, 
-  CheckCircle2, 
-  ArrowRight,
-  Server,
+  Eye, 
+  EyeOff, 
+  LogIn, 
+  ShieldCheck, 
+  Sun, 
+  Moon, 
+  Loader2, 
+  AlertOctagon, 
   Layers,
-  ShieldCheck,
-  Zap,
-  Sun,
-  Moon,
-  Loader2,
-  AlertOctagon,
+  Crown,
+  Briefcase,
   UserCheck
 } from "lucide-react";
 
@@ -26,12 +26,13 @@ export default function AdminManagementLoginPage() {
   const [adminToken, setAdminToken] = useState("");
   const [rootKey, setRootKey] = useState("");
   const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isAuthorizing, setIsAuthorizing] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
 
   useEffect(() => {
-    // Theme sync
+    // Theme sync - default to light or match existing system
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
@@ -65,7 +66,7 @@ export default function AdminManagementLoginPage() {
     setError("");
 
     if (!adminToken || !rootKey) {
-      setError("Both Staff / Admin Identifier and Master Passphrase are required.");
+      setError("Please enter your Admin Email / Staff ID and Password.");
       return;
     }
 
@@ -97,7 +98,7 @@ export default function AdminManagementLoginPage() {
       }
 
       if (data.user?.role !== "master_admin" && data.user?.role !== "management" && data.user?.role !== "staff") {
-        setError("Access Restricted: This gate requires Master Admin or Management Staff clearance (Section 27).");
+        setError("Access Restricted: This gate requires Master Admin or Management Staff clearance.");
         setIsAuthorizing(false);
         return;
       }
@@ -120,270 +121,227 @@ export default function AdminManagementLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-orange-500 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 font-sans selection:bg-orange-500 selection:text-white transition-colors duration-500 bg-gradient-to-b from-[#e3edf7] via-[#eef5fc] to-[#f4f9ff] dark:from-[#060913] dark:via-[#090e1f] dark:to-[#050811]">
       
-      {/* Background radial matrix glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
-      <div className="absolute top-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-orange-500/10 to-rose-500/10 blur-[140px] rounded-full pointer-events-none" />
-
-      {/* Top Floating Security Header */}
-      <div className="w-full max-w-5xl mx-auto flex items-center justify-between py-3 mb-2 relative z-20">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
-            <Layers className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col text-left">
-            <span className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white leading-tight">
-              EKONNET<span className="text-orange-500">ADMIN</span>
-            </span>
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-              Management & Compliance Gate
-            </span>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 font-mono text-[11px] font-bold border border-orange-500/20">
-            <Lock className="w-3 h-3" />
-            <span>CLEARANCE LEVEL 3+</span>
-          </span>
-
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition"
-            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-slate-700" />
-            )}
-          </button>
-        </div>
+      {/* Background Architectural Rings (exact match to reference image) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        {/* Soft glowing ambient circle */}
+        <div className="w-[850px] h-[850px] rounded-full border border-white/60 dark:border-white/5 opacity-50 dark:opacity-20 absolute -top-10" />
+        <div className="w-[1100px] h-[1100px] rounded-full border border-white/50 dark:border-white/5 opacity-40 dark:opacity-10 absolute -top-40" />
+        <div className="w-[1400px] h-[1400px] rounded-full border border-white/30 dark:border-white/5 opacity-30 dark:opacity-5 absolute -top-80" />
+        
+        {/* Subtle orange-rose glow accent in dark mode / soft sky cloud glow in light mode */}
+        <div className="absolute top-1/3 w-[500px] h-[500px] bg-orange-500/10 dark:bg-orange-500/15 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-10 w-[600px] h-[400px] bg-rose-500/5 dark:bg-rose-500/10 blur-[130px] rounded-full pointer-events-none" />
       </div>
 
-      {/* Main Glass HUD Container */}
-      <div className="w-full max-w-5xl mx-auto rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 bg-white dark:bg-[#0c1222]/95 ring-1 ring-slate-900/5 dark:ring-white/10 relative z-10 my-2 transition-colors duration-300">
-        
-        {/* LEFT COLUMN: Executive Governance Deck */}
-        <div className="hidden lg:flex lg:col-span-6 relative bg-gradient-to-br from-orange-500/10 via-rose-500/5 to-amber-500/10 dark:from-slate-900/90 dark:via-[#0c1222]/80 dark:to-slate-950/90 border-r border-slate-200/80 dark:border-white/10 p-8 xl:p-12 flex-col justify-between overflow-hidden text-slate-900 dark:text-white transition-colors duration-300">
+      {/* Top Bar with Brand Logo and Theme Switcher */}
+      <header className="relative z-20 flex items-center justify-between w-full max-w-6xl mx-auto">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+            <Layers className="w-4 h-4 text-white" />
+          </div>
+          <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+            Ekonnet <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Admin</span>
+          </span>
+        </Link>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="p-2.5 rounded-full bg-white/70 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/80 dark:border-white/10 backdrop-blur-md text-slate-700 dark:text-slate-200 transition shadow-sm hover:shadow"
+          title={theme === "dark" ? "Switch to Light Sky Mode" : "Switch to Dark Mode"}
+          aria-label="Toggle theme"
+        >
+          {theme === "dark" ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-slate-700" />
+          )}
+        </button>
+      </header>
+
+      {/* Main Centered Floating Glass Card */}
+      <main className="relative z-20 my-auto flex items-center justify-center py-6 sm:py-10">
+        <div className="w-full max-w-[430px] rounded-[32px] sm:rounded-[36px] bg-white/75 dark:bg-[#0c1222]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.08)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] p-7 sm:p-9 transition-all duration-300">
           
-          <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-orange-500/15 dark:bg-orange-500/20 blur-[110px] rounded-full pointer-events-none -z-10" />
-
-          {/* Core Clearance Banner */}
-          <div className="space-y-4 my-auto py-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs font-mono font-bold tracking-wider uppercase">
-              <ShieldAlert className="w-3.5 h-3.5" />
-              <span>Restricted Root Console</span>
-            </div>
-
-            <h1 className="text-3xl xl:text-4xl font-black tracking-tight leading-tight">
-              Administrative &amp; <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500">
-                Staff Governance Portal
-              </span>
-            </h1>
-
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              This terminal provides privileged access to Ekonnet Core Systems: User RBAC (Section 50), KYC Dossier Approvals, Staff Permission Matrices (Section 27), Liquidity Reserves, and Immutable Audit Trails (Section 60).
-            </p>
-
-            {/* Protocol Checklist */}
-            <div className="space-y-2.5 pt-3">
-              {[
-                "Hardware-enforced 2FA Token Verification (RFC 6238 TOTP)",
-                "Full IP & Geolocation Security Clearance Binding",
-                "Automated Multi-sig Role Separation (Zero Single Point of Failure)",
-                "Real-time Python Engine & PostgreSQL Cluster Sync"
-              ].map((feat, i) => (
-                <div key={i} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                  </div>
-                  <span>{feat}</span>
-                </div>
-              ))}
+          {/* Elevated Centered Top Icon Badge (Exact match to reference [->]) */}
+          <div className="flex justify-center -mt-2 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-white/95 dark:bg-[#131b2e] border border-slate-100 dark:border-white/10 shadow-md shadow-slate-200/50 dark:shadow-black/40 flex items-center justify-center text-slate-800 dark:text-orange-400 transform hover:scale-105 transition-transform">
+              <LogIn className="w-5 h-5 text-slate-800 dark:text-orange-400 stroke-[2.2]" />
             </div>
           </div>
 
-          {/* Node Footer */}
-          <div className="pt-6 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-mono">
-            <span>CLUSTER NODE: VPS-DE-01 (82.165.10.77)</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping inline-block" />
-              SYSTEMS 100% HEALTHY
+          {/* Header Title & Subtitle */}
+          <div className="text-center space-y-1.5 mb-6">
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Sign in with credentials
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-[290px] mx-auto">
+              Privileged root management terminal for Ekonnet Executive &amp; Compliance Staff.
+            </p>
+          </div>
+
+          {/* Error Banner */}
+          {error && (
+            <div className="mb-4 p-3 rounded-2xl bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-400 text-xs flex items-start gap-2 animate-in fade-in">
+              <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
+              <span className="leading-tight">{error}</span>
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleAdminAuth} className="space-y-3.5">
+            
+            {/* Input 1: Admin Email / Username */}
+            <div className="relative flex items-center">
+              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
+                <Mail className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                required
+                value={adminToken}
+                onChange={(e) => setAdminToken(e.target.value)}
+                placeholder="Email or Staff ID"
+                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
+              />
+            </div>
+
+            {/* Input 2: Password with Show/Hide Toggle */}
+            <div className="relative flex items-center">
+              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
+                <Lock className="w-4 h-4" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={rootKey}
+                onChange={(e) => setRootKey(e.target.value)}
+                placeholder="Password"
+                className="w-full pl-11 pr-11 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition p-1"
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+
+            {/* Input 3: 2FA Rolling Code */}
+            <div className="relative flex items-center">
+              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
+                <KeyRound className="w-4 h-4 text-orange-500/80" />
+              </div>
+              <input
+                type="text"
+                maxLength={6}
+                value={twoFactorCode}
+                onChange={(e) => setTwoFactorCode(e.target.value)}
+                placeholder="2FA Token (e.g. 123456)"
+                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 font-mono focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
+              />
+            </div>
+
+            {/* Forgot password link */}
+            <div className="flex justify-end pt-0.5">
+              <button
+                type="button"
+                onClick={() => alert("Verification reset instructions sent to registered executive email.")}
+                className="text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition font-medium"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Main Primary Action Button (Sleek dark pill matching reference, with orange hover aura) */}
+            <button
+              type="submit"
+              disabled={isAuthorizing}
+              className="w-full py-3.5 rounded-2xl bg-[#1e232e] hover:bg-black dark:bg-gradient-to-r dark:from-orange-500 dark:to-rose-500 dark:hover:from-orange-600 dark:hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-lg shadow-black/15 dark:shadow-orange-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-50 mt-1 cursor-pointer"
+            >
+              {isAuthorizing ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-orange-400" />
+                  <span>Authorizing Clearance...</span>
+                </>
+              ) : (
+                <span>Authorize &amp; Get Started</span>
+              )}
+            </button>
+
+          </form>
+
+          {/* Dotted Divider with "Or sign in with" */}
+          <div className="relative my-6 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-dashed border-slate-300 dark:border-white/15" />
+            </div>
+            <span className="relative px-3 bg-white/90 dark:bg-[#0c1222] text-[11px] text-slate-400 dark:text-slate-500 font-medium rounded-full">
+              Or quick test with
             </span>
           </div>
 
-        </div>
+          {/* 3 Bottom Quick Profile Buttons (matching reference layout) */}
+          <div className="grid grid-cols-3 gap-2.5">
+            <button
+              type="button"
+              onClick={() => fillQuickDemo("master_admin", "Ekonnet2026!")}
+              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
+              title="Super Administrator (Full RBAC)"
+            >
+              <Crown className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px]">Super Admin</span>
+            </button>
 
-        {/* RIGHT COLUMN: Dedicated Admin Login Form */}
-        <div className="lg:col-span-6 p-6 sm:p-10 xl:p-12 flex flex-col justify-between">
-          
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-orange-600 dark:text-orange-400 font-bold">
-                Admin Authentication
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10">
-                TLS 1.3 SECURED
-              </span>
-            </div>
+            <button
+              type="button"
+              onClick={() => fillQuickDemo("manager_sarah", "Ekonnet2026!")}
+              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
+              title="Management Executive"
+            >
+              <Briefcase className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px]">Management</span>
+            </button>
 
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Sign In to Management
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Enter your authorized staff credentials to initialize root session.
-            </p>
-
-            {/* Error Banner */}
-            {error && (
-              <div className="mt-4 p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs flex items-start gap-2.5 animate-in fade-in">
-                <AlertOctagon className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleAdminAuth} className="mt-5 space-y-4">
-              
-              <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Administrator / Staff ID
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-3.5 text-slate-400">
-                    <UserCheck className="w-4 h-4 text-orange-500" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={adminToken}
-                    onChange={(e) => setAdminToken(e.target.value)}
-                    placeholder="e.g. master_admin / manager_sarah"
-                    className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white font-mono focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Master Passphrase / Key
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-3.5 text-slate-400">
-                    <Lock className="w-4 h-4 text-orange-500" />
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    value={rootKey}
-                    onChange={(e) => setRootKey(e.target.value)}
-                    placeholder="••••••••••••••••"
-                    className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
-                  />
-                </div>
-              </div>
-
-              {/* 2FA Token Code */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    2FA Authenticator Code (Section 16)
-                  </label>
-                  <span className="text-[10px] text-orange-600 dark:text-orange-400 font-mono">
-                    Demo: 123456
-                  </span>
-                </div>
-                <div className="relative flex items-center">
-                  <div className="absolute left-3.5 text-slate-400">
-                    <KeyRound className="w-4 h-4 text-orange-500" />
-                  </div>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={twoFactorCode}
-                    onChange={(e) => setTwoFactorCode(e.target.value)}
-                    placeholder="123456"
-                    className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-sm tracking-[0.25em] text-emerald-600 dark:text-emerald-400 font-bold font-mono focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isAuthorizing}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition disabled:opacity-50"
-              >
-                {isAuthorizing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying Security Clearance...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Authorize Management Session</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-
-            </form>
-
-            {/* Quick Demo Pre-fills for Testing Admin Roles */}
-            <div className="mt-6 pt-4 border-t border-slate-200/80 dark:border-white/10">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-2 font-mono">
-                Select Administrative Clearance Level:
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => fillQuickDemo("master_admin", "Ekonnet2026!")}
-                  className="p-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-600 dark:text-orange-400 font-mono text-[10px] font-bold text-center transition"
-                >
-                  <span className="block text-xs font-black">Super Admin</span>
-                  <span className="text-[9px] opacity-75">Full Root RBAC</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fillQuickDemo("manager_sarah", "Ekonnet2026!")}
-                  className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold text-center transition"
-                >
-                  <span className="block text-xs font-black">Management</span>
-                  <span className="text-[9px] opacity-75">KYC & Approvals</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fillQuickDemo("staff_alex", "Ekonnet2026!")}
-                  className="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-mono text-[10px] font-bold text-center transition"
-                >
-                  <span className="block text-xs font-black">Staff Officer</span>
-                  <span className="text-[9px] opacity-75">Support & Audit</span>
-                </button>
-              </div>
-            </div>
-
+            <button
+              type="button"
+              onClick={() => fillQuickDemo("staff_alex", "Ekonnet2026!")}
+              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
+              title="Staff Compliance Officer"
+            >
+              <UserCheck className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px]">Staff Officer</span>
+            </button>
           </div>
 
-          {/* Bottom Trader Switcher Link */}
-          <div className="mt-6 pt-4 border-t border-slate-200/80 dark:border-white/10 text-center">
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              Are you a platform customer or trader?{" "}
+          {/* Bottom Switch to Customer Portal */}
+          <div className="mt-6 pt-3 text-center border-t border-slate-100 dark:border-white/5">
+            <span className="text-[11px] text-slate-400 dark:text-slate-500">
+              Are you a trader?{" "}
             </span>
             <Link
               href="/"
-              className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline"
+              className="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline"
             >
-              Go to Customer Trading Portal
+              Customer Trading Portal →
             </Link>
           </div>
 
         </div>
+      </main>
 
-      </div>
+      {/* Footer Info */}
+      <footer className="relative z-20 text-center text-[11px] text-slate-400 dark:text-slate-600 font-mono py-2">
+        TLS 1.3 Hardware Enclave Encrypted &bull; Host Node VPS-DE-01 (82.165.10.77)
+      </footer>
 
     </div>
   );
