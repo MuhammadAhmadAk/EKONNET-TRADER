@@ -89,11 +89,11 @@ export default function LandingPage() {
           onOpenLogin={() => setIsLoginOpen(true)}
         /> */}
 
-        {/* 5-PLATFORM SOVEREIGN ECOSYSTEM MASTER ADVERTISEMENT BILLBOARD */}
-        <SovereignEcosystemShowcase 
+        {/* Commented out per request: 5-PLATFORM SOVEREIGN ECOSYSTEM MASTER ADVERTISEMENT BILLBOARD */}
+        {/* <SovereignEcosystemShowcase 
           onOpenRegister={() => setIsRegisterOpen(true)}
           onOpenLogin={() => setIsLoginOpen(true)}
-        />
+        /> */}
         
         {/* BITFINEX-STYLE ADVANCED WEB TRADING TERMINAL */}
         <InteractiveTradingTerminal 
