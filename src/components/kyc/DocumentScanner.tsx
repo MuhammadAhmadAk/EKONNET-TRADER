@@ -23,7 +23,7 @@ interface DocumentScannerProps {
 
 export default function DocumentScanner({
   label,
-  subLabel = "Smart CNIC, Passport, ya Driving License",
+  subLabel = "National ID, Passport, or Driver's License",
   documentType,
   side,
   value,
@@ -281,7 +281,7 @@ export default function DocumentScanner({
             </button>
           </div>
           <p className="text-[10px] text-slate-400">
-            Smart CNIC, Passport, ya Driving License ki saaf photo upload karein
+            Upload a clear, high-resolution photo of your original government-issued document
           </p>
         </div>
       )}
@@ -336,7 +336,7 @@ export default function DocumentScanner({
                   className="max-h-[70vh] w-auto object-contain rounded-xl border border-white/20 shadow-2xl"
                 />
                 <span className="mt-3 text-xs text-white/90 font-medium">
-                  Check photo clarity: Kiya tamam text saaf parha ja raha hai?
+                  Review clarity: Ensure all text and corners are clearly legible without blur.
                 </span>
               </div>
             ) : cameraError ? (

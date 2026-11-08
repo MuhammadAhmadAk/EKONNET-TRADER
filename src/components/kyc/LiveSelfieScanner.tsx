@@ -356,7 +356,7 @@ export default function LiveSelfieScanner({
                   className="max-h-[70vh] w-auto object-contain rounded-2xl border border-white/20 shadow-2xl"
                 />
                 <span className="mt-3 text-xs text-white/90 font-medium">
-                  Selfie check: Kiya chehra bilkul saaf aur seedha dikh raha hai?
+                  Biometric check: Ensure your face is centered, well-lit, and directly facing the camera.
                 </span>
               </div>
             ) : cameraError ? (

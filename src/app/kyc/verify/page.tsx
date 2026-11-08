@@ -484,7 +484,7 @@ function KYCVerifyContent() {
               </div>
               <h2 className="text-xl font-black text-slate-900 dark:text-white">High-Tier Limit Clearance</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Sirf high limits ($100,000+ trading) ke liye pichle 3 mahine ka utility bill (bijli/gas) ya bank statement upload karein. Standard limits ke liye yeh optional hai.
+                Optional for standard trading. Upload a utility bill or bank statement (issued within last 90 days) to unlock high-tier limits ($100,000+).
               </p>
             </div>
 
@@ -517,7 +517,7 @@ function KYCVerifyContent() {
             </div>
 
             <div className="p-3 rounded-xl bg-orange-500/5 border border-orange-500/20 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-              💡 <strong>Note:</strong> Agar abhi bill ya bank statement dastiyab nahi hai, to aap direct niche submit kar sakte hain. Aapka standard account foran verify ho jayega.
+              💡 <strong>Note:</strong> If you don&apos;t have a proof of address right now, you can skip and submit below. Your standard trading account will be verified directly.
             </div>
 
             <div className="flex gap-2.5 pt-2">
@@ -560,7 +560,7 @@ function KYCVerifyContent() {
             <div className="space-y-1">
               <h2 className="text-2xl font-black text-slate-900 dark:text-white">KYC Submitted Successfully!</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-                Aapka KYC Dossier Ekonnet Compliance Desk ko receive ho chuka hai. Verification status review ke baad update ho jayega.
+                Your KYC dossier has been received by the Ekonnet Compliance Desk. Your verification status will update upon automated compliance review.
               </p>
             </div>
 
