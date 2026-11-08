@@ -6,33 +6,27 @@ import { useRouter } from "next/navigation";
 import { 
   Lock, 
   Mail, 
-  KeyRound, 
   Eye, 
   EyeOff, 
   LogIn, 
-  ShieldCheck, 
   Sun, 
   Moon, 
   Loader2, 
   AlertOctagon, 
-  Layers,
-  Crown,
-  Briefcase,
-  UserCheck
+  Layers
 } from "lucide-react";
 
 export default function AdminManagementLoginPage() {
   const router = useRouter();
   const [adminToken, setAdminToken] = useState("");
   const [rootKey, setRootKey] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isAuthorizing, setIsAuthorizing] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
-    // Theme sync - default to light or match existing system
+    // Theme sync - match current system theme
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
@@ -77,8 +71,7 @@ export default function AdminManagementLoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           identifier: adminToken.trim(),
-          password: rootKey,
-          twoFactorCode: twoFactorCode.trim() || undefined
+          password: rootKey
         })
       });
 
@@ -113,19 +106,12 @@ export default function AdminManagementLoginPage() {
     }
   };
 
-  const fillQuickDemo = (demoId: string, demoPass: string) => {
-    setAdminToken(demoId);
-    setRootKey(demoPass);
-    setTwoFactorCode("123456");
-    setError("");
-  };
-
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 font-sans selection:bg-orange-500 selection:text-white transition-colors duration-500 bg-gradient-to-b from-[#e3edf7] via-[#eef5fc] to-[#f4f9ff] dark:from-[#060913] dark:via-[#090e1f] dark:to-[#050811]">
       
       {/* Background Architectural Rings (exact match to reference image) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-        {/* Soft glowing ambient circle */}
+        {/* Soft glowing ambient circles */}
         <div className="w-[850px] h-[850px] rounded-full border border-white/60 dark:border-white/5 opacity-50 dark:opacity-20 absolute -top-10" />
         <div className="w-[1100px] h-[1100px] rounded-full border border-white/50 dark:border-white/5 opacity-40 dark:opacity-10 absolute -top-40" />
         <div className="w-[1400px] h-[1400px] rounded-full border border-white/30 dark:border-white/5 opacity-30 dark:opacity-5 absolute -top-80" />
@@ -138,18 +124,18 @@ export default function AdminManagementLoginPage() {
       {/* Top Bar with Brand Logo and Theme Switcher */}
       <header className="relative z-20 flex items-center justify-between w-full max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
             <Layers className="w-4 h-4 text-white" />
           </div>
           <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-            Ekonnet <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Admin</span>
+            Ekonnet <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded-[6px] bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">Admin</span>
           </span>
         </Link>
 
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
-          className="p-2.5 rounded-full bg-white/70 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/80 dark:border-white/10 backdrop-blur-md text-slate-700 dark:text-slate-200 transition shadow-sm hover:shadow"
+          className="p-2.5 rounded-[8px] bg-white/70 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/80 dark:border-white/10 backdrop-blur-md text-slate-700 dark:text-slate-200 transition shadow-sm hover:shadow"
           title={theme === "dark" ? "Switch to Light Sky Mode" : "Switch to Dark Mode"}
           aria-label="Toggle theme"
         >
@@ -161,13 +147,13 @@ export default function AdminManagementLoginPage() {
         </button>
       </header>
 
-      {/* Main Centered Floating Glass Card */}
+      {/* Main Centered Floating Glass Card - Border Radius 8px */}
       <main className="relative z-20 my-auto flex items-center justify-center py-6 sm:py-10">
-        <div className="w-full max-w-[430px] rounded-[32px] sm:rounded-[36px] bg-white/75 dark:bg-[#0c1222]/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.08)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] p-7 sm:p-9 transition-all duration-300">
+        <div className="w-full max-w-[420px] rounded-[8px] bg-white/80 dark:bg-[#0c1222]/90 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7)] p-7 sm:p-9 transition-all duration-300">
           
-          {/* Elevated Centered Top Icon Badge (Exact match to reference [->]) */}
+          {/* Elevated Centered Top Icon Badge */}
           <div className="flex justify-center -mt-2 mb-5">
-            <div className="w-14 h-14 rounded-2xl bg-white/95 dark:bg-[#131b2e] border border-slate-100 dark:border-white/10 shadow-md shadow-slate-200/50 dark:shadow-black/40 flex items-center justify-center text-slate-800 dark:text-orange-400 transform hover:scale-105 transition-transform">
+            <div className="w-13 h-13 p-3.5 rounded-[8px] bg-white/95 dark:bg-[#131b2e] border border-slate-100 dark:border-white/10 shadow-md shadow-slate-200/50 dark:shadow-black/40 flex items-center justify-center text-slate-800 dark:text-orange-400 transform hover:scale-105 transition-transform">
               <LogIn className="w-5 h-5 text-slate-800 dark:text-orange-400 stroke-[2.2]" />
             </div>
           </div>
@@ -184,14 +170,14 @@ export default function AdminManagementLoginPage() {
 
           {/* Error Banner */}
           {error && (
-            <div className="mb-4 p-3 rounded-2xl bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-400 text-xs flex items-start gap-2 animate-in fade-in">
+            <div className="mb-4 p-3 rounded-[8px] bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-400 text-xs flex items-start gap-2 animate-in fade-in">
               <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
               <span className="leading-tight">{error}</span>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleAdminAuth} className="space-y-3.5">
+          <form onSubmit={handleAdminAuth} className="space-y-4">
             
             {/* Input 1: Admin Email / Username */}
             <div className="relative flex items-center">
@@ -204,7 +190,7 @@ export default function AdminManagementLoginPage() {
                 value={adminToken}
                 onChange={(e) => setAdminToken(e.target.value)}
                 placeholder="Email or Staff ID"
-                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
+                className="w-full pl-11 pr-4 py-3 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
               />
             </div>
 
@@ -219,7 +205,7 @@ export default function AdminManagementLoginPage() {
                 value={rootKey}
                 onChange={(e) => setRootKey(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-11 pr-11 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
+                className="w-full pl-11 pr-11 py-3 rounded-[8px] bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/20 transition"
               />
               <button
                 type="button"
@@ -235,21 +221,6 @@ export default function AdminManagementLoginPage() {
               </button>
             </div>
 
-            {/* Input 3: 2FA Rolling Code */}
-            <div className="relative flex items-center">
-              <div className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none">
-                <KeyRound className="w-4 h-4 text-orange-500/80" />
-              </div>
-              <input
-                type="text"
-                maxLength={6}
-                value={twoFactorCode}
-                onChange={(e) => setTwoFactorCode(e.target.value)}
-                placeholder="2FA Token (e.g. 123456)"
-                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-100/80 dark:bg-black/35 border border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 font-mono focus:outline-none focus:bg-white dark:focus:bg-black/50 focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/15 transition"
-              />
-            </div>
-
             {/* Forgot password link */}
             <div className="flex justify-end pt-0.5">
               <button
@@ -261,11 +232,11 @@ export default function AdminManagementLoginPage() {
               </button>
             </div>
 
-            {/* Main Primary Action Button (Sleek dark pill matching reference, with orange hover aura) */}
+            {/* Main Primary Action Button - 8px radius */}
             <button
               type="submit"
               disabled={isAuthorizing}
-              className="w-full py-3.5 rounded-2xl bg-[#1e232e] hover:bg-black dark:bg-gradient-to-r dark:from-orange-500 dark:to-rose-500 dark:hover:from-orange-600 dark:hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-lg shadow-black/15 dark:shadow-orange-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-50 mt-1 cursor-pointer"
+              className="w-full py-3.5 rounded-[8px] bg-[#1e232e] hover:bg-black dark:bg-gradient-to-r dark:from-orange-500 dark:to-rose-500 dark:hover:from-orange-600 dark:hover:to-rose-600 text-white font-bold text-xs tracking-wide shadow-lg shadow-black/15 dark:shadow-orange-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-50 mt-2 cursor-pointer"
             >
               {isAuthorizing ? (
                 <>
@@ -279,51 +250,8 @@ export default function AdminManagementLoginPage() {
 
           </form>
 
-          {/* Dotted Divider with "Or sign in with" */}
-          <div className="relative my-6 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-dashed border-slate-300 dark:border-white/15" />
-            </div>
-            <span className="relative px-3 bg-white/90 dark:bg-[#0c1222] text-[11px] text-slate-400 dark:text-slate-500 font-medium rounded-full">
-              Or quick test with
-            </span>
-          </div>
-
-          {/* 3 Bottom Quick Profile Buttons (matching reference layout) */}
-          <div className="grid grid-cols-3 gap-2.5">
-            <button
-              type="button"
-              onClick={() => fillQuickDemo("master_admin", "Ekonnet2026!")}
-              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
-              title="Super Administrator (Full RBAC)"
-            >
-              <Crown className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px]">Super Admin</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillQuickDemo("manager_sarah", "Ekonnet2026!")}
-              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
-              title="Management Executive"
-            >
-              <Briefcase className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px]">Management</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillQuickDemo("staff_alex", "Ekonnet2026!")}
-              className="py-2.5 px-2 rounded-2xl bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 text-[11px] font-bold shadow-sm hover:shadow transition flex flex-col items-center gap-1 group"
-              title="Staff Compliance Officer"
-            >
-              <UserCheck className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px]">Staff Officer</span>
-            </button>
-          </div>
-
           {/* Bottom Switch to Customer Portal */}
-          <div className="mt-6 pt-3 text-center border-t border-slate-100 dark:border-white/5">
+          <div className="mt-6 pt-4 text-center border-t border-slate-100 dark:border-white/5">
             <span className="text-[11px] text-slate-400 dark:text-slate-500">
               Are you a trader?{" "}
             </span>
