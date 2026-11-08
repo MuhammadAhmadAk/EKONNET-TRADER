@@ -142,12 +142,12 @@ export default function UserRegisterModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 dark:bg-black/80 backdrop-blur-md">
       
       {/* Centered Compact Card - Fits screen without inner scrolling */}
-      <div className="relative w-full max-w-lg rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-2xl backdrop-blur-2xl bg-white dark:bg-[#0c1222] p-6 sm:p-7 text-slate-900 dark:text-white transition-all">
+      <div className="relative w-full max-w-lg rounded-[8px] border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-2xl bg-white dark:bg-[#0c1222] p-6 sm:p-7 text-slate-900 dark:text-white transition-all">
         
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+          className="absolute top-4 right-4 p-2 rounded-[8px] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           aria-label="Close"
         >
           <X className="w-4 h-4" />
@@ -155,7 +155,7 @@ export default function UserRegisterModal({
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center shadow-md shadow-orange-500/25 shrink-0">
+          <div className="w-10 h-10 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center shadow-sm shrink-0">
             <UserPlus className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -170,7 +170,7 @@ export default function UserRegisterModal({
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs mb-3.5">
+          <div className="p-2.5 rounded-[8px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs mb-3.5">
             {errorMessage}
           </div>
         )}
@@ -183,7 +183,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Full Legal Name
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <User className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type="text"
@@ -200,7 +200,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Username
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <span className="text-slate-400 font-mono text-xs mr-1">@</span>
                 <input
                   type="text"
@@ -220,7 +220,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Email Address
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Mail className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type="email"
@@ -237,7 +237,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Phone Number
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Phone className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type="tel"
@@ -256,7 +256,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Password
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Lock className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -280,7 +280,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Confirm Password
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Lock className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -305,7 +305,7 @@ export default function UserRegisterModal({
                   {age} yrs ({age >= 18 ? "18+ Eligible" : "Under 18"})
                 </span>
               </div>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Calendar className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type="date"
@@ -321,7 +321,7 @@ export default function UserRegisterModal({
               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                 Country
               </label>
-              <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
+              <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3 py-2 focus-within:border-orange-500 transition">
                 <Globe className="w-3.5 h-3.5 text-slate-400 mr-2 shrink-0" />
                 <input
                   type="text"
@@ -342,7 +342,7 @@ export default function UserRegisterModal({
               id="terms"
               checked={agreedTerms}
               onChange={(e) => setAgreedTerms(e.target.checked)}
-              className="rounded accent-orange-500 w-3.5 h-3.5"
+              className="rounded-[4px] accent-orange-500 w-3.5 h-3.5"
             />
             <label htmlFor="terms" className="cursor-pointer select-none">
               I agree to the <span className="text-orange-600 dark:text-orange-400 font-semibold">Terms of Service</span> &amp; <span className="text-orange-600 dark:text-orange-400 font-semibold">Privacy Policy</span>
@@ -353,7 +353,7 @@ export default function UserRegisterModal({
           <button
             type="submit"
             disabled={isLoading || age < 18}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+            className="w-full py-3 rounded-[8px] bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? (
               <>

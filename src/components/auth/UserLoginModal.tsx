@@ -100,12 +100,12 @@ export default function UserLoginModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 dark:bg-black/80 backdrop-blur-md">
       
       {/* Centered Compact Auth Card - No Inner Scrolling */}
-      <div className="relative w-full max-w-md rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-2xl backdrop-blur-2xl bg-white dark:bg-[#0c1222] p-6 sm:p-8 text-slate-900 dark:text-white transition-all">
+      <div className="relative w-full max-w-md rounded-[8px] border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-2xl bg-white dark:bg-[#0c1222] p-6 sm:p-8 text-slate-900 dark:text-white transition-all">
         
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+          className="absolute top-4 right-4 p-2 rounded-[8px] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           aria-label="Close"
         >
           <X className="w-4 h-4" />
@@ -113,7 +113,7 @@ export default function UserLoginModal({
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center space-y-2 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+          <div className="w-12 h-12 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center shadow-sm">
             <Lock className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -128,7 +128,7 @@ export default function UserLoginModal({
 
         {/* Lockout Warning */}
         {lockedUntil && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs flex items-center gap-2 mb-4">
+          <div className="p-3 rounded-[8px] bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs flex items-center gap-2 mb-4">
             <ShieldAlert className="w-4 h-4 shrink-0 text-rose-500" />
             <span>Account locked for {lockedUntil}. Please retry later.</span>
           </div>
@@ -136,7 +136,7 @@ export default function UserLoginModal({
 
         {/* Error Alert */}
         {errorMessage && !lockedUntil && (
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs mb-4">
+          <div className="p-3 rounded-[8px] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs mb-4">
             {errorMessage}
           </div>
         )}
@@ -150,7 +150,7 @@ export default function UserLoginModal({
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                   Username or Email
                 </label>
-                <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3.5 py-2.5 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition">
+                <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3.5 py-2.5 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition">
                   <UserIcon className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
                   <input
                     type="text"
@@ -176,7 +176,7 @@ export default function UserLoginModal({
                     </span>
                   )}
                 </div>
-                <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3.5 py-2.5 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition">
+                <div className="flex items-center rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 px-3.5 py-2.5 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition">
                   <Lock className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
                   <input
                     type={showPassword ? "text" : "password"}
@@ -199,7 +199,7 @@ export default function UserLoginModal({
             </>
           ) : (
             /* 2FA Step */
-            <div className="p-4 rounded-2xl bg-orange-500/5 dark:bg-black/25 border border-orange-500/30 space-y-2 text-center">
+            <div className="p-4 rounded-[8px] bg-orange-500/5 dark:bg-black/25 border border-orange-500/30 space-y-2 text-center">
               <div className="flex items-center justify-center space-x-1.5 text-xs font-bold text-orange-600 dark:text-orange-400">
                 <KeyRound className="w-4 h-4 text-orange-500" />
                 <span>Two-Factor Authentication</span>
@@ -213,7 +213,7 @@ export default function UserLoginModal({
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
                 placeholder="000000"
-                className="w-full text-center tracking-[0.4em] text-xl font-black font-mono bg-white dark:bg-black/40 border border-orange-500/40 text-orange-600 dark:text-orange-400 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                className="w-full text-center tracking-[0.4em] text-xl font-black font-mono bg-white dark:bg-black/40 border border-orange-500/40 text-orange-600 dark:text-orange-400 py-2.5 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
           )}
@@ -222,7 +222,7 @@ export default function UserLoginModal({
           <button
             type="submit"
             disabled={!!lockedUntil || isLoading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+            className="w-full py-3 rounded-[8px] bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? (
               <>
