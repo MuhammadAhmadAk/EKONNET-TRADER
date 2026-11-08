@@ -231,17 +231,6 @@ export default function AdminManagementLoginPage() {
               </button>
             </div>
 
-            {/* Forgot password link */}
-            <div className="flex justify-end pt-0.5">
-              <button
-                type="button"
-                onClick={() => alert("Verification reset instructions sent to registered executive email.")}
-                className="text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition font-medium"
-              >
-                Forgot password?
-              </button>
-            </div>
-
             {/* Main Primary Action Button - 8px radius */}
             <button
               type="submit"

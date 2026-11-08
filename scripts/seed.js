@@ -332,9 +332,120 @@ async function seedDatabase() {
     await auditCol.insertOne(genesisAudit);
     console.log("  ✓ Recorded genesis audit log entry.");
 
+    // 6. MODULAR MULTI-DATABASE PARTITIONING (IAM, LEDGER, P2P, TRADING, COMPLIANCE)
+    console.log("\n--- PARTITIONING MODULAR DATABASES ---");
+    
+    // (a) ekonnet_iam
+    const iamDb = client.db("ekonnet_iam");
+    await iamDb.collection("users").createIndex({ id: 1 }, { unique: true });
+    await iamDb.collection("users").createIndex({ username: 1 });
+    await iamDb.collection("users").createIndex({ "emails": 1 });
+    for (const u of users) {
+      await iamDb.collection("users").updateOne({ id: u.id }, { $set: u }, { upsert: true });
+    }
+    for (const p of permissions) {
+      await iamDb.collection("staff_permissions").updateOne({ staffId: p.staffId }, { $set: p }, { upsert: true });
+    }
+    await iamDb.collection("audit_logs").insertOne(genesisAudit);
+    console.log("  ✓ Partition 'ekonnet_iam' seeded with IAM users, permissions, and audit logs.");
+
+    // (b) ekonnet_ledger
+    const ledgerDb = client.db("ekonnet_ledger");
+    await ledgerDb.collection("wallets").createIndex({ userId: 1 }, { unique: true });
+    for (const u of users) {
+      await ledgerDb.collection("wallets").updateOne(
+        { userId: u.id },
+        { $set: { userId: u.id, username: u.username, balances: u.walletBalances, updatedAt: new Date().toISOString() } },
+        { upsert: true }
+      );
+    }
+    await ledgerDb.collection("deposit_requests").updateOne(
+      { id: "DEP-839201" },
+      {
+        $set: {
+          id: "DEP-839201",
+          userId: "EKON-419836",
+          userName: "Farhan Qureshi",
+          amount: 5000,
+          currency: "USD",
+          paymentRail: "Direct Wire",
+          transactionRef: "WIRE-REF-9928194",
+          status: "PENDING",
+          cvVerification: {
+            status: "PASS",
+            confidenceScore: 92,
+            sharpnessScore: 89,
+            details: "Official Standard Chartered wire slip detected. Optimal clarity.",
+            verifiedAt: new Date().toISOString()
+          },
+          createdAt: new Date().toISOString()
+        }
+      },
+      { upsert: true }
+    );
+    await ledgerDb.collection("ledger_journal").insertOne({
+      id: "JRN-GENESIS",
+      transactionType: "PLATFORM_INIT",
+      debitAccount: "PLATFORM_RESERVE",
+      creditAccount: "USER_POOLS",
+      amount: 1365250.00,
+      currency: "USD",
+      referenceId: "BOOTSTRAP",
+      description: "Genesis platform liquidity capitalization",
+      timestamp: new Date().toISOString()
+    });
+    console.log("  ✓ Partition 'ekonnet_ledger' seeded with wallets, deposit slips, and double-entry journal.");
+
+    // (c) ekonnet_p2p
+    const p2pDb = client.db("ekonnet_p2p");
+    await p2pDb.collection("p2p_offers").updateOne(
+      { id: "SETTLE-84910" },
+      {
+        $set: {
+          id: "SETTLE-84910",
+          offerType: "SELL",
+          creatorId: "EKON-819204",
+          creatorName: "Alexander Vance",
+          cryptoSymbol: "BTC",
+          fiatCurrency: "USD",
+          amount: 0.25,
+          pricePerUnit: 67200,
+          totalFiat: 16800,
+          paymentRail: "Direct Wire",
+          status: "OPEN",
+          createdAt: new Date().toISOString()
+        }
+      },
+      { upsert: true }
+    );
+    console.log("  ✓ Partition 'ekonnet_p2p' seeded with active settlement contracts.");
+
+    // (d) ekonnet_trading
+    const tradingDb = client.db("ekonnet_trading");
+    await tradingDb.collection("trading_orders").createIndex({ userId: 1, status: 1 });
+    console.log("  ✓ Partition 'ekonnet_trading' initialized with order book indexes.");
+
+    // (e) ekonnet_compliance
+    const complianceDb = client.db("ekonnet_compliance");
+    await complianceDb.collection("internal_notes").insertOne({
+      id: "NOTE-1",
+      targetUserId: "EKON-419836",
+      staffId: "STAFF-101",
+      staffName: "Sarah Jenkins",
+      noteText: "Verified corporate bank account linkage. Cleared for Tier-2 high volume settlement.",
+      actionTaken: "KYC Tier-2 Approved",
+      createdAt: new Date().toISOString()
+    });
+    console.log("  ✓ Partition 'ekonnet_compliance' seeded with staff internal notes & case logs.");
+
     console.log("\n========================================================");
-    console.log("🎉 DATABASE SEEDING COMPLETED SUCCESSFULLY!");
-    console.log("All accounts have real bcrypt salted hashes in MongoDB.");
+    console.log("🎉 ALL MODULAR DATABASES SEEDED SUCCESSFULLY!");
+    console.log("  - ekonnet_iam (Users, Staff Permissions, Security Audits)");
+    console.log("  - ekonnet_ledger (Wallets, Double-entry Journal, Deposit Slips)");
+    console.log("  - ekonnet_p2p (Direct P2P Settlement Vault)");
+    console.log("  - ekonnet_trading (Spot Orders & Matches)");
+    console.log("  - ekonnet_compliance (Staff Notes & Support Tickets)");
+    console.log("  - ekonnet_trader_db (Synchronized Legacy Fallback)");
     console.log("========================================================");
 
   } catch (error) {
