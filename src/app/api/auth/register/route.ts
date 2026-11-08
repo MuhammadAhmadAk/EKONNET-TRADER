@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { generateEkonnetId, calculateAge } from "@/lib/utils";
 import { createUser, getUserById, createAuditLog } from "@/lib/dbService";
 import { User } from "@/lib/types";
+import { signAuthToken, AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "@/lib/jwt";
+import { hashPassword } from "@/lib/password";
 
 export async function POST(request: Request) {
   try {
@@ -56,10 +58,13 @@ export async function POST(request: Request) {
     const cleanEmails = Array.isArray(emails) ? emails.filter(Boolean) : [emails];
     const cleanPhones = Array.isArray(phones) ? phones.filter(Boolean) : phones ? [phones] : [];
 
+    // Production Salted Bcrypt Password Hashing
+    const hashedPassword = await hashPassword(password || "Ekonnet2026!");
+
     const newUser: User = {
       id: autoId,
       username: username.toLowerCase().trim(),
-      password: password || "Ekonnet2026!",
+      password: hashedPassword,
       fullName,
       role: "user",
       emails: cleanEmails,
@@ -92,17 +97,39 @@ export async function POST(request: Request) {
       userName: newUser.username,
       role: "user",
       actionType: "LOGIN",
-      description: `New user account created with 18+ age verification (${age} yrs)`,
+      description: `New user account created with 18+ age verification (${age} yrs) [JWT Issued]`,
       ipAddress: "82.165.10.77",
       location: `${city}, ${country}`,
       status: "SUCCESS"
     });
 
-    return NextResponse.json({
+    // Issue Production JWT Token
+    const token = await signAuthToken({
+      userId: newUser.id,
+      username: newUser.username,
+      role: "user",
+      fullName: newUser.fullName,
+      email: cleanEmails[0] || "",
+      kycStatus: newUser.kycStatus,
+      packageTier: newUser.packageTier
+    });
+
+    const sanitizedUser = { ...newUser };
+    delete sanitizedUser.password;
+
+    const response = NextResponse.json({
       success: true,
       message: "Account created successfully. Unique Ekonnet ID assigned.",
-      user: newUser
+      user: sanitizedUser
     }, { status: 201 });
+
+    // Set cryptographically signed JWT in httpOnly Secure Cookie
+    response.cookies.set({
+      ...AUTH_COOKIE_OPTIONS,
+      value: token
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error("REGISTER ERROR:", error);

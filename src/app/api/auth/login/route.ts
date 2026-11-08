@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserById, updateUser, createAuditLog } from "@/lib/dbService";
+import { signAuthToken, AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "@/lib/jwt";
+import { comparePassword, hashPassword } from "@/lib/password";
 
 export async function POST(request: Request) {
   try {
@@ -56,11 +58,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Verify Password (In production, bcrypt/argon2; here we accept demo password or check string)
-    // Accept standard default password or username-based for test accounts
-    // Real password validation:
-    const expectedPassword = user.password || "Ekonnet2026!";
-    const isValidPassword = password === expectedPassword || password === "Ekonnet2026!" || password === "correct123";
+    // Verify Password using production bcrypt hashing & secure comparison
+    const isValidPassword = await comparePassword(password, user.password);
 
     if (!isValidPassword) {
       const attempts = (user.failedLoginAttempts || 0) + 1;
@@ -114,6 +113,12 @@ export async function POST(request: Request) {
       }
     }
 
+    // Auto-upgrade plain password to bcrypt hash in DB if not yet hashed
+    if (user.password && !user.password.startsWith("$2a$") && !user.password.startsWith("$2b$")) {
+      const hashed = await hashPassword(user.password);
+      await updateUser(user.id, { password: hashed });
+    }
+
     // Reset failed attempts on success
     await updateUser(user.id, {
       failedLoginAttempts: 0,
@@ -127,13 +132,25 @@ export async function POST(request: Request) {
       userName: user.username,
       role: user.role,
       actionType: "LOGIN",
-      description: `User authenticated successfully with role ${user.role}`,
+      description: `User authenticated successfully with role ${user.role} (JWT Issued)`,
       ipAddress: "82.165.10.77",
       location: "Verified Sovereign Node",
       status: "SUCCESS"
     });
 
-    return NextResponse.json({
+    // Generate Production Cryptographic JWT Token (Valid for 7 days)
+    const token = await signAuthToken({
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+      fullName: user.fullName,
+      email: user.emails[0] || "",
+      kycStatus: user.kycStatus,
+      packageTier: user.packageTier
+    });
+
+    // Construct response with sanitized user data
+    const response = NextResponse.json({
       success: true,
       message: "Authentication successful",
       user: {
@@ -153,7 +170,17 @@ export async function POST(request: Request) {
       }
     });
 
+    // Set cryptographically signed JWT in httpOnly Secure Cookie
+    // NOTE: httpOnly prevents JavaScript (XSS scripts) from accessing or stealing the token!
+    response.cookies.set({
+      ...AUTH_COOKIE_OPTIONS,
+      value: token
+    });
+
+    return response;
+
   } catch (error) {
+    console.error("Login API Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

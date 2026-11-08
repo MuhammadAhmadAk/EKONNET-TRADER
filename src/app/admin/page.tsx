@@ -131,7 +131,10 @@ export default function AdminPortalPage() {
     window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: next } }));
   };
 
-  const handleAdminLogout = () => {
+  const handleAdminLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {}
     localStorage.removeItem("ekonnet_user");
     window.dispatchEvent(new Event("auth-changed"));
     router.push("/admin/login");

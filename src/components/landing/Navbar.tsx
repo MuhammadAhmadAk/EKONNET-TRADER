@@ -48,16 +48,24 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
-    const loadUser = () => {
+    const loadUser = async () => {
       try {
-        const stored = localStorage.getItem("ekonnet_user");
-        if (stored) {
-          setCurrentUser(JSON.parse(stored));
-        } else {
-          setCurrentUser(null);
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setCurrentUser(data.user);
+            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
+            return;
+          }
         }
-      } catch (e) {
+        localStorage.removeItem("ekonnet_user");
         setCurrentUser(null);
+      } catch (e) {
+        try {
+          const stored = localStorage.getItem("ekonnet_user");
+          if (stored) setCurrentUser(JSON.parse(stored));
+        } catch (err) {}
       }
     };
 
@@ -83,7 +91,10 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
     window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: next } }));
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {}
     localStorage.removeItem("ekonnet_user");
     setCurrentUser(null);
     setUserDropdownOpen(false);
