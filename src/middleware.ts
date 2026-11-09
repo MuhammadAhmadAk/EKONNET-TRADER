@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyAuthToken, AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "@/lib/jwt";
+import { verifyAuthToken, AUTH_COOKIE_NAME, AUTH_ADMIN_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "@/lib/jwt";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Allow public admin login gate without checking token
   if (pathname === "/admin/login") {
-    // If already logged in as admin, redirect directly to /admin
-    const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+    // If already logged in as admin via dedicated admin cookie (or fallback)
+    const token = request.cookies.get(AUTH_ADMIN_COOKIE_NAME)?.value || request.cookies.get(AUTH_COOKIE_NAME)?.value;
     if (token) {
       const payload = await verifyAuthToken(token);
       if (payload && (payload.role === "master_admin" || payload.role === "management" || payload.role === "staff")) {
@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
 
   // 2. Protect Admin Console pages: /admin and subpaths
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+    const token = request.cookies.get(AUTH_ADMIN_COOKIE_NAME)?.value || request.cookies.get(AUTH_COOKIE_NAME)?.value;
 
     if (!token) {
       const loginUrl = new URL("/admin/login", request.url);
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
 
   // 3. Protect Admin APIs: /api/admin/*
   if (pathname.startsWith("/api/admin/")) {
-    const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+    const token = request.cookies.get(AUTH_ADMIN_COOKIE_NAME)?.value || request.cookies.get(AUTH_COOKIE_NAME)?.value;
     if (!token) {
       return NextResponse.json(
         { error: "Unauthorized: Missing administrative JWT cookie." },

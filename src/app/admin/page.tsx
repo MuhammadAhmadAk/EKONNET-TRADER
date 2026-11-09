@@ -122,7 +122,7 @@ export default function AdminPortalPage() {
     const verifyAdminSession = async () => {
       try {
         // Fast local recovery first (so no blank screen on refresh)
-        const stored = localStorage.getItem("ekonnet_admin_user") || localStorage.getItem("ekonnet_user");
+        const stored = localStorage.getItem("ekonnet_admin_user");
         let localAdmin = null;
         if (stored) {
           try {
@@ -136,14 +136,13 @@ export default function AdminPortalPage() {
           } catch (e) {}
         }
 
-        // Verify with /api/auth/me (validates server-side httpOnly JWT cookie)
-        const res = await fetch("/api/auth/me");
+        // Verify with /api/auth/admin/me (validates server-side httpOnly admin JWT cookie)
+        const res = await fetch("/api/auth/admin/me");
         if (res.ok) {
           const data = await res.json();
           if (data.authenticated && data.user && (data.user.role === "master_admin" || data.user.role === "management" || data.user.role === "staff")) {
             setCurrentAdmin(data.user);
             localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
-            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
             setIsAuthChecking(false);
             loadDeposits();
             return;
@@ -191,11 +190,10 @@ export default function AdminPortalPage() {
 
   const handleAdminLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await fetch("/api/auth/admin/logout", { method: "POST" });
     } catch (e) {}
-    localStorage.removeItem("ekonnet_user");
     localStorage.removeItem("ekonnet_admin_user");
-    window.dispatchEvent(new Event("auth-changed"));
+    window.dispatchEvent(new Event("admin-auth-changed"));
     router.push("/admin/login");
   };
 

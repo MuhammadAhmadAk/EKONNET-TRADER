@@ -53,7 +53,11 @@ export default function UserDashboardPage() {
         const res = await fetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
-          if (data.authenticated && data.user) {
+          if (data.isAdministrative) {
+            router.replace("/admin");
+            return;
+          }
+          if (data.authenticated && data.user && data.user.role === "user") {
             setUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
 
@@ -66,16 +70,20 @@ export default function UserDashboardPage() {
           }
         }
         
-        // Backup from localStorage
+        // Backup from localStorage (ensuring role is user)
         const stored = localStorage.getItem("ekonnet_user");
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
-            setUser(parsed);
-            if (parsed.kycStatus === "approved") {
-              router.replace("/?kyc=approved");
+            if (parsed.role === "user") {
+              setUser(parsed);
+              if (parsed.kycStatus === "approved") {
+                router.replace("/?kyc=approved");
+              }
+              return;
+            } else {
+              localStorage.removeItem("ekonnet_user");
             }
-            return;
           } catch (err) {}
         }
 
@@ -97,7 +105,7 @@ export default function UserDashboardPage() {
         const res = await fetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
-          if (data.authenticated && data.user) {
+          if (data.authenticated && data.user && data.user.role === "user") {
             setUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
             if (data.user.kycStatus === "approved") {

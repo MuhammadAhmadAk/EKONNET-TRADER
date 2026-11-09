@@ -4,6 +4,7 @@
 const SECRET_STRING = process.env.JWT_SECRET || "ekonnet_sovereign_jwt_secret_key_production_2026_vault_sec_999!";
 
 export const AUTH_COOKIE_NAME = "ekonnet_auth_token";
+export const AUTH_ADMIN_COOKIE_NAME = "ekonnet_admin_token";
 
 export interface AuthTokenPayload {
   userId: string;
@@ -128,6 +129,15 @@ export async function verifyAuthToken(token: string): Promise<AuthTokenPayload |
  */
 export const AUTH_COOKIE_OPTIONS = {
   name: AUTH_COOKIE_NAME,
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+};
+
+export const AUTH_ADMIN_COOKIE_OPTIONS = {
+  name: AUTH_ADMIN_COOKIE_NAME,
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,

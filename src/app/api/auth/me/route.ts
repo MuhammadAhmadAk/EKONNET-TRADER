@@ -28,6 +28,17 @@ export async function GET() {
       return NextResponse.json({ authenticated: false, error: "Account locked" }, { status: 403 });
     }
 
+    // Strict Isolation: /api/auth/me is dedicated exclusively to Trader/Customer accounts.
+    // Administrative accounts (master_admin, management, staff) must use /api/auth/admin/me.
+    if (user.role !== "user") {
+      return NextResponse.json({
+        authenticated: false,
+        user: null,
+        isAdministrative: true,
+        message: "Session belongs to administrative staff. Trader session is unauthenticated."
+      }, { status: 200 });
+    }
+
     const sanitizedUser = { ...user };
     delete sanitizedUser.password;
 

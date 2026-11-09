@@ -40,6 +40,7 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
   const [academyDropdownOpen, setAcademyDropdownOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [adminSession, setAdminSession] = useState<any>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -48,12 +49,14 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
+    // 1. Load Trader/Customer Session strictly (role: "user")
     const loadUser = async () => {
       try {
         const res = await fetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
-          if (data.authenticated && data.user) {
+          // STRICT ROLE GATE: Only customer accounts are valid for trading navbar
+          if (data.authenticated && data.user && data.user.role === "user") {
             setCurrentUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
             return;
@@ -64,17 +67,50 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
       } catch (e) {
         try {
           const stored = localStorage.getItem("ekonnet_user");
-          if (stored) setCurrentUser(JSON.parse(stored));
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.role === "user") {
+              setCurrentUser(parsed);
+              return;
+            }
+          }
         } catch (err) {}
+        setCurrentUser(null);
       }
     };
 
+    // 2. Load Administrative Session independently
+    const checkAdmin = () => {
+      try {
+        const storedAdmin = localStorage.getItem("ekonnet_admin_user");
+        if (storedAdmin) {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.role === "master_admin" || parsed.role === "management" || parsed.role === "staff") {
+            setAdminSession(parsed);
+            return;
+          }
+        }
+      } catch (e) {}
+      setAdminSession(null);
+    };
+
     loadUser();
+    checkAdmin();
+
     window.addEventListener("auth-changed", loadUser);
-    window.addEventListener("storage", loadUser);
+    window.addEventListener("admin-auth-changed", checkAdmin);
+    window.addEventListener("storage", () => {
+      loadUser();
+      checkAdmin();
+    });
+
     return () => {
       window.removeEventListener("auth-changed", loadUser);
-      window.removeEventListener("storage", loadUser);
+      window.removeEventListener("admin-auth-changed", checkAdmin);
+      window.removeEventListener("storage", () => {
+        loadUser();
+        checkAdmin();
+      });
     };
   }, []);
 
@@ -417,20 +453,20 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
               )}
             </button>
 
+            {/* Independent Admin Console Link (shown when an admin session is active) */}
+            {adminSession && (
+              <Link
+                href="/admin"
+                className="px-3 py-1.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-[11px] text-amber-600 dark:text-amber-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
+                title="Management Console"
+              >
+                <Lock className="w-3 h-3" />
+                <span>Admin</span>
+              </Link>
+            )}
+
             {currentUser ? (
               <div className="flex items-center gap-2.5">
-                {/* Admin Console shortcut for privileged accounts */}
-                {currentUser.role !== "user" && (
-                  <Link
-                    href="/admin"
-                    className="px-3 py-1.5 rounded-full bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-[11px] text-orange-600 dark:text-orange-400 font-semibold tracking-wide flex items-center gap-1.5 transition"
-                    title="Enterprise Admin Management Console"
-                  >
-                    <Lock className="w-3 h-3" />
-                    <span>Admin</span>
-                  </Link>
-                )}
-
                 {/* User Session Pill with Dropdown */}
                 <div className="relative">
                   <button

@@ -24,6 +24,17 @@ export async function POST(request: Request) {
       );
     }
 
+    // Strict Gate Isolation: Customer portal only accepts Trader (role: "user") accounts
+    if (user.role !== "user") {
+      return NextResponse.json(
+        { 
+          error: "Administrative account detected. Please sign in via the Management Gate at /admin/login to access administrative tools.",
+          isAdminRedirect: true
+        },
+        { status: 403 }
+      );
+    }
+
     const now = new Date();
 
     // Check if account is locked

@@ -30,9 +30,9 @@ export default function AdminManagementLoginPage() {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
-    // Check if already authenticated as admin via localStorage or server session
+    // Check if already authenticated as admin via dedicated admin storage
     try {
-      const stored = localStorage.getItem("ekonnet_admin_user") || localStorage.getItem("ekonnet_user");
+      const stored = localStorage.getItem("ekonnet_admin_user");
       if (stored) {
         const u = JSON.parse(stored);
         if (u.role === "master_admin" || u.role === "management" || u.role === "staff") {
@@ -42,15 +42,14 @@ export default function AdminManagementLoginPage() {
       }
     } catch (e) {}
 
-    // Verify server session
-    fetch("/api/auth/me")
+    // Verify dedicated admin server session
+    fetch("/api/auth/admin/me")
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated && data.user) {
           const role = data.user.role;
           if (role === "master_admin" || role === "management" || role === "staff") {
             localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
-            localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
             router.push("/admin");
           }
         }
@@ -83,7 +82,7 @@ export default function AdminManagementLoginPage() {
 
     setIsAuthorizing(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -113,10 +112,9 @@ export default function AdminManagementLoginPage() {
         return;
       }
 
-      // Store authenticated session in both admin storage and general user storage
+      // Store authenticated session strictly in dedicated admin storage
       localStorage.setItem("ekonnet_admin_user", JSON.stringify(data.user));
-      localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
-      window.dispatchEvent(new Event("auth-changed"));
+      window.dispatchEvent(new Event("admin-auth-changed"));
       router.push("/admin");
     } catch (err) {
       setError("Network error connecting to management auth service.");

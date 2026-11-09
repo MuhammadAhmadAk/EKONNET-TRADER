@@ -64,6 +64,11 @@ export default function UserLoginModal({
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.isAdminRedirect) {
+          setErrorMessage(data.error || "Administrative account detected. Please access the Management Gate at /admin/login.");
+          setIsLoading(false);
+          return;
+        }
         if (data.isLocked) {
           setLockedUntil(`${data.remainingMinutes || 30}:00 Minutes`);
           setFailedAttempts(3);
@@ -72,6 +77,13 @@ export default function UserLoginModal({
           setFailedAttempts((prev) => prev + 1);
           setErrorMessage(data.error || "Invalid username or password.");
         }
+        setIsLoading(false);
+        return;
+      }
+
+      // STRICT ROLE GATE: Reject any administrative account from customer storage
+      if (data.user?.role !== "user") {
+        setErrorMessage("Administrative account detected. Please use the Management Gate at /admin/login.");
         setIsLoading(false);
         return;
       }
