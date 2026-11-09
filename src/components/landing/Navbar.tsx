@@ -49,8 +49,20 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
 
-    // 1. Load Trader/Customer Session strictly (role: "user")
+    // 1. Instant Synchronous Load from Local Cache (0ms latency for instant UI rendering)
     const loadUser = async () => {
+      // Step A: Immediately show cached customer profile so user sees profile in 0ms!
+      try {
+        const stored = localStorage.getItem("ekonnet_user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.role === "user") {
+            setCurrentUser(parsed);
+          }
+        }
+      } catch (err) {}
+
+      // Step B: Asynchronously re-validate with backend in background without UI freeze
       try {
         const res = await fetch("/api/auth/me");
         if (res.ok) {
@@ -62,20 +74,12 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             return;
           }
         }
-        localStorage.removeItem("ekonnet_user");
-        setCurrentUser(null);
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("ekonnet_user");
+          setCurrentUser(null);
+        }
       } catch (e) {
-        try {
-          const stored = localStorage.getItem("ekonnet_user");
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed.role === "user") {
-              setCurrentUser(parsed);
-              return;
-            }
-          }
-        } catch (err) {}
-        setCurrentUser(null);
+        // Keep cached state on temporary network delay
       }
     };
 

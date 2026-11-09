@@ -11,28 +11,20 @@ declare global {
 }
 
 export async function getMongoClient(): Promise<MongoClient> {
-  if (process.env.NODE_ENV === "development") {
-    if (!global._mongoClientPromise) {
-      client = new MongoClient(uri, {
-        serverSelectionTimeoutMS: 3000,
-        connectTimeoutMS: 3000,
-      });
-      global._mongoClientPromise = client.connect().catch((err) => {
-        console.warn("[MongoDB Warning] Local connection failed, fallback will be used if needed:", err.message);
-        throw err;
-      });
-    }
-    return global._mongoClientPromise;
-  } else {
-    if (!clientPromise) {
-      client = new MongoClient(uri, {
-        serverSelectionTimeoutMS: 5000,
-        connectTimeoutMS: 5000,
-      });
-      clientPromise = client.connect();
-    }
-    return clientPromise;
+  if (!global._mongoClientPromise) {
+    const client = new MongoClient(uri, {
+      maxPoolSize: 50,
+      minPoolSize: 5,
+      serverSelectionTimeoutMS: 2000,
+      connectTimeoutMS: 2000,
+    });
+    global._mongoClientPromise = client.connect().catch((err) => {
+      console.warn("[MongoDB Warning] Connection failed, will retry on next query:", err.message);
+      global._mongoClientPromise = undefined;
+      throw err;
+    });
   }
+  return global._mongoClientPromise;
 }
 
 export async function getDatabase(dbName: string = "ekonnet_trader_db"): Promise<Db | null> {

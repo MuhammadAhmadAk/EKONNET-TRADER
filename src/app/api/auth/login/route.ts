@@ -137,8 +137,8 @@ export async function POST(request: Request) {
       lockoutUntil: undefined
     });
 
-    // Record successful login audit
-    await createAuditLog({
+    // Record successful login audit asynchronously (non-blocking for ultra-fast login response)
+    createAuditLog({
       userId: user.id,
       userName: user.username,
       role: user.role,
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
       ipAddress: "82.165.10.77",
       location: "Verified Sovereign Node",
       status: "SUCCESS"
-    });
+    }).catch((err) => console.error("Audit log error:", err));
 
     // Generate Production Cryptographic JWT Token (Valid for 7 days)
     const token = await signAuthToken({

@@ -60,12 +60,6 @@ export default function UserDashboardPage() {
           if (data.authenticated && data.user && data.user.role === "user") {
             setUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
-
-            // Instant auto-redirect to homepage if already approved
-            if (data.user.kycStatus === "approved") {
-              router.replace("/?kyc=approved");
-              return;
-            }
             return;
           }
         }
@@ -77,9 +71,6 @@ export default function UserDashboardPage() {
             const parsed = JSON.parse(stored);
             if (parsed.role === "user") {
               setUser(parsed);
-              if (parsed.kycStatus === "approved") {
-                router.replace("/?kyc=approved");
-              }
               return;
             } else {
               localStorage.removeItem("ekonnet_user");
@@ -146,13 +137,8 @@ export default function UserDashboardPage() {
     }
   };
 
-  // No blocking loader - Render cleanly
+  // Clean non-blocking container while mounting
   if (!mounted || !user) {
-    return <div className="min-h-screen bg-slate-50 dark:bg-[#070b14]" />;
-  }
-
-  // If approved, don't show QR page - redirect immediately
-  if (user.kycStatus === "approved") {
     return <div className="min-h-screen bg-slate-50 dark:bg-[#070b14]" />;
   }
 

@@ -48,21 +48,36 @@ export default function LandingPage() {
   }, []);
 
   const handleRegisterSuccess = (newUser: any) => {
-    setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}. Please complete mobile KYC.`);
-    setTimeout(() => setActiveNotification(""), 6000);
+    setActiveNotification(`Welcome to Ekonnet, ${newUser.fullName}! Your User ID is ${newUser.id}.`);
+    setTimeout(() => setActiveNotification(""), 5000);
     const params = new URLSearchParams(window.location.search);
     const fromParam = params.get("from");
-    const destination = fromParam && fromParam.startsWith("/") ? fromParam : "/dashboard";
-    router.push(destination);
+    if (fromParam && fromParam.startsWith("/") && fromParam !== "/dashboard") {
+      router.push(fromParam);
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   const handleLoginSuccess = (user?: any) => {
     setActiveNotification(`Welcome back${user?.fullName ? ', ' + user.fullName : ''}! Authentication successful.`);
-    setTimeout(() => setActiveNotification(""), 5000);
+    setTimeout(() => setActiveNotification(""), 4000);
     const params = new URLSearchParams(window.location.search);
     const fromParam = params.get("from");
-    const destination = fromParam && fromParam.startsWith("/") ? fromParam : "/dashboard";
-    router.push(destination);
+    
+    // Only redirect if an explicit destination was requested (e.g., /trades, /payments)
+    // Never bounce to /dashboard and back to / when logging in from the homepage!
+    if (fromParam && fromParam.startsWith("/") && fromParam !== "/dashboard") {
+      router.push(fromParam);
+      return;
+    }
+
+    if (fromParam === "/dashboard" && user?.kycStatus !== "approved") {
+      router.push("/dashboard");
+      return;
+    }
+
+    // Otherwise, stay smoothly on the current page with instant navbar profile rendering!
   };
 
   return (
