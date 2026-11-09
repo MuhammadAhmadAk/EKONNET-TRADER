@@ -32,6 +32,7 @@ export default function LiveSelfieScanner({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const nativeCameraInputRef = useRef<HTMLInputElement | null>(null);
   const timerRef = useRef<any>(null);
 
   // Stop camera helper
@@ -56,7 +57,7 @@ export default function LiveSelfieScanner({
     setIsStartingCamera(true);
 
     if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setCameraError("Camera is not supported on this browser. Please use the 'Upload Selfie from Gallery' option.");
+      setCameraError("Camera is not supported on this browser. Please use the 'Take Photo' or 'Upload Selfie from Gallery' option.");
       setIsStartingCamera(false);
       return;
     }
@@ -89,7 +90,7 @@ export default function LiveSelfieScanner({
           });
         } catch (e3: any) {
           console.warn("Selfie camera start failed:", e3);
-          setCameraError(e3.message || "Could not access front camera. Please allow camera permissions or upload a photo.");
+          setCameraError(e3.message || "Could not access front camera. Please allow camera permissions or take a photo with your phone camera.");
           setIsStartingCamera(false);
           return;
         }
@@ -99,8 +100,14 @@ export default function LiveSelfieScanner({
     if (stream) {
       streamRef.current = stream;
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch((err) => console.warn("Video play error:", err));
+        const vid = videoRef.current;
+        vid.srcObject = stream;
+        vid.muted = true;
+        vid.playsInline = true;
+        vid.onloadedmetadata = () => {
+          vid.play().catch((err) => console.warn("Video metadata play error:", err));
+        };
+        vid.play().catch((err) => console.warn("Video direct play error:", err));
       }
     }
     setIsStartingCamera(false);
@@ -124,6 +131,11 @@ export default function LiveSelfieScanner({
     videoRef.current = node;
     if (node && streamRef.current && node.srcObject !== streamRef.current) {
       node.srcObject = streamRef.current;
+      node.muted = true;
+      node.playsInline = true;
+      node.onloadedmetadata = () => {
+        node.play().catch((err) => console.warn("Ref play error:", err));
+      };
       node.play().catch((err) => console.warn("Ref play error:", err));
     }
   }, []);
@@ -140,6 +152,10 @@ export default function LiveSelfieScanner({
     if (!videoRef.current) return;
     try {
       const video = videoRef.current;
+      if (!video.videoWidth || !video.videoHeight) {
+        alert("Camera preview is loading. Please give it a moment and try again.");
+        return;
+      }
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth || 720;
       canvas.height = video.videoHeight || 960;
@@ -216,9 +232,18 @@ export default function LiveSelfieScanner({
 
   return (
     <div className="space-y-3">
-      {/* Hidden file input with selfie front capture attribute */}
+      {/* Hidden gallery file input */}
       <input
         ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {/* Hidden native front camera trigger */}
+      <input
+        ref={nativeCameraInputRef}
         type="file"
         accept="image/*"
         capture="user"
@@ -275,32 +300,42 @@ export default function LiveSelfieScanner({
 
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              Take a Clear Facial Selfie
+              Take a Live Biometric Selfie
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-              Button dabane par poora front camera biometric oval guide ke saath open ho jayega.
+              Your front camera will open with a facial alignment oval for instant verification.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1">
             {/* Primary Action: Open Full Selfie Camera */}
             <button
               type="button"
               onClick={() => setIsScannerOpen(true)}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 transition"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition"
             >
               <Camera className="w-4 h-4" />
-              <span>Open Selfie Camera</span>
+              <span>Live Camera</span>
+            </button>
+
+            {/* Direct Phone Camera Action */}
+            <button
+              type="button"
+              onClick={() => nativeCameraInputRef.current?.click()}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-3.5 h-3.5 text-orange-400" />
+              <span>Take Photo</span>
             </button>
 
             {/* Secondary Action: Upload from Gallery */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full sm:w-auto px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition"
             >
-              <Upload className="w-4 h-4" />
-              <span>Upload from Gallery</span>
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload Photo</span>
             </button>
           </div>
         </div>

@@ -148,11 +148,28 @@ export default function UserDashboardPage() {
     return <div className="min-h-screen bg-slate-50 dark:bg-[#070b14]" />;
   }
 
-  const activeKycUrl = kycUrl || `https://ekonnet.com/kyc/verify?userId=${user.id}`;
+  // Safe helpers to prevent any array/string map exceptions
+  const userEmails: string[] = Array.isArray(user?.emails)
+    ? user.emails.filter(Boolean)
+    : typeof user?.emails === "string" && user.emails
+    ? [user.emails]
+    : typeof user?.email === "string" && user.email
+    ? [user.email]
+    : ["No email registered"];
+
+  const userPhones: string[] = Array.isArray(user?.phones)
+    ? user.phones.filter(Boolean)
+    : typeof user?.phones === "string" && user.phones
+    ? [user.phones]
+    : typeof user?.phone === "string" && user.phone
+    ? [user.phone]
+    : ["No phone registered"];
+
+  const activeKycUrl = kycUrl || (user?.id ? `https://ekonnet.com/kyc/verify?userId=${user.id}` : "https://ekonnet.com/kyc/verify");
   const qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(activeKycUrl)}`;
 
-  const isKycApproved = user.kycStatus === "approved";
-  const isKycPending = user.kycStatus === "pending";
+  const isKycApproved = user?.kycStatus === "approved";
+  const isKycPending = user?.kycStatus === "pending";
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-gray-100 flex flex-col font-sans transition-colors duration-300">
@@ -392,28 +409,34 @@ export default function UserDashboardPage() {
             <div className="space-y-2 text-xs font-mono">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-100 dark:border-white/5 space-y-1.5">
                 <span className="text-[10px] text-slate-400 block font-bold uppercase">Registered Emails:</span>
-                {(user.emails && user.emails.length > 0 ? user.emails : [user.email || "No email registered"]).map((email: string, idx: number) => (
-                  <div key={idx} className="flex items-center justify-between text-slate-800 dark:text-slate-200">
-                    <span className="flex items-center gap-2 truncate">
-                      <Mail className="w-3.5 h-3.5 text-orange-500 shrink-0" />
-                      <span className="truncate">{email}</span>
-                    </span>
-                    <span className="text-[10px] text-emerald-500 font-bold shrink-0">{idx === 0 ? "PRIMARY" : "BACKUP"}</span>
-                  </div>
-                ))}
+                {userEmails.map((email: any, idx: number) => {
+                  const displayEmail = typeof email === "string" ? email : (email?.email || email?.address || String(email));
+                  return (
+                    <div key={idx} className="flex items-center justify-between text-slate-800 dark:text-slate-200">
+                      <span className="flex items-center gap-2 truncate">
+                        <Mail className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                        <span className="truncate">{displayEmail}</span>
+                      </span>
+                      <span className="text-[10px] text-emerald-500 font-bold shrink-0">{idx === 0 ? "PRIMARY" : "BACKUP"}</span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-100 dark:border-white/5 space-y-1.5">
                 <span className="text-[10px] text-slate-400 block font-bold uppercase">Registered Phones:</span>
-                {(user.phones && user.phones.length > 0 ? user.phones : [user.phone || "No phone registered"]).map((phone: string, idx: number) => (
-                  <div key={idx} className="flex items-center justify-between text-slate-800 dark:text-slate-200">
-                    <span className="flex items-center gap-2 truncate">
-                      <Phone className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                      <span className="truncate">{phone}</span>
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-bold shrink-0">{idx === 0 ? "SMS 2FA" : "SECONDARY"}</span>
-                  </div>
-                ))}
+                {userPhones.map((phone: any, idx: number) => {
+                  const displayPhone = typeof phone === "string" ? phone : (phone?.phone || phone?.number || String(phone));
+                  return (
+                    <div key={idx} className="flex items-center justify-between text-slate-800 dark:text-slate-200">
+                      <span className="flex items-center gap-2 truncate">
+                        <Phone className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                        <span className="truncate">{displayPhone}</span>
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-bold shrink-0">{idx === 0 ? "SMS 2FA" : "SECONDARY"}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -274,7 +274,7 @@ function KYCVerifyContent() {
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                  Full Legal Name (ID ke mutabiq)
+                  Full Legal Name (As printed on ID)
                 </label>
                 <div className="flex items-center rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                   <User className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
@@ -307,7 +307,7 @@ function KYCVerifyContent() {
 
               <div>
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                  Ghar Ka Pata / Residential Address
+                  Residential Address
                 </label>
                 <div className="flex items-start rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 p-2.5 focus-within:border-orange-500">
                   <MapPin className="w-4 h-4 text-slate-400 mr-2 mt-0.5 shrink-0" />
@@ -367,7 +367,7 @@ function KYCVerifyContent() {
               </div>
               <h2 className="text-xl font-black text-slate-900 dark:text-white">Select & Upload ID</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Accepted: Smart CNIC (English wala), Passport, ya Driving License.
+                Accepted: Smart National ID, Passport, or Driving License.
               </p>
             </div>
 

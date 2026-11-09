@@ -38,6 +38,7 @@ export default function DocumentScanner({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const nativeCameraInputRef = useRef<HTMLInputElement | null>(null);
 
   // Stop camera helper
   const stopCamera = useCallback(() => {
@@ -56,25 +57,25 @@ export default function DocumentScanner({
     setIsStartingCamera(true);
 
     if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setCameraError("Camera is not supported on this browser. Please use the 'Upload from Gallery' option.");
+      setCameraError("Live camera API is unavailable. Please click 'Take Photo' or 'Upload from Gallery'.");
       setIsStartingCamera(false);
       return;
     }
 
     let stream: MediaStream | null = null;
 
-    // Attempt 1: High-res environment camera
+    // Attempt 1: Standard environment camera
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
           facingMode: { ideal: facing },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       });
     } catch (e1) {
-      // Attempt 2: Standard resolution
+      // Attempt 2: Flexible facing
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: false,
@@ -89,7 +90,7 @@ export default function DocumentScanner({
           });
         } catch (e3: any) {
           console.warn("All camera attempts failed:", e3);
-          setCameraError(e3.message || "Could not access camera. Please allow camera permissions or upload a photo.");
+          setCameraError(e3.message || "Could not access camera. Please allow camera permissions or take a photo using your phone camera.");
           setIsStartingCamera(false);
           return;
         }
@@ -99,8 +100,14 @@ export default function DocumentScanner({
     if (stream) {
       streamRef.current = stream;
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch((err) => console.warn("Video play error:", err));
+        const vid = videoRef.current;
+        vid.srcObject = stream;
+        vid.muted = true;
+        vid.playsInline = true;
+        vid.onloadedmetadata = () => {
+          vid.play().catch((err) => console.warn("Video metadata play error:", err));
+        };
+        vid.play().catch((err) => console.warn("Video direct play error:", err));
       }
     }
     setIsStartingCamera(false);
@@ -124,7 +131,12 @@ export default function DocumentScanner({
     videoRef.current = node;
     if (node && streamRef.current && node.srcObject !== streamRef.current) {
       node.srcObject = streamRef.current;
-      node.play().catch((err) => console.warn("Ref play error:", err));
+      node.muted = true;
+      node.playsInline = true;
+      node.onloadedmetadata = () => {
+        node.play().catch((err) => console.warn("Ref play error:", err));
+      };
+      node.play().catch((err) => console.warn("Ref immediate play error:", err));
     }
   }, []);
 
@@ -140,9 +152,13 @@ export default function DocumentScanner({
     if (!videoRef.current) return;
     try {
       const video = videoRef.current;
+      if (!video.videoWidth || !video.videoHeight) {
+        alert("Camera preview is loading. Please give it 1 second and press capture again.");
+        return;
+      }
       const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth || 1280;
-      canvas.height = video.videoHeight || 720;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -194,11 +210,21 @@ export default function DocumentScanner({
 
   return (
     <div className="space-y-2.5">
-      {/* Hidden native file input */}
+      {/* Hidden native file input for gallery */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {/* Hidden native camera trigger for instant phone camera */}
+      <input
+        ref={nativeCameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
         className="hidden"
         onChange={handleFileChange}
       />
@@ -259,25 +285,35 @@ export default function DocumentScanner({
       ) : (
         /* STATE 2: Empty Card with Clean Actions */
         <div className="p-4 rounded-xl border-2 border-dashed border-slate-200 dark:border-white/15 bg-slate-50/70 dark:bg-black/20 text-center space-y-3">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
             {/* Primary Action: Open Full Live Scanner */}
             <button
               type="button"
               onClick={() => setIsScannerOpen(true)}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition"
             >
               <Camera className="w-4 h-4" />
-              <span>Scan with Camera</span>
+              <span>Live Scanner</span>
             </button>
 
-            {/* Secondary Action: Upload from Disk / Gallery */}
+            {/* Direct Phone Camera Action */}
+            <button
+              type="button"
+              onClick={() => nativeCameraInputRef.current?.click()}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-3.5 h-3.5 text-orange-400" />
+              <span>Take Photo</span>
+            </button>
+
+            {/* Secondary Action: Upload from Gallery */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition"
             >
               <Upload className="w-3.5 h-3.5" />
-              <span>Upload from Gallery</span>
+              <span>Upload File</span>
             </button>
           </div>
           <p className="text-[10px] text-slate-400">
