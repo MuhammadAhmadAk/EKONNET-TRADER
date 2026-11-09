@@ -613,7 +613,7 @@ export default function AdminPortalPage() {
               title="Trader Accounts & Balance Management"
             >
               <Users className="w-4 h-4 shrink-0" />
-              {sidebarOpen && <span>Trader Accounts (Sec 50)</span>}
+              {sidebarOpen && <span>Trader Accounts</span>}
             </button>
 
             {/* 5. 5 Base Pairs Reserves */}
@@ -662,7 +662,7 @@ export default function AdminPortalPage() {
               title="Staff Permissions Matrix"
             >
               <ShieldCheck className="w-4 h-4 shrink-0" />
-              {sidebarOpen && <span>Staff Matrix (Sec 27)</span>}
+              {sidebarOpen && <span>Staff Matrix</span>}
             </button>
 
             {/* 8. Audit Trail */}
@@ -676,7 +676,7 @@ export default function AdminPortalPage() {
               title="Immutable Audit Logs"
             >
               <Database className="w-4 h-4 shrink-0" />
-              {sidebarOpen && <span>Audit Trail (Sec 60)</span>}
+              {sidebarOpen && <span>Audit Trail</span>}
             </button>
 
             {/* 9. Live Telemetry */}
@@ -1048,7 +1048,7 @@ export default function AdminPortalPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
-                    <span>Recent Administrative &amp; Trading Audit Events (Sec 60)</span>
+                    <span>Recent Administrative &amp; Trading Audit Events</span>
                   </h3>
                   <button 
                     onClick={() => setActiveNav("audit")}
@@ -1218,7 +1218,6 @@ export default function AdminPortalPage() {
                   <div key={pool.pair} className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                     <div className="flex justify-between items-center">
                       <span className={`text-base font-black font-mono ${pool.color}`}>{pool.pair}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Sec 19</span>
                     </div>
                     <div>
                       <div className="text-xs text-slate-400">{pool.name}</div>
@@ -1581,7 +1580,7 @@ export default function AdminPortalPage() {
                 <div>
                   <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold mb-2">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>SECTION 27.[1] & 27.[2] 4-TIER ACCESS DELEGATION</span>
+                    <span>4-TIER ROLE ACCESS DELEGATION</span>
                   </div>
                   <h2 className="text-base font-bold text-slate-900 dark:text-white">Staff Operational Permissions Matrix</h2>
                   <p className="text-xs text-slate-400 mt-1 max-w-2xl">
@@ -1952,7 +1951,7 @@ export default function AdminPortalPage() {
               <span className="text-emerald-400 font-mono text-[11px] font-semibold">Active Staff Node</span>
             </div>
 
-            {/* Checkbox Task Assignment Matrix (Section 27.2) */}
+            {/* Checkbox Task Assignment Matrix */}
             <div className="space-y-3">
               <div className="text-xs font-bold uppercase text-slate-400 tracking-wider">
                 Assigned Platform Tasks (Tick boxes to grant permission):
