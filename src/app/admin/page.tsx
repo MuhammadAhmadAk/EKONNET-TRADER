@@ -543,13 +543,14 @@ export default function AdminPortalPage() {
 
           {/* Sidebar Nav Links */}
           <div className="px-3 py-4 space-y-5 overflow-y-auto max-h-[calc(100vh-140px)] no-scrollbar">
-            {/* Group 1: CORE PLATFORM */}
+            {/* Group 1: CORE TRADING & FINANCIAL OPERATIONS (TOP PRIORITY) */}
             <div className="space-y-1">
               {sidebarOpen && (
                 <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Core Platform
+                  Exchange Operations
                 </div>
               )}
+              {/* 1. Dashboard Overview */}
               <button
                 onClick={() => setActiveNav("overview")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -557,38 +558,13 @@ export default function AdminPortalPage() {
                     ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
-                title="Overview Dashboard"
+                title="Executive Overview"
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Dashboard Overview</span>}
+                {sidebarOpen && <span>Executive Overview</span>}
               </button>
 
-              <button
-                onClick={() => setActiveNav("telemetry")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "telemetry"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="System Telemetry"
-              >
-                <Activity className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Live Telemetry</span>}
-              </button>
-
-              <button
-                onClick={() => setActiveNav("reserves")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "reserves"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="5 Base Pairs Reserves"
-              >
-                <Coins className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>5 Base Pairs Reserves</span>}
-              </button>
-
+              {/* 2. Deposits & Clearing */}
               <button
                 onClick={() => {
                   setActiveNav("deposits");
@@ -606,33 +582,13 @@ export default function AdminPortalPage() {
                   {sidebarOpen && <span>Deposits &amp; Clearing</span>}
                 </div>
                 {sidebarOpen && depositsList.filter(d => d.status === "PENDING").length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white animate-pulse">
                     {depositsList.filter(d => d.status === "PENDING").length}
                   </span>
                 )}
               </button>
-            </div>
 
-            {/* Group 2: USERS & COMPLIANCE */}
-            <div className="space-y-1">
-              {sidebarOpen && (
-                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Users & Compliance
-                </div>
-              )}
-              <button
-                onClick={() => setActiveNav("users")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "users"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="User Accounts & RBAC"
-              >
-                <Users className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Users & RBAC (Sec 50)</span>}
-              </button>
-
+              {/* 3. KYC Dossiers Review */}
               <button
                 onClick={() => setActiveNav("kyc")}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -647,20 +603,70 @@ export default function AdminPortalPage() {
                   {sidebarOpen && <span>KYC Dossier Review</span>}
                 </div>
                 {sidebarOpen && pendingKycCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white animate-pulse">
                     {pendingKycCount}
                   </span>
                 )}
               </button>
+
+              {/* 4. User Accounts & RBAC */}
+              <button
+                onClick={() => setActiveNav("users")}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
+                  activeNav === "users"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                }`}
+                title="Trader Accounts & Balance Management"
+              >
+                <Users className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>Trader Accounts (Sec 50)</span>}
+              </button>
+
+              {/* 5. 5 Base Pairs Reserves */}
+              <button
+                onClick={() => setActiveNav("reserves")}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
+                  activeNav === "reserves"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                }`}
+                title="Treasury & Vault Reserves"
+              >
+                <Coins className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>Treasury &amp; Reserves</span>}
+              </button>
             </div>
 
-            {/* Group 3: GOVERNANCE & AUDIT */}
+            {/* Group 2: GOVERNANCE & SUPPORT */}
             <div className="space-y-1">
               {sidebarOpen && (
                 <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Governance & Security
+                  Governance &amp; Support
                 </div>
               )}
+              {/* 6. Gorelo AI Tickets */}
+              <button
+                onClick={() => setActiveNav("tickets")}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
+                  activeNav === "tickets"
+                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                }`}
+                title="Gorelo AI Support Tickets"
+              >
+                <div className="flex items-center gap-3 truncate">
+                  <MessageSquare className="w-4 h-4 shrink-0" />
+                  {sidebarOpen && <span>Gorelo Support Tickets</span>}
+                </div>
+                {sidebarOpen && openTicketsCount > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white">
+                    {openTicketsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* 7. Staff Matrix */}
               <button
                 onClick={() => setActiveNav("permissions")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -674,6 +680,7 @@ export default function AdminPortalPage() {
                 {sidebarOpen && <span>Staff Matrix (Sec 27)</span>}
               </button>
 
+              {/* 8. Audit Trail */}
               <button
                 onClick={() => setActiveNav("audit")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -688,33 +695,29 @@ export default function AdminPortalPage() {
               </button>
             </div>
 
-            {/* Group 4: SUPPORT & SYSTEM */}
-            <div className="space-y-1">
+            {/* Group 3: DEVOPS & INFRASTRUCTURE (MOVED TO BOTTOM AS REQUESTED) */}
+            <div className="space-y-1 pt-2 border-t border-slate-200/60 dark:border-white/5">
               {sidebarOpen && (
-                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Support & AI
+                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2 flex items-center gap-1.5">
+                  <Server className="w-3 h-3 text-slate-400" />
+                  <span>DevOps &amp; Infrastructure</span>
                 </div>
               )}
+              {/* 9. Live Telemetry */}
               <button
-                onClick={() => setActiveNav("tickets")}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "tickets"
+                onClick={() => setActiveNav("telemetry")}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
+                  activeNav === "telemetry"
                     ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
-                title="Gorelo AI Support Tickets"
+                title="Node Telemetry & Cluster Ports"
               >
-                <div className="flex items-center gap-3 truncate">
-                  <MessageSquare className="w-4 h-4 shrink-0" />
-                  {sidebarOpen && <span>Gorelo AI Tickets</span>}
-                </div>
-                {sidebarOpen && openTicketsCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white">
-                    {openTicketsCount}
-                  </span>
-                )}
+                <Cpu className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>Node &amp; Cluster Telemetry</span>}
               </button>
 
+              {/* 10. Platform Settings & Freeze */}
               <button
                 onClick={() => setActiveNav("settings")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -722,10 +725,10 @@ export default function AdminPortalPage() {
                     ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
-                title="Platform Settings"
+                title="Platform Outage Controls & Emergency Freeze"
               >
                 <Settings className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Settings & Freeze</span>}
+                {sidebarOpen && <span>Platform Outage Controls</span>}
               </button>
             </div>
           </div>
@@ -867,20 +870,23 @@ export default function AdminPortalPage() {
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
           
           {/* ========================================================================= */}
-          {/* TAB 1: OVERVIEW DASHBOARD */}
+          {/* TAB 1: EXECUTIVE OVERVIEW DASHBOARD (TRADING & BUSINESS PRIORITIZED) */}
           {/* ========================================================================= */}
           {activeNav === "overview" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               {/* Stat Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
+                <div 
+                  onClick={() => setActiveNav("users")}
+                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                >
                   <div className="flex justify-between items-center text-slate-400 text-xs">
-                    <span>Total Registered Users</span>
+                    <span className="group-hover:text-orange-500 transition-colors">Registered Traders</span>
                     <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">1,428</div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">{users.length || "1,428"}</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
-                    <TrendingUp className="w-3 h-3" /> +14.2% this month
+                    <TrendingUp className="w-3 h-3" /> {users.filter(u => u.kycStatus === 'approved').length} Verified Traders
                   </div>
                 </div>
 
@@ -891,70 +897,213 @@ export default function AdminPortalPage() {
                   </div>
                   <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">$4,892,100</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
-                    <TrendingUp className="w-3 h-3" /> +8.7% vs yesterday
+                    <TrendingUp className="w-3 h-3" /> +8.7% P2P &amp; Spot Flow
                   </div>
                 </div>
 
-                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
+                <div 
+                  onClick={() => { setActiveNav("deposits"); loadDeposits(); }}
+                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                >
                   <div className="flex justify-between items-center text-slate-400 text-xs">
-                    <span>Pending KYC Verifications</span>
+                    <span className="group-hover:text-orange-500 transition-colors">Pending Deposits</span>
+                    <CreditCard className="w-4 h-4 text-orange-500" />
+                  </div>
+                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">
+                    {depositsList.filter(d => d.status === "PENDING").length} Slips
+                  </div>
+                  <div className="text-[11px] text-orange-500 font-semibold flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Bank Wire &amp; Crypto Clearing
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => setActiveNav("kyc")}
+                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                >
+                  <div className="flex justify-between items-center text-slate-400 text-xs">
+                    <span className="group-hover:text-orange-500 transition-colors">Pending KYC Dossiers</span>
                     <FileCheck className="w-4 h-4 text-amber-400" />
                   </div>
                   <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">{pendingKycCount} Dossiers</div>
-                  <div className="text-[11px] text-amber-400 font-semibold">
-                    Handwritten notes await review
-                  </div>
-                </div>
-
-                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
-                  <div className="flex justify-between items-center text-slate-400 text-xs">
-                    <span>System Health & Node Status</span>
-                    <Server className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="text-2xl font-black text-emerald-400 font-mono">100% ONLINE</div>
-                  <div className="text-[11px] text-slate-400 font-mono">
-                    VPS-Plesk-EU #01 (Synced)
+                  <div className="text-[11px] text-amber-400 font-semibold flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> Photo ID &amp; Handwritten Notes
                   </div>
                 </div>
               </div>
 
-              {/* Service Cluster Health Matrix */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                    <span>Microservice Cluster & Secondary Node Status </span>
-                  </h3>
-                  <span className="text-xs text-slate-400 font-mono">Autoscaling Active</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {services.map((svc) => (
-                    <div key={svc.name} className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 dark:text-white">{svc.name}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">{svc.type} &bull; Port {svc.port}</div>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          {svc.status}
-                        </span>
+              {/* ACTION CENTER: PENDING TASKS QUEUE (DEPOSITS & KYC) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* 1. Deposits Awaiting Clearance */}
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl bg-orange-500/10 text-orange-500">
+                        <CreditCard className="w-4 h-4" />
                       </div>
-                      <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 border-t border-slate-200 dark:border-white/10/80 pt-2">
-                        <span>Latency: <strong className="text-slate-800 dark:text-slate-200">{svc.latency}</strong></span>
-                        <span>Uptime: <strong className="text-emerald-400">{svc.uptime}</strong></span>
+                      <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Deposit Clearance Queue</h3>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">Manual wire and receipt submissions awaiting staff credit</p>
                       </div>
                     </div>
-                  ))}
+                    <button 
+                      onClick={() => { setActiveNav("deposits"); loadDeposits(); }}
+                      className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-500 font-semibold"
+                    >
+                      View All Slips &rarr;
+                    </button>
+                  </div>
+
+                  {depositsList.filter(d => d.status === "PENDING").length === 0 ? (
+                    <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
+                      <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+                      <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">All Deposits Cleared &amp; Settled</div>
+                      <div className="text-[11px] text-slate-500">Zero pending deposit slips in queue. Instant balance credits up to date.</div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {depositsList.filter(d => d.status === "PENDING").slice(0, 3).map((dep) => (
+                        <div key={dep.id} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+                          <div className="space-y-0.5">
+                            <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                              <span>User: {dep.userId}</span>
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-orange-500/10 text-orange-500 font-bold uppercase">{dep.paymentMethod}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 font-mono">
+                              Slip: <strong className="text-slate-800 dark:text-slate-200">{dep.id}</strong> • {new Date(dep.submittedAt).toLocaleTimeString()}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <div className="text-xs font-bold font-mono text-emerald-500">+{Number(dep.amount).toLocaleString()} {dep.currency}</div>
+                              <div className="text-[10px] text-amber-500 font-mono">PENDING</div>
+                            </div>
+                            <button
+                              disabled={isApprovingDeposit === dep.id}
+                              onClick={() => handleApproveDeposit(dep.id)}
+                              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-[11px] tracking-wide transition shrink-0 disabled:opacity-50"
+                            >
+                              {isApprovingDeposit === dep.id ? "Approving..." : "Approve & Credit"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. KYC Dossiers Awaiting Review */}
+                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+                        <FileCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Identity KYC Verification Queue</h3>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">Government ID &amp; handwritten security notes awaiting review</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => setActiveNav("kyc")}
+                      className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-500 font-semibold"
+                    >
+                      View All Dossiers &rarr;
+                    </button>
+                  </div>
+
+                  {users.filter(u => u.kycStatus === "pending").length === 0 ? (
+                    <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
+                      <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+                      <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">All KYC Dossiers Processed</div>
+                      <div className="text-[11px] text-slate-500">No customers are currently pending manual identity review.</div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {users.filter(u => u.kycStatus === "pending").slice(0, 3).map((u) => (
+                        <div key={u.id} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+                          <div className="space-y-0.5">
+                            <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                              <span>{u.fullName || u.username}</span>
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-purple-500/10 text-purple-400 font-bold uppercase">{u.packageTier || "Standard"}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 font-mono">
+                              ID: <strong className="text-slate-800 dark:text-slate-200">{u.id}</strong> • @{u.username} • {u.country || "Global"}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => { setSelectedKycUser(u); setActiveNav("kyc"); }}
+                            className="px-3 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 font-bold text-[11px] transition shrink-0"
+                          >
+                            Review Dossier
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Recent Audit Stream */}
+              {/* 5 BASE PAIRS TREASURY RESERVES SNAPSHOT */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                      <Coins className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">Treasury Cold &amp; Hot Vault Reserves</h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">Strict 1:1 backed liquidity reserves across the 5 core platform pairs</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setActiveNav("reserves")}
+                    className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-500 font-semibold"
+                  >
+                    Manage Multi-Sig Vaults &rarr;
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 font-mono">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                    <div className="text-[11px] text-slate-400 font-bold">USD Fiat Custody</div>
+                    <div className="text-lg font-black text-slate-900 dark:text-white">$4,250,000</div>
+                    <div className="text-[10px] text-emerald-400 font-bold">100% Backed (Escrow)</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                    <div className="text-[11px] text-amber-500 font-bold">Bitcoin (BTC)</div>
+                    <div className="text-lg font-black text-slate-900 dark:text-white">142.50 BTC</div>
+                    <div className="text-[10px] text-emerald-400 font-bold">Multi-Sig Cold Vault</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                    <div className="text-[11px] text-cyan-400 font-bold">Ripple (XRP)</div>
+                    <div className="text-lg font-black text-slate-900 dark:text-white">1,850,000 XRP</div>
+                    <div className="text-[10px] text-emerald-400 font-bold">Ledger Trustline Active</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                    <div className="text-[11px] text-purple-400 font-bold">Ethereum (ETH)</div>
+                    <div className="text-lg font-black text-slate-900 dark:text-white">820.00 ETH</div>
+                    <div className="text-[10px] text-emerald-400 font-bold">Multi-Sig Hot Pool</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                    <div className="text-[11px] text-emerald-400 font-bold">Bitcoin Cash (BCH)</div>
+                    <div className="text-lg font-black text-slate-900 dark:text-white">3,140.00 BCH</div>
+                    <div className="text-[10px] text-emerald-400 font-bold">Cold Vault Synced</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RECENT AUDIT TRAIL STREAM */}
               <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
-                    <span>Recent Immutable Audit Events </span>
+                    <span>Recent Administrative &amp; Trading Audit Events (Sec 60)</span>
                   </h3>
                   <button 
                     onClick={() => setActiveNav("audit")}
@@ -977,7 +1126,7 @@ export default function AdminPortalPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                      {auditLogs.slice(0, 5).map((log) => (
+                      {auditLogs.slice(0, 4).map((log) => (
                         <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                           <td className="py-2 px-3 text-orange-600 dark:text-orange-400 font-bold">{log.id}</td>
                           <td className="py-2 px-3 text-slate-400">{log.timestamp.split("T")[1]?.slice(0, 8)}</td>
@@ -994,6 +1143,32 @@ export default function AdminPortalPage() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+
+              {/* COMPACT DEVOPS & INFRASTRUCTURE STATUS RIBBON (PLACED AT BOTTOM) */}
+              <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/60 border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500">
+                    <Server className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <span>Infrastructure Cluster</span>
+                      <span className="px-2 py-0.2 rounded-full text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">100% ONLINE</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono">
+                      EU Master Node (82.165.10.77) • US Replica Mirror Synced • 6 Microservices Active
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setActiveNav("telemetry")}
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-1.5 transition whitespace-nowrap"
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>Open DevOps Hardware &amp; Telemetry &rarr;</span>
+                </button>
               </div>
             </div>
           )}
@@ -1041,6 +1216,37 @@ export default function AdminPortalPage() {
                     <div className="flex justify-between"><span>Automated Failover Trigger:</span><span className="text-slate-900 dark:text-white font-bold">&lt; 30 seconds</span></div>
                     <div className="flex justify-between"><span>Nightly Cold Archive:</span><span className="text-slate-700 dark:text-slate-300 font-bold">02:00 UTC (Encrypted)</span></div>
                   </div>
+                </div>
+              </div>
+
+              {/* Service Cluster Health Matrix (Detailed DevOps View) */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                    <span>Microservice Cluster &amp; Port Binding Matrix</span>
+                  </h3>
+                  <span className="text-xs text-slate-400 font-mono">Autoscaling Active</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {services.map((svc) => (
+                    <div key={svc.name} className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-white">{svc.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{svc.type} &bull; Port {svc.port}</div>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          {svc.status}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 border-t border-slate-200 dark:border-white/10/80 pt-2">
+                        <span>Latency: <strong className="text-slate-800 dark:text-slate-200">{svc.latency}</strong></span>
+                        <span>Uptime: <strong className="text-emerald-400">{svc.uptime}</strong></span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
