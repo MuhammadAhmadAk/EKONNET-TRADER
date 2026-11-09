@@ -474,7 +474,7 @@ export default function AdminPortalPage() {
   if (isAuthChecking) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] flex flex-col items-center justify-center p-6 select-none font-sans">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-xl shadow-orange-500/30 mb-4 animate-bounce">
+        <div className="w-14 h-14 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white shadow-xl shadow-orange-500/30 mb-4 animate-bounce">
           <Layers className="w-7 h-7" />
         </div>
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200">
@@ -492,7 +492,7 @@ export default function AdminPortalPage() {
     <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 selection:bg-orange-500 selection:text-white">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-bottom-4">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-[8px] shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-bottom-4">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           <span className="text-xs font-semibold">{toastMessage}</span>
         </div>
@@ -541,203 +541,178 @@ export default function AdminPortalPage() {
             </button>
           </div>
 
-          {/* Sidebar Nav Links */}
-          <div className="px-3 py-4 space-y-5 overflow-y-auto max-h-[calc(100vh-140px)] no-scrollbar">
-            {/* Group 1: CORE TRADING & FINANCIAL OPERATIONS (TOP PRIORITY) */}
-            <div className="space-y-1">
-              {sidebarOpen && (
-                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Exchange Operations
-                </div>
+          {/* Sidebar Nav Links - Clean Flat Direct List (No Sections) */}
+          <div className="px-2.5 py-3 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)] no-scrollbar">
+            {/* 1. Dashboard Overview */}
+            <button
+              onClick={() => setActiveNav("overview")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "overview"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Executive Overview"
+            >
+              <LayoutDashboard className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Executive Overview</span>}
+            </button>
+
+            {/* 2. Deposits & Clearing */}
+            <button
+              onClick={() => {
+                setActiveNav("deposits");
+                loadDeposits();
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "deposits"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Deposits & Clearing Ledger"
+            >
+              <div className="flex items-center gap-3 truncate">
+                <CreditCard className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>Deposits &amp; Clearing</span>}
+              </div>
+              {sidebarOpen && depositsList.filter(d => d.status === "PENDING").length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-[8px] text-[10px] font-bold bg-orange-500 text-white animate-pulse">
+                  {depositsList.filter(d => d.status === "PENDING").length}
+                </span>
               )}
-              {/* 1. Dashboard Overview */}
-              <button
-                onClick={() => setActiveNav("overview")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "overview"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Executive Overview"
-              >
-                <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Executive Overview</span>}
-              </button>
+            </button>
 
-              {/* 2. Deposits & Clearing */}
-              <button
-                onClick={() => {
-                  setActiveNav("deposits");
-                  loadDeposits();
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                  activeNav === "deposits"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Deposits & Clearing Ledger"
-              >
-                <div className="flex items-center gap-3 truncate">
-                  <CreditCard className="w-4 h-4 shrink-0" />
-                  {sidebarOpen && <span>Deposits &amp; Clearing</span>}
-                </div>
-                {sidebarOpen && depositsList.filter(d => d.status === "PENDING").length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white animate-pulse">
-                    {depositsList.filter(d => d.status === "PENDING").length}
-                  </span>
-                )}
-              </button>
-
-              {/* 3. KYC Dossiers Review */}
-              <button
-                onClick={() => setActiveNav("kyc")}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "kyc"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="KYC Photo Verification"
-              >
-                <div className="flex items-center gap-3 truncate">
-                  <FileCheck className="w-4 h-4 shrink-0" />
-                  {sidebarOpen && <span>KYC Dossier Review</span>}
-                </div>
-                {sidebarOpen && pendingKycCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white animate-pulse">
-                    {pendingKycCount}
-                  </span>
-                )}
-              </button>
-
-              {/* 4. User Accounts & RBAC */}
-              <button
-                onClick={() => setActiveNav("users")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "users"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Trader Accounts & Balance Management"
-              >
-                <Users className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Trader Accounts (Sec 50)</span>}
-              </button>
-
-              {/* 5. 5 Base Pairs Reserves */}
-              <button
-                onClick={() => setActiveNav("reserves")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "reserves"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Treasury & Vault Reserves"
-              >
-                <Coins className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Treasury &amp; Reserves</span>}
-              </button>
-            </div>
-
-            {/* Group 2: GOVERNANCE & SUPPORT */}
-            <div className="space-y-1">
-              {sidebarOpen && (
-                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2">
-                  Governance &amp; Support
-                </div>
+            {/* 3. KYC Dossiers Review */}
+            <button
+              onClick={() => setActiveNav("kyc")}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "kyc"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="KYC Photo Verification"
+            >
+              <div className="flex items-center gap-3 truncate">
+                <FileCheck className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>KYC Dossier Review</span>}
+              </div>
+              {sidebarOpen && pendingKycCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded-[8px] text-[10px] font-bold bg-amber-500 text-white animate-pulse">
+                  {pendingKycCount}
+                </span>
               )}
-              {/* 6. Gorelo AI Tickets */}
-              <button
-                onClick={() => setActiveNav("tickets")}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "tickets"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Gorelo AI Support Tickets"
-              >
-                <div className="flex items-center gap-3 truncate">
-                  <MessageSquare className="w-4 h-4 shrink-0" />
-                  {sidebarOpen && <span>Gorelo Support Tickets</span>}
-                </div>
-                {sidebarOpen && openTicketsCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white">
-                    {openTicketsCount}
-                  </span>
-                )}
-              </button>
+            </button>
 
-              {/* 7. Staff Matrix */}
-              <button
-                onClick={() => setActiveNav("permissions")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "permissions"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Staff Permissions Matrix"
-              >
-                <ShieldCheck className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Staff Matrix (Sec 27)</span>}
-              </button>
+            {/* 4. User Accounts & RBAC */}
+            <button
+              onClick={() => setActiveNav("users")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "users"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Trader Accounts & Balance Management"
+            >
+              <Users className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Trader Accounts (Sec 50)</span>}
+            </button>
 
-              {/* 8. Audit Trail */}
-              <button
-                onClick={() => setActiveNav("audit")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "audit"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Immutable Audit Logs"
-              >
-                <Database className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Audit Trail (Sec 60)</span>}
-              </button>
-            </div>
+            {/* 5. 5 Base Pairs Reserves */}
+            <button
+              onClick={() => setActiveNav("reserves")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "reserves"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Treasury & Vault Reserves"
+            >
+              <Coins className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Treasury &amp; Reserves</span>}
+            </button>
 
-            {/* Group 3: DEVOPS & INFRASTRUCTURE (MOVED TO BOTTOM AS REQUESTED) */}
-            <div className="space-y-1 pt-2 border-t border-slate-200/60 dark:border-white/5">
-              {sidebarOpen && (
-                <div className="px-3 text-[10px] font-bold tracking-wider uppercase text-slate-400 mb-2 flex items-center gap-1.5">
-                  <Server className="w-3 h-3 text-slate-400" />
-                  <span>DevOps &amp; Infrastructure</span>
-                </div>
+            {/* 6. Gorelo AI Tickets */}
+            <button
+              onClick={() => setActiveNav("tickets")}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "tickets"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Gorelo AI Support Tickets"
+            >
+              <div className="flex items-center gap-3 truncate">
+                <MessageSquare className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>Gorelo Support Tickets</span>}
+              </div>
+              {sidebarOpen && openTicketsCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded-[8px] text-[10px] font-bold bg-orange-500 text-white">
+                  {openTicketsCount}
+                </span>
               )}
-              {/* 9. Live Telemetry */}
-              <button
-                onClick={() => setActiveNav("telemetry")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "telemetry"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Node Telemetry & Cluster Ports"
-              >
-                <Cpu className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Node &amp; Cluster Telemetry</span>}
-              </button>
+            </button>
 
-              {/* 10. Platform Settings & Freeze */}
-              <button
-                onClick={() => setActiveNav("settings")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeNav === "settings"
-                    ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-md shadow-orange-500/25 font-bold"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                }`}
-                title="Platform Outage Controls & Emergency Freeze"
-              >
-                <Settings className="w-4 h-4 shrink-0" />
-                {sidebarOpen && <span>Platform Outage Controls</span>}
-              </button>
-            </div>
+            {/* 7. Staff Matrix */}
+            <button
+              onClick={() => setActiveNav("permissions")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "permissions"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Staff Permissions Matrix"
+            >
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Staff Matrix (Sec 27)</span>}
+            </button>
+
+            {/* 8. Audit Trail */}
+            <button
+              onClick={() => setActiveNav("audit")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "audit"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Immutable Audit Logs"
+            >
+              <Database className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Audit Trail (Sec 60)</span>}
+            </button>
+
+            {/* 9. Live Telemetry */}
+            <button
+              onClick={() => setActiveNav("telemetry")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "telemetry"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Node Telemetry & Cluster Ports"
+            >
+              <Cpu className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Node &amp; Cluster Telemetry</span>}
+            </button>
+
+            {/* 10. Platform Settings & Freeze */}
+            <button
+              onClick={() => setActiveNav("settings")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "settings"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Platform Outage Controls & Emergency Freeze"
+            >
+              <Settings className="w-4 h-4 shrink-0" />
+              {sidebarOpen && <span>Platform Outage Controls</span>}
+            </button>
           </div>
         </div>
 
         {/* Sidebar Footer User Card */}
-        <div className="p-3 border-t border-slate-200/80 dark:border-white/10 bg-transparent">
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-sm">
+        <div className="p-2.5 border-t border-slate-200/80 dark:border-white/10 bg-transparent">
+          <div className="flex items-center gap-2.5 p-2 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10">
+            <div className="w-7 h-7 rounded-[8px] bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-sm">
               {currentAdmin?.fullName?.charAt(0) || "A"}
             </div>
             {sidebarOpen && (
@@ -755,9 +730,9 @@ export default function AdminPortalPage() {
               <button 
                 onClick={handleAdminLogout} 
                 title="Log Out of Administration" 
-                className="text-slate-400 hover:text-rose-500 p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition"
+                className="text-slate-400 hover:text-rose-500 p-1 rounded-[8px] hover:bg-slate-200 dark:hover:bg-white/10 transition cursor-pointer"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -770,41 +745,22 @@ export default function AdminPortalPage() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-transparent">
         
         {/* Top App Bar */}
-        <header className="h-16 border-b border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c1222]/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between shrink-0 z-30 transition-colors">
+        <header className="h-14 border-b border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c1222]/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between shrink-0 z-30 transition-colors">
           {/* Breadcrumb Trail */}
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-            <Link href="/" className="hover:text-orange-500 transition">Platform Root</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
-            <span className="text-slate-700 dark:text-slate-700 dark:text-slate-300">Admin Console</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
-            <span className="text-orange-600 dark:text-orange-400 capitalize font-bold">{activeNav}</span>
+            <span className="text-slate-400">Admin Console</span>
+            <span className="text-slate-300 dark:text-slate-600">/</span>
+            <span className="text-slate-900 dark:text-white capitalize font-semibold">
+              {activeNav === "overview" ? "Executive Overview" : activeNav}
+            </span>
           </div>
 
-          {/* Quick Actions & Telemetry Badges */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-700 dark:text-slate-300">
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span>Base Liquidity: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">$1,280,450</strong></span>
-            </div>
-
-            {/* Emergency Freeze Button */}
-            <button
-              onClick={handleEmergencyFreezeToggle}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
-                emergencyLockActive 
-                  ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse" 
-                  : "bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700"
-              }`}
-              title="EMERGENCY Platform Freeze"
-            >
-              <AlertTriangle className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{emergencyLockActive ? "LIFT FREEZE" : "EMERGENCY FREEZE"}</span>
-            </button>
-
+          {/* Quick Actions (Uncluttered, Minimal) */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition"
+              className="p-2 rounded-[8px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition cursor-pointer"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle theme"
             >
@@ -815,33 +771,22 @@ export default function AdminPortalPage() {
               )}
             </button>
 
-            {/* Administrator Profile Pill */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-500 to-rose-500 text-white font-bold flex items-center justify-center text-[10px] shadow-sm">
-                {currentAdmin?.fullName?.charAt(0) || "A"}
-              </div>
-              <div className="flex flex-col text-left leading-tight">
-                <span className="font-bold text-slate-900 dark:text-white text-[11px] truncate max-w-[120px]">
-                  {currentAdmin?.fullName || currentAdmin?.username || "Super Admin"}
-                </span>
-                <span className="text-[9px] text-orange-600 dark:text-orange-400 font-mono uppercase font-bold">
-                  {currentAdmin?.role?.replace('_', ' ') || "MASTER ADMIN"}
-                </span>
-              </div>
-            </div>
-
+            {/* Public Site Link */}
             <Link
               href="/"
-              className="hidden sm:flex px-3 py-1.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold items-center gap-1.5 shadow-md shadow-orange-500/25 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-[8px] border border-slate-200 dark:border-white/10 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center gap-1.5"
+              title="Open Public Site"
             >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Public Site ↗</span>
+              <Globe className="w-3.5 h-3.5 text-slate-400" />
+              <span>Public Site</span>
             </Link>
 
-            {/* Logout Management Button */}
+            {/* Logout Button */}
             <button
               onClick={handleAdminLogout}
-              className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 rounded-[8px] text-xs font-semibold text-rose-500 hover:bg-rose-500/10 border border-rose-500/20 transition flex items-center gap-1.5 cursor-pointer"
               title="Lock Terminal & Log Out"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -867,7 +812,7 @@ export default function AdminPortalPage() {
         )}
 
         {/* Main Workspace Body */}
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 sm:space-y-5">
           
           {/* ========================================================================= */}
           {/* TAB 1: EXECUTIVE OVERVIEW DASHBOARD (TRADING & BUSINESS PRIORITIZED) */}
@@ -878,24 +823,24 @@ export default function AdminPortalPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div 
                   onClick={() => setActiveNav("users")}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                  className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
                 >
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span className="group-hover:text-orange-500 transition-colors">Registered Traders</span>
                     <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">{users.length || "1,428"}</div>
+                  <div className="text-lg font-bold text-slate-900 dark:text-white font-mono">{users.length || "1,428"}</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
                     <TrendingUp className="w-3 h-3" /> {users.filter(u => u.kycStatus === 'approved').length} Verified Traders
                   </div>
                 </div>
 
-                <div className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2">
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span>24h Platform Volume</span>
                     <BarChart3 className="w-4 h-4 text-purple-400" />
                   </div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">$4,892,100</div>
+                  <div className="text-lg font-bold text-slate-900 dark:text-white font-mono">$4,892,100</div>
                   <div className="text-[11px] text-emerald-400 flex items-center gap-1 font-semibold">
                     <TrendingUp className="w-3 h-3" /> +8.7% P2P &amp; Spot Flow
                   </div>
@@ -903,13 +848,13 @@ export default function AdminPortalPage() {
 
                 <div 
                   onClick={() => { setActiveNav("deposits"); loadDeposits(); }}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                  className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
                 >
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span className="group-hover:text-orange-500 transition-colors">Pending Deposits</span>
                     <CreditCard className="w-4 h-4 text-orange-500" />
                   </div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">
+                  <div className="text-lg font-bold text-slate-900 dark:text-white font-mono">
                     {depositsList.filter(d => d.status === "PENDING").length} Slips
                   </div>
                   <div className="text-[11px] text-orange-500 font-semibold flex items-center gap-1">
@@ -919,13 +864,13 @@ export default function AdminPortalPage() {
 
                 <div 
                   onClick={() => setActiveNav("kyc")}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
+                  className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-2 cursor-pointer hover:border-orange-500/50 transition group"
                 >
                   <div className="flex justify-between items-center text-slate-400 text-xs">
                     <span className="group-hover:text-orange-500 transition-colors">Pending KYC Dossiers</span>
                     <FileCheck className="w-4 h-4 text-amber-400" />
                   </div>
-                  <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">{pendingKycCount} Dossiers</div>
+                  <div className="text-lg font-bold text-slate-900 dark:text-white font-mono">{pendingKycCount} Dossiers</div>
                   <div className="text-[11px] text-amber-400 font-semibold flex items-center gap-1">
                     <AlertTriangle className="w-3 h-3" /> Photo ID &amp; Handwritten Notes
                   </div>
@@ -936,10 +881,10 @@ export default function AdminPortalPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* 1. Deposits Awaiting Clearance */}
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/5">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 rounded-xl bg-orange-500/10 text-orange-500">
+                      <div className="p-2 rounded-[8px] bg-orange-500/10 text-orange-500">
                         <CreditCard className="w-4 h-4" />
                       </div>
                       <div>
@@ -956,7 +901,7 @@ export default function AdminPortalPage() {
                   </div>
 
                   {depositsList.filter(d => d.status === "PENDING").length === 0 ? (
-                    <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
+                    <div className="p-4 rounded-[8px] bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
                       <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
                       <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">All Deposits Cleared &amp; Settled</div>
                       <div className="text-[11px] text-slate-500">Zero pending deposit slips in queue. Instant balance credits up to date.</div>
@@ -964,7 +909,7 @@ export default function AdminPortalPage() {
                   ) : (
                     <div className="space-y-2.5">
                       {depositsList.filter(d => d.status === "PENDING").slice(0, 3).map((dep) => (
-                        <div key={dep.id} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+                        <div key={dep.id} className="p-3.5 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
                           <div className="space-y-0.5">
                             <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
                               <span>User: {dep.userId}</span>
@@ -982,7 +927,7 @@ export default function AdminPortalPage() {
                             <button
                               disabled={isApprovingDeposit === dep.id}
                               onClick={() => handleApproveDeposit(dep.id)}
-                              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-[11px] tracking-wide transition shrink-0 disabled:opacity-50"
+                              className="px-3 py-1.5 rounded-[8px] bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold text-[11px] tracking-wide transition shrink-0 disabled:opacity-50"
                             >
                               {isApprovingDeposit === dep.id ? "Approving..." : "Approve & Credit"}
                             </button>
@@ -994,10 +939,10 @@ export default function AdminPortalPage() {
                 </div>
 
                 {/* 2. KYC Dossiers Awaiting Review */}
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/5">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+                      <div className="p-2 rounded-[8px] bg-amber-500/10 text-amber-500">
                         <FileCheck className="w-4 h-4" />
                       </div>
                       <div>
@@ -1014,7 +959,7 @@ export default function AdminPortalPage() {
                   </div>
 
                   {users.filter(u => u.kycStatus === "pending").length === 0 ? (
-                    <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
+                    <div className="p-4 rounded-[8px] bg-emerald-500/5 border border-emerald-500/20 text-center space-y-2">
                       <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
                       <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">All KYC Dossiers Processed</div>
                       <div className="text-[11px] text-slate-500">No customers are currently pending manual identity review.</div>
@@ -1022,7 +967,7 @@ export default function AdminPortalPage() {
                   ) : (
                     <div className="space-y-2.5">
                       {users.filter(u => u.kycStatus === "pending").slice(0, 3).map((u) => (
-                        <div key={u.id} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+                        <div key={u.id} className="p-3.5 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
                           <div className="space-y-0.5">
                             <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
                               <span>{u.fullName || u.username}</span>
@@ -1034,7 +979,7 @@ export default function AdminPortalPage() {
                           </div>
                           <button
                             onClick={() => { setSelectedKycUser(u); setActiveNav("kyc"); }}
-                            className="px-3 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 font-bold text-[11px] transition shrink-0"
+                            className="px-3 py-1.5 rounded-[8px] bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 font-bold text-[11px] transition shrink-0"
                           >
                             Review Dossier
                           </button>
@@ -1046,10 +991,10 @@ export default function AdminPortalPage() {
               </div>
 
               {/* 5 BASE PAIRS TREASURY RESERVES SNAPSHOT */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+              <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                    <div className="p-2 rounded-[8px] bg-emerald-500/10 text-emerald-500">
                       <Coins className="w-4 h-4" />
                     </div>
                     <div>
@@ -1066,31 +1011,31 @@ export default function AdminPortalPage() {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 font-mono">
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                  <div className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
                     <div className="text-[11px] text-slate-400 font-bold">USD Fiat Custody</div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">$4,250,000</div>
                     <div className="text-[10px] text-emerald-400 font-bold">100% Backed (Escrow)</div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                  <div className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
                     <div className="text-[11px] text-amber-500 font-bold">Bitcoin (BTC)</div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">142.50 BTC</div>
                     <div className="text-[10px] text-emerald-400 font-bold">Multi-Sig Cold Vault</div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                  <div className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
                     <div className="text-[11px] text-cyan-400 font-bold">Ripple (XRP)</div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">1,850,000 XRP</div>
                     <div className="text-[10px] text-emerald-400 font-bold">Ledger Trustline Active</div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                  <div className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
                     <div className="text-[11px] text-purple-400 font-bold">Ethereum (ETH)</div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">820.00 ETH</div>
                     <div className="text-[10px] text-emerald-400 font-bold">Multi-Sig Hot Pool</div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
+                  <div className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1">
                     <div className="text-[11px] text-emerald-400 font-bold">Bitcoin Cash (BCH)</div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">3,140.00 BCH</div>
                     <div className="text-[10px] text-emerald-400 font-bold">Cold Vault Synced</div>
@@ -1099,7 +1044,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* RECENT AUDIT TRAIL STREAM */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
+              <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Database className="w-4 h-4 text-purple-400" />
@@ -1146,9 +1091,9 @@ export default function AdminPortalPage() {
               </div>
 
               {/* COMPACT DEVOPS & INFRASTRUCTURE STATUS RIBBON (PLACED AT BOTTOM) */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/60 border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+              <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/60 border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500">
+                  <div className="w-8 h-8 rounded-[8px] bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500">
                     <Server className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div>
@@ -1164,7 +1109,7 @@ export default function AdminPortalPage() {
 
                 <button
                   onClick={() => setActiveNav("telemetry")}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-1.5 transition whitespace-nowrap"
+                  className="px-3 py-1.5 rounded-[8px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-1.5 transition whitespace-nowrap"
                 >
                   <Cpu className="w-3.5 h-3.5" />
                   <span>Open DevOps Hardware &amp; Telemetry &rarr;</span>
@@ -1185,14 +1130,14 @@ export default function AdminPortalPage() {
                 </div>
                 <button
                   onClick={() => showToast("Health heartbeat ping dispatched to all 6 nodes.")}
-                  className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-[8px] text-xs font-semibold flex items-center gap-1.5 transition"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Ping Nodes
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-slate-900 dark:text-white">Primary Node: VPS-Plesk-EU #01</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE MASTER</span>
@@ -1205,7 +1150,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-slate-900 dark:text-white">Secondary Backup Node: VPS-Plesk-US #02</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">STANDBY REPLICA</span>
@@ -1220,7 +1165,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Service Cluster Health Matrix (Detailed DevOps View) */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+              <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
@@ -1231,7 +1176,7 @@ export default function AdminPortalPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {services.map((svc) => (
-                    <div key={svc.name} className="p-4 rounded-2xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
+                    <div key={svc.name} className="p-4 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-xs font-bold text-slate-900 dark:text-white">{svc.name}</div>
@@ -1270,7 +1215,7 @@ export default function AdminPortalPage() {
                   { pair: "ETH", name: "Ethereum Pool", balance: "94.2000 ETH", hot: "20%", cold: "80%", color: "text-purple-400" },
                   { pair: "BCH", name: "Bitcoin Cash", balance: "340.500 BCH", hot: "25%", cold: "75%", color: "text-emerald-300" },
                 ].map((pool) => (
-                  <div key={pool.pair} className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
+                  <div key={pool.pair} className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                     <div className="flex justify-between items-center">
                       <span className={`text-base font-black font-mono ${pool.color}`}>{pool.pair}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Sec 19</span>
@@ -1305,7 +1250,7 @@ export default function AdminPortalPage() {
                 </div>
                 <button
                   onClick={loadDeposits}
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 transition cursor-pointer"
+                  className="px-3.5 py-2 rounded-[8px] bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 transition cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Sync Ledger</span>
@@ -1314,21 +1259,21 @@ export default function AdminPortalPage() {
 
               {/* Metric Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Deposits</div>
-                  <div className="text-2xl font-black font-mono text-slate-900 dark:text-white">{depositsList.length} Slips</div>
+                  <div className="text-lg font-bold font-mono text-slate-900 dark:text-white">{depositsList.length} Slips</div>
                   <div className="text-[11px] text-slate-500 font-mono">Recorded in ekonnet_ledger</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pending Clearance</div>
-                  <div className="text-2xl font-black font-mono text-orange-600 dark:text-orange-400">
+                  <div className="text-lg font-bold font-mono text-orange-600 dark:text-orange-400">
                     {depositsList.filter(d => d.status === "PENDING").length} Pending
                   </div>
                   <div className="text-[11px] text-orange-500 font-semibold">Requires Staff Sign-off</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Python CV Engine</div>
                   <div className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4" /> 94.8% Pass
@@ -1336,7 +1281,7 @@ export default function AdminPortalPage() {
                   <div className="text-[11px] text-slate-400">OpenCV Laplacian Forensics</div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Ledger Invariant</div>
                   <div className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                     <ShieldCheck className="w-4 h-4" /> BALANCED
@@ -1346,7 +1291,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Deposits Table */}
-              <div className="rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden p-5 space-y-4">
+              <div className="rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden p-5 space-y-4">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
@@ -1433,7 +1378,7 @@ export default function AdminPortalPage() {
                                 <button
                                   onClick={() => handleApproveDeposit(dep.id)}
                                   disabled={isApprovingDeposit === dep.id}
-                                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
+                                  className="px-3.5 py-1.5 rounded-[8px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
                                 >
                                   {isApprovingDeposit === dep.id ? (
                                     <>
@@ -1477,13 +1422,13 @@ export default function AdminPortalPage() {
                       placeholder="Search EKON-ID, name, email..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-64"
+                      className="pl-8 pr-3 py-1.5 rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-64"
                     />
                   </div>
                   <select
                     value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
-                    className="py-1.5 px-3 rounded-xl bg-white/[0.04] dark:bg-black/25 border border-white/10 text-xs text-slate-800 dark:text-slate-200 focus:outline-none"
+                    className="py-1.5 px-3 rounded-[8px] bg-white/[0.04] dark:bg-black/25 border border-white/10 text-xs text-slate-800 dark:text-slate-200 focus:outline-none"
                   >
                     <option value="all">All Tiers</option>
                     <option value="free">Free</option>
@@ -1494,7 +1439,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Users Table */}
-              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
+              <div className="rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-mono border-b border-slate-200 dark:border-white/10">
@@ -1580,14 +1525,14 @@ export default function AdminPortalPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {users.filter(u => u.kycStatus === "pending").map((u) => (
-                  <div key={u.id} className="p-4 rounded-2xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
+                  <div key={u.id} className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-3">
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-bold text-slate-900 dark:text-white font-mono">{u.id}</span>
                       <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">PENDING REVIEW</span>
                     </div>
 
                     {u.kycDocumentUrl && (
-                      <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 h-40 bg-slate-950">
+                      <div className="rounded-[8px] overflow-hidden border border-slate-200 dark:border-white/10 h-40 bg-slate-950">
                         <img src={u.kycDocumentUrl} alt="KYC Document" className="w-full h-full object-cover" />
                       </div>
                     )}
@@ -1616,7 +1561,7 @@ export default function AdminPortalPage() {
                 ))}
 
                 {users.filter(u => u.kycStatus === "pending").length === 0 && (
-                  <div className="col-span-3 p-12 text-center rounded-2xl bg-slate-900/40 border border-dashed border-slate-200 dark:border-white/10 space-y-2">
+                  <div className="col-span-3 p-12 text-center rounded-[8px] bg-slate-900/40 border border-dashed border-slate-200 dark:border-white/10 space-y-2">
                     <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
                     <div className="text-sm font-bold text-slate-900 dark:text-white">All KYC Submissions Cleared!</div>
                     <div className="text-xs text-slate-400">No pending verification queues. New submissions will notify staff in real-time.</div>
@@ -1632,13 +1577,13 @@ export default function AdminPortalPage() {
           {activeNav === "permissions" && (
             <div className="space-y-6 max-w-7xl mx-auto">
               {/* Header and 4-Tier Badges */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white/[0.02] dark:bg-slate-900/40 border border-white/10 backdrop-blur-xl">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[8px] bg-white/[0.02] dark:bg-slate-900/40 border border-white/10 backdrop-blur-xl">
                 <div>
                   <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold mb-2">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>SECTION 27.[1] & 27.[2] 4-TIER ACCESS DELEGATION</span>
                   </div>
-                  <h2 className="text-xl font-black text-slate-900 dark:text-white">Staff Operational Permissions Matrix</h2>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">Staff Operational Permissions Matrix</h2>
                   <p className="text-xs text-slate-400 mt-1 max-w-2xl">
                     Click on any staff member to open their individual account drawer and assign specific jobs by ticking boxes.
                   </p>
@@ -1647,7 +1592,7 @@ export default function AdminPortalPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSaveStaffPermissions()}
-                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-orange-500/25 transition flex items-center space-x-2"
+                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-white rounded-[8px] text-xs font-bold shadow-lg shadow-orange-500/25 transition flex items-center space-x-2"
                   >
                     <Check className="w-4 h-4" />
                     <span>Save All to MongoDB</span>
@@ -1657,22 +1602,22 @@ export default function AdminPortalPage() {
 
               {/* 4-Tier Account Hierarchy Metric Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-800/30">
+                <div className="p-4 rounded-[8px] bg-purple-950/20 border border-purple-800/30">
                   <span className="text-[10px] text-purple-400 uppercase font-bold tracking-wider block">Tier 1: Master Admin</span>
                   <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Account</div>
                   <span className="text-[11px] text-purple-300 font-mono">EKON-000001 (Root)</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20">
+                <div className="p-4 rounded-[8px] bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20">
                   <span className="text-[10px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider block">Tier 2: Management</span>
                   <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Sub-Admin</div>
                   <span className="text-[11px] text-orange-600 dark:text-orange-400 font-mono">EKON-749201</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-800/30">
+                <div className="p-4 rounded-[8px] bg-cyan-950/20 border border-cyan-800/30">
                   <span className="text-[10px] text-cyan-400 uppercase font-bold tracking-wider block">Tier 3: Employee Staff</span>
                   <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{permissions.length} Staff</div>
                   <span className="text-[11px] text-cyan-300 font-mono">Compliance & Support</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-800/30">
+                <div className="p-4 rounded-[8px] bg-emerald-950/20 border border-emerald-800/30">
                   <span className="text-[10px] text-emerald-400 uppercase font-bold tracking-wider block">Tier 4: Traders / Users</span>
                   <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{users.filter(u => u.role === 'user').length} Registered</div>
                   <span className="text-[11px] text-emerald-300 font-mono">Active On-Chain</span>
@@ -1680,7 +1625,7 @@ export default function AdminPortalPage() {
               </div>
 
               {/* Staff Accounts Table with Row-Click Drawer Opening */}
-              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden shadow-2xl">
+              <div className="rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden shadow-2xl">
                 <div className="p-4 border-b border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <span>💡 Tip: Click any row or &quot;Inspect Account&quot; to open the dedicated permission drawer.</span>
                   <span className="font-mono text-emerald-400 flex items-center gap-1">
@@ -1821,7 +1766,7 @@ export default function AdminPortalPage() {
                     <div
                       key={t.id}
                       onClick={() => setActiveTicket(t)}
-                      className={`p-3.5 rounded-xl border cursor-pointer transition ${
+                      className={`p-3.5 rounded-[8px] border cursor-pointer transition ${
                         activeTicket?.id === t.id
                           ? "bg-orange-500/10 border-orange-500/40"
                           : "bg-white dark:bg-[#0c1222]/90 border-slate-200/80 dark:border-white/10 shadow-sm hover:bg-slate-50 dark:hover:bg-white/5"
@@ -1842,7 +1787,7 @@ export default function AdminPortalPage() {
                 </div>
 
                 {activeTicket && (
-                  <div className="lg:col-span-7 p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                  <div className="lg:col-span-7 p-6 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                     <div className="flex justify-between items-start pb-3 border-b border-slate-200 dark:border-white/10">
                       <div>
                         <div className="text-sm font-bold text-slate-900 dark:text-white">{activeTicket.subject}</div>
@@ -1850,7 +1795,7 @@ export default function AdminPortalPage() {
                       </div>
                       <button
                         onClick={() => handleSummarizeTicket(activeTicket.id)}
-                        className="px-3 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-purple-600/30 transition"
+                        className="px-3 py-1.5 rounded-[8px] bg-purple-600/20 text-purple-300 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-purple-600/30 transition"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-purple-400" />
                         AI Summarize
@@ -1858,7 +1803,7 @@ export default function AdminPortalPage() {
                     </div>
 
                     {summarizedTicketId === activeTicket.id && (
-                      <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/40 text-xs text-purple-200 space-y-1">
+                      <div className="p-3 rounded-[8px] bg-purple-950/30 border border-purple-800/40 text-xs text-purple-200 space-y-1">
                         <div className="font-bold flex items-center gap-1.5 text-purple-300">
                           <Sparkles className="w-3.5 h-3.5" />
                           Gorelo AI Summary :
@@ -1871,7 +1816,7 @@ export default function AdminPortalPage() {
 
                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                       {activeTicket.messages.map((m, idx) => (
-                        <div key={idx} className={`p-3 rounded-xl text-xs space-y-1 ${
+                        <div key={idx} className={`p-3 rounded-[8px] text-xs space-y-1 ${
                           m.senderRole === "user" ? "bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10" : "bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20"
                         }`}>
                           <div className="flex justify-between text-[10px] font-mono text-slate-400">
@@ -1898,7 +1843,7 @@ export default function AdminPortalPage() {
                 <p className="text-xs text-slate-400">Cryptographically verifiable log of all administrative actions, logins, and trades.</p>
               </div>
 
-              <div className="rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
+              <div className="rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
                     <tr>
@@ -1938,7 +1883,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <ShieldAlert className="w-4 h-4 text-rose-400" />
                     <span>Emergency Master Killswitch </span>
@@ -1948,7 +1893,7 @@ export default function AdminPortalPage() {
                   </p>
                   <button
                     onClick={handleEmergencyFreezeToggle}
-                    className={`w-full py-2.5 rounded-xl font-bold text-xs transition ${
+                    className={`w-full py-2.5 rounded-[8px] font-bold text-xs transition ${
                       emergencyLockActive
                         ? "bg-rose-600 hover:bg-rose-500 text-white"
                         : "bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600/30"
@@ -1958,7 +1903,7 @@ export default function AdminPortalPage() {
                   </button>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
+                <div className="p-4 rounded-[8px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl space-y-4">
                   <div className="flex items-center gap-2 text-sm font-bold text-white">
                     <Lock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                     <span>Security & 2FA Enforcement </span>
@@ -1968,7 +1913,7 @@ export default function AdminPortalPage() {
                   </p>
                   <button
                     onClick={() => showToast("Strict 2FA enforcement confirmed active across all staff.")}
-                    className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs border border-slate-700 transition"
+                    className="w-full py-2.5 rounded-[8px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs border border-slate-700 transition"
                   >
                     Enforce Staff 2FA Policy
                   </button>
@@ -1983,7 +1928,7 @@ export default function AdminPortalPage() {
       {/* Clickable Staff Account Inspection & Permission Assignment Drawer */}
       {selectedStaffForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-xl rounded-3xl bg-white dark:bg-[#0c1222] border border-slate-200 dark:border-white/10 p-6 space-y-5 shadow-2xl text-slate-900 dark:text-white">
+          <div className="w-full max-w-xl rounded-[8px] bg-white dark:bg-[#0c1222] border border-slate-200 dark:border-white/10 p-6 space-y-5 shadow-2xl text-slate-900 dark:text-white">
             {/* Modal Header */}
             <div className="flex justify-between items-start border-b border-slate-200 dark:border-white/10 pb-4">
               <div>
@@ -1995,14 +1940,14 @@ export default function AdminPortalPage() {
               </div>
               <button 
                 onClick={() => setSelectedStaffForModal(null)} 
-                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-700 transition"
+                className="p-1.5 rounded-[8px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-700 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Role & Authority Banner */}
-            <div className="p-3.5 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 flex items-center justify-between text-xs">
+            <div className="p-3.5 rounded-[8px] bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 flex items-center justify-between text-xs">
               <span className="text-orange-600 dark:text-orange-400 font-medium">Delegated by: <strong className="text-slate-900 dark:text-white">{selectedStaffForModal.lastUpdatedBy}</strong></span>
               <span className="text-emerald-400 font-mono text-[11px] font-semibold">Active Staff Node</span>
             </div>
@@ -2014,7 +1959,7 @@ export default function AdminPortalPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canViewUsers}
@@ -2027,7 +1972,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canApproveKYC}
@@ -2040,7 +1985,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canFreezeAccounts}
@@ -2053,7 +1998,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canManageTickets}
@@ -2066,7 +2011,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canAccessLiveChat}
@@ -2079,7 +2024,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canWriteInternalNotes}
@@ -2092,7 +2037,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canViewAuditLogs}
@@ -2105,7 +2050,7 @@ export default function AdminPortalPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
+                <label className="flex items-center space-x-3 p-3 rounded-[8px] bg-slate-950 border border-slate-200 dark:border-white/10 hover:border-slate-700 cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={selectedStaffForModal.canExecuteReimbursements}
@@ -2126,13 +2071,13 @@ export default function AdminPortalPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedStaffForModal(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-white transition"
+                  className="px-4 py-2 rounded-[8px] bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-white transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleSaveStaffPermissions(selectedStaffForModal)}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-xs font-bold text-white shadow-lg shadow-orange-500/25 transition flex items-center space-x-1.5"
+                  className="px-5 py-2 rounded-[8px] bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-xs font-bold text-white shadow-lg shadow-orange-500/25 transition flex items-center space-x-1.5"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Permissions</span>
@@ -2146,7 +2091,7 @@ export default function AdminPortalPage() {
       {/* Internal Staff Notes Modal  */}
       {selectedNoteUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-200 dark:border-white/10 p-5 space-y-4 shadow-2xl">
+          <div className="w-full max-w-md rounded-[8px] bg-slate-900 border border-slate-200 dark:border-white/10 p-5 space-y-4 shadow-2xl">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Staff Internal Notes: @{selectedNoteUser.username}</h3>
               <button onClick={() => setSelectedNoteUser(null)} className="p-1 text-slate-400 hover:text-white">
@@ -2158,7 +2103,7 @@ export default function AdminPortalPage() {
               value={internalNoteText}
               onChange={(e) => setInternalNoteText(e.target.value)}
               placeholder="Record confidential staff observation ..."
-              className="w-full rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
+              className="w-full rounded-[8px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
             />
             <div className="flex justify-end gap-2">
               <button

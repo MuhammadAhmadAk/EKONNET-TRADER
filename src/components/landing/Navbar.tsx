@@ -56,8 +56,12 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
         const stored = localStorage.getItem("ekonnet_user");
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed.role === "user") {
+          if (parsed && parsed.role === "user") {
             setCurrentUser(parsed);
+          } else {
+            // Strictly purge any legacy or administrative data from customer trading cache
+            localStorage.removeItem("ekonnet_user");
+            setCurrentUser(null);
           }
         }
       } catch (err) {}
@@ -72,6 +76,9 @@ export default function Navbar({ onOpenLogin, onOpenRegister }: NavbarProps) {
             setCurrentUser(data.user);
             localStorage.setItem("ekonnet_user", JSON.stringify(data.user));
             return;
+          } else {
+            localStorage.removeItem("ekonnet_user");
+            setCurrentUser(null);
           }
         }
         if (res.status === 401 || res.status === 403) {
