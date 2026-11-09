@@ -116,35 +116,68 @@ interface TutorialVideoShowcaseProps {
 export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoShowcaseProps = {}) {
   const [selectedLesson, setSelectedLesson] = useState<TutorialLesson>(LESSONS[0]);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [currentTime, setCurrentTime] = useState<number>(54); // default 0:54 like in Bitfinex 2 screenshot!
-  const [duration, setDuration] = useState<number>(65); // 1:05
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(10);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"video" | "guide">("video");
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Timer loop for simulated video player playback
-  useEffect(() => {
-    let interval: any;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= duration) {
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
+  // Sync video time updates
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(Math.floor(videoRef.current.currentTime));
+      if (videoRef.current.duration && !isNaN(videoRef.current.duration)) {
+        setDuration(Math.floor(videoRef.current.duration));
+      }
     }
-    return () => clearInterval(interval);
-  }, [isPlaying, duration]);
+  };
 
-  // When changing lesson, reset time to beginning
-  const handleSelectLesson = (lesson: TutorialLesson) => {
-    setSelectedLesson(lesson);
-    const parts = lesson.duration.split(":");
-    const totalSecs = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-    setDuration(totalSecs);
-    setCurrentTime(0);
+  // Toggle Play / Pause
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
+  };
+
+  // Replay from beginning
+  const handleReplay = () => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = 0;
+    videoRef.current.play().catch(() => {});
     setIsPlaying(true);
+    setCurrentTime(0);
+  };
+
+  // Toggle Mute
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  // Scrubber Seek
+  const handleSeek = (newSeconds: number) => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = newSeconds;
+    setCurrentTime(newSeconds);
+  };
+
+  // When changing lesson, jump to relevant segment
+  const handleSelectLesson = (lesson: TutorialLesson, idx: number) => {
+    setSelectedLesson(lesson);
+    if (videoRef.current) {
+      const timestamps = [0, 3, 6, 8];
+      const targetTime = timestamps[idx % timestamps.length] || 0;
+      videoRef.current.currentTime = targetTime;
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+      setCurrentTime(targetTime);
+    }
   };
 
   const formatSeconds = (sec: number) => {
@@ -204,82 +237,71 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
           <div className="lg:col-span-8 space-y-4">
             <div className="relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 group transition-colors">
               
-              {/* Simulated Video Canvas / Live Demonstration Screen */}
-              <div className="relative w-full aspect-video bg-gradient-to-br from-slate-100 via-white to-slate-50 dark:from-slate-950 dark:via-[#0B101E] dark:to-slate-900 flex flex-col justify-between p-6 overflow-hidden">
+              {/* Institutional Video Container */}
+              <div className="relative w-full aspect-video bg-black flex flex-col justify-between overflow-hidden group/vid">
                 
-                {/* Background Tech Grid & Watermark */}
-                <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-800 font-mono text-7xl font-black select-none pointer-events-none opacity-40 dark:opacity-20">
-                  EKONNET TRADER
-                </div>
+                {/* HTML5 Video Element playing the generated 10s video */}
+                <video
+                  ref={videoRef}
+                  src="/videos/trading-intro.mp4"
+                  playsInline
+                  autoPlay
+                  loop
+                  muted={isMuted}
+                  onTimeUpdate={handleTimeUpdate}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
 
-                {/* Top Video Overlay Bar */}
-                <div className="relative z-10 flex items-center justify-between">
+                {/* Top Overlay Badge Bar */}
+                <div className="relative z-10 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/30 to-transparent">
                   <div className="flex items-center space-x-2.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
-                    <span className="px-2.5 py-1 rounded-md bg-white/80 dark:bg-black/60 border border-slate-200 dark:border-white/10 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold backdrop-blur-md shadow-2xs">
-                      HD 1080P • {selectedLesson.category}
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                    <span className="px-2.5 py-1 rounded-md bg-black/70 border border-white/10 text-[11px] font-mono text-emerald-400 font-bold backdrop-blur-md shadow-xs">
+                      HD 720P • {selectedLesson.category}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono bg-white/80 dark:bg-black/40 px-3 py-1 rounded-lg border border-slate-200 dark:border-white/5 backdrop-blur-md shadow-2xs">
-                    BATTLE TESTED TRADING PROTOCOL
+                  <span className="text-[11px] text-slate-300 font-mono bg-black/70 px-3 py-1 rounded-lg border border-white/10 backdrop-blur-md shadow-xs">
+                    MATCHING ENGINE DEMO • 10 SEC
                   </span>
                 </div>
 
-                {/* Interactive Dynamic Center Graphic: Simulating Real Platform Action */}
-                <div className="relative z-10 my-auto text-center space-y-4 max-w-lg mx-auto">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 border border-emerald-500/40 mx-auto flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    {isPlaying ? (
-                      <Sliders className="w-8 h-8 text-blue-600 dark:text-cyan-400 animate-spin-slow" />
-                    ) : (
-                      <Play className="w-8 h-8 text-emerald-600 dark:text-emerald-400 ml-1" />
-                    )}
-                  </div>
-                  <div>
-                    <span className="text-xs uppercase font-mono tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">
-                      Interactive Tutorial Lesson
-                    </span>
-                    <h4 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
-                      {selectedLesson.videoHeading}
-                    </h4>
-                  </div>
-                  
-                  {/* Dynamic Simulation Ticker Display */}
-                  <div className="inline-flex items-center gap-4 px-4 py-2 rounded-xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 text-xs font-mono text-slate-700 dark:text-slate-300 shadow-sm">
-                    <span>Order Engine: <strong className="text-emerald-600 dark:text-emerald-400">ACTIVE</strong></span>
-                    <span>•</span>
-                    <span>Simulated Fill: <strong className="text-blue-600 dark:text-blue-400">100%</strong></span>
-                    <span>•</span>
-                    <span>Latency: <strong className="text-purple-600 dark:text-purple-400">4.2ms</strong></span>
-                  </div>
-                </div>
+                {/* Center Play Indicator when paused */}
+                {!isPlaying && (
+                  <button
+                    onClick={togglePlay}
+                    className="absolute inset-0 z-20 m-auto w-16 h-16 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white backdrop-blur-md shadow-2xl hover:scale-105 transition"
+                  >
+                    <Play className="w-8 h-8 text-emerald-400 ml-1" />
+                  </button>
+                )}
 
-                {/* Bottom Video Controls Bar (Matches Bitfinex Screenshot 2 with Scrubber 0:54 / 1:05) */}
-                <div className="relative z-10 bg-white/95 dark:bg-slate-950/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl p-3 sm:p-4 space-y-2 shadow-sm">
+                {/* Bottom Video Controls Bar */}
+                <div className="relative z-10 m-3 sm:m-4 bg-black/80 backdrop-blur-xl border border-white/15 rounded-2xl p-3 sm:p-4 space-y-2 shadow-2xl">
                   
                   {/* Progress Bar / Scrubber */}
                   <div 
-                    className="relative w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden cursor-pointer group/bar"
+                    className="relative w-full h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer group/bar"
                     onClick={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const clickX = e.clientX - rect.left;
                       const newPct = clickX / rect.width;
-                      setCurrentTime(Math.floor(newPct * duration));
+                      handleSeek(Math.floor(newPct * duration));
                     }}
                   >
                     <div 
-                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 rounded-full transition-all duration-300"
+                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-500 via-rose-500 to-emerald-400 rounded-full transition-all duration-150"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
 
                   {/* Playback Controls & Timestamp */}
-                  <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 pt-1">
+                  <div className="flex items-center justify-between text-xs text-white pt-1">
                     <div className="flex items-center space-x-4">
                       {/* Play/Pause Button */}
                       <button
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 transition cursor-pointer"
+                        type="button"
+                        onClick={togglePlay}
+                        className="p-1.5 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 transition cursor-pointer"
                         title={isPlaying ? "Pause" : "Play"}
                       >
                         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -287,34 +309,45 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
 
                       {/* Replay Button */}
                       <button
-                        onClick={() => { setCurrentTime(0); setIsPlaying(true); }}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+                        type="button"
+                        onClick={handleReplay}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition cursor-pointer"
                         title="Replay from start"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
 
-                      {/* Time Counter Highlighted like Bitfinex 2 Circle (0:54 / 1:05) */}
-                      <div className="flex items-center gap-1 font-mono text-[11px] sm:text-xs text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900/90 px-3 py-1 rounded-lg border border-emerald-500/30 shadow-inner">
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{formatSeconds(currentTime)}</span>
-                        <span className="text-slate-400 dark:text-slate-500">/</span>
-                        <span className="text-slate-500 dark:text-slate-400">{formatSeconds(duration)}</span>
+                      {/* Time Counter Highlighted (00:04 / 00:10) */}
+                      <div className="flex items-center gap-1 font-mono text-[11px] sm:text-xs text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10 shadow-inner">
+                        <span className="text-emerald-400 font-bold">{formatSeconds(currentTime)}</span>
+                        <span className="text-slate-400">/</span>
+                        <span className="text-slate-300">{formatSeconds(duration)}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
                       {/* Mute/Unmute */}
                       <button 
-                        onClick={() => setIsMuted(!isMuted)}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+                        type="button"
+                        onClick={toggleMute}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition cursor-pointer"
+                        title={isMuted ? "Unmute" : "Mute"}
                       >
-                        {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
+                        {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-slate-200" />}
                       </button>
 
                       {/* Fullscreen */}
                       <button 
-                        onClick={() => alert("Video is playing in optimized responsive container.")}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+                        type="button"
+                        onClick={() => {
+                          if (videoRef.current) {
+                            if (videoRef.current.requestFullscreen) {
+                              videoRef.current.requestFullscreen();
+                            }
+                          }
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition cursor-pointer"
+                        title="Fullscreen"
                       >
                         <Maximize2 className="w-4 h-4" />
                       </button>
@@ -395,7 +428,7 @@ export default function TutorialVideoShowcase({ onOpenRegister }: TutorialVideoS
                   return (
                     <div
                       key={lesson.id}
-                      onClick={() => handleSelectLesson(lesson)}
+                      onClick={() => handleSelectLesson(lesson, idx)}
                       className={`cursor-pointer rounded-xl p-4 border transition-all duration-200 space-y-2 ${
                         isSelected
                           ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/50 shadow-sm"
