@@ -69,7 +69,8 @@ type NavKey =
   | "permissions" 
   | "tickets" 
   | "audit" 
-  | "settings";
+  | "settings"
+  | "backups";
 
 interface SystemService {
   name: string;
@@ -98,6 +99,49 @@ export default function AdminPortalPage() {
   // Phase 2: Treasury Deposits & Clearing
   const [depositsList, setDepositsList] = useState<any[]>([]);
   const [isApprovingDeposit, setIsApprovingDeposit] = useState<string | null>(null);
+
+  // Read-Only Real-Time Backup Monitor State
+  const [backupData, setBackupData] = useState<any>(null);
+  const [backupFeedAvailable, setBackupFeedAvailable] = useState<boolean | null>(null);
+  const [backupFeedReason, setBackupFeedReason] = useState<string | null>(null);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [backupAutoPoll, setBackupAutoPoll] = useState(true);
+  const [backupLastSync, setBackupLastSync] = useState<string | null>(null);
+
+  const loadBackupStatus = async (silent = false) => {
+    if (!silent) setBackupLoading(true);
+    try {
+      const res = await fetch("/api/admin/backups", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        setBackupFeedAvailable(Boolean(json.available));
+        setBackupFeedReason(json.reason || null);
+        if (json.available && json.data) {
+          setBackupData(json.data);
+        }
+        setBackupLastSync(new Date().toLocaleTimeString());
+      }
+    } catch (e) {
+      // Keep previous telemetry state if transient poll fails
+    } finally {
+      if (!silent) setBackupLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAuthChecking && currentAdmin) {
+      loadBackupStatus(true);
+    }
+  }, [isAuthChecking, currentAdmin]);
+
+  useEffect(() => {
+    if (activeNav !== "backups" || !backupAutoPoll) return;
+    loadBackupStatus(false);
+    const interval = setInterval(() => {
+      loadBackupStatus(true);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [activeNav, backupAutoPoll]);
 
   useEffect(() => {
     // 1. Theme sync with persistence
@@ -705,6 +749,34 @@ export default function AdminPortalPage() {
             >
               <Settings className="w-4 h-4 shrink-0" />
               {sidebarOpen && <span>Platform Outage Controls</span>}
+            </button>
+
+            {/* 11. Real-Time Read-Only Backup Monitor (Bottom) */}
+            <button
+              onClick={() => {
+                setActiveNav("backups");
+                loadBackupStatus(false);
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-[4px] text-xs font-semibold transition cursor-pointer ${
+                activeNav === "backups"
+                  ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+              }`}
+              title="Daily & 15-Min DB Backup Monitor (Read-Only)"
+            >
+              <div className="flex items-center gap-3 truncate">
+                <HardDrive className="w-4 h-4 shrink-0" />
+                {sidebarOpen && <span>System Backups</span>}
+              </div>
+              {sidebarOpen && (
+                backupData?.health?.errors_detected > 0 ? (
+                  <span className="px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold bg-rose-500 text-white">
+                    ERR
+                  </span>
+                ) : (
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" title="Automated Backups Active" />
+                )
+              )}
             </button>
           </div>
         </div>
@@ -1918,6 +1990,276 @@ export default function AdminPortalPage() {
                   </button>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 10: READ-ONLY REAL-TIME BACKUP & RECOVERY MONITOR                      */}
+          {/* ========================================================================= */}
+          {activeNav === "backups" && (
+            <div className="space-y-4 max-w-7xl mx-auto">
+              {/* Top Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <HardDrive className="w-4 h-4 text-orange-500" />
+                      <span>Ekonnet Automated Backup &amp; DB Snapshot Monitor</span>
+                    </h2>
+                    <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1">
+                      <Lock className="w-3 h-3" /> READ-ONLY ISOLATED FEED
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Live telemetry for 15-minute MongoDB + MariaDB snapshots, daily encrypted archives, SHA-256 verification, and storage health. Vault stays strictly root-locked (`0700`).
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => setBackupAutoPoll(!backupAutoPoll)}
+                    className={`px-2.5 py-1.5 rounded-[4px] text-[11px] font-mono font-semibold border transition cursor-pointer flex items-center gap-1.5 ${
+                      backupAutoPoll
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
+                        : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500"
+                    }`}
+                    title="Auto-refresh every 15 seconds"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${backupAutoPoll ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
+                    <span>{backupAutoPoll ? "Live 15s Poll ON" : "Live Poll OFF"}</span>
+                  </button>
+
+                  <button
+                    onClick={() => loadBackupStatus(false)}
+                    disabled={backupLoading}
+                    className="px-3 py-1.5 rounded-[4px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${backupLoading ? "animate-spin" : ""}`} />
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              {backupFeedAvailable === false && (
+                <div className="p-4 rounded-[4px] bg-amber-500/10 border border-amber-500/30 text-xs text-amber-600 dark:text-amber-300 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>{backupFeedReason || "Backup telemetry feed is not available on this host."}</span>
+                </div>
+              )}
+
+              {backupData && (
+                <>
+                  {/* 4 Compact Tier Summary Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {/* 15-Min DB Snapshots */}
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-1.5">
+                      <div className="flex justify-between items-center text-[11px] text-slate-400">
+                        <span>15-Min DB Snapshots</span>
+                        <Database className="w-4 h-4 text-orange-500" />
+                      </div>
+                      <div className="text-lg font-bold font-mono text-slate-900 dark:text-white">
+                        {backupData.tiers?.db_15m?.count ?? 0} / {backupData.tiers?.db_15m?.retention_max ?? 96}
+                      </div>
+                      <div className="text-[11px] font-mono text-emerald-500 font-semibold">
+                        24h Runs: {backupData.tiers?.db_15m?.last_24h_count ?? 0} &bull; {((backupData.tiers?.db_15m?.latest_size_bytes ?? 0) / 1024).toFixed(0)} KB
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono truncate" title={backupData.tiers?.db_15m?.latest_time_utc || ""}>
+                        Last: {backupData.tiers?.db_15m?.latest_time_utc ? new Date(backupData.tiers.db_15m.latest_time_utc).toLocaleString() : "—"}
+                      </div>
+                    </div>
+
+                    {/* Daily Files Backup */}
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-1.5">
+                      <div className="flex justify-between items-center text-[11px] text-slate-400">
+                        <span>Daily Files &amp; Configs</span>
+                        <FileCheck className="w-4 h-4 text-cyan-500" />
+                      </div>
+                      <div className="text-lg font-bold font-mono text-slate-900 dark:text-white">
+                        {backupData.tiers?.files_daily?.count ?? 0} / {backupData.tiers?.files_daily?.retention_max ?? 7} Days
+                      </div>
+                      <div className="text-[11px] font-mono text-cyan-500 font-semibold">
+                        Latest: {((backupData.tiers?.files_daily?.latest_size_bytes ?? 0) / (1024 * 1024)).toFixed(1)} MB
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono truncate">
+                        Last: {backupData.tiers?.files_daily?.latest_time_utc ? new Date(backupData.tiers.files_daily.latest_time_utc).toLocaleString() : "—"}
+                      </div>
+                    </div>
+
+                    {/* Daily Plesk Archive */}
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-1.5">
+                      <div className="flex justify-between items-center text-[11px] text-slate-400">
+                        <span>Plesk Domain Backups</span>
+                        <Server className="w-4 h-4 text-purple-400" />
+                      </div>
+                      <div className="text-lg font-bold font-mono text-slate-900 dark:text-white">
+                        {backupData.tiers?.plesk_daily?.count ?? 0}D / {backupData.tiers?.plesk_weekly?.count ?? 0}W / {backupData.tiers?.plesk_monthly?.count ?? 0}M
+                      </div>
+                      <div className="text-[11px] font-mono text-purple-400 font-semibold">
+                        Latest: {((backupData.tiers?.plesk_daily?.latest_size_bytes ?? 0) / (1024 * 1024)).toFixed(1)} MB
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono truncate">
+                        Last: {backupData.tiers?.plesk_daily?.latest_time_utc ? new Date(backupData.tiers.plesk_daily.latest_time_utc).toLocaleString() : "—"}
+                      </div>
+                    </div>
+
+                    {/* Vault Disk & Health */}
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-1.5">
+                      <div className="flex justify-between items-center text-[11px] text-slate-400">
+                        <span>Server Disk &amp; Health</span>
+                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      </div>
+                      <div className="text-lg font-bold font-mono text-slate-900 dark:text-white">
+                        {backupData.health?.disk_free_gb ?? "—"} GB Free
+                      </div>
+                      <div className={`text-[11px] font-mono font-semibold ${backupData.health?.errors_detected > 0 ? "text-rose-500" : "text-emerald-500"}`}>
+                        {backupData.health?.errors_detected > 0 ? `${backupData.health.errors_detected} Errors Detected` : "0 Errors • SHA-256 Clean"}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono truncate">
+                        Used: {backupData.health?.disk_used_pct ?? 0}% of {backupData.health?.disk_total_gb ?? 0} GB
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Protected Databases, Encryption & Staging Recovery Verification Row */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-2.5 lg:col-span-2">
+                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-2">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                          <Database className="w-3.5 h-3.5 text-orange-500" />
+                          <span>Protected Databases (15-Minute Consistent Snapshots)</span>
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">
+                          {backupLastSync ? `UI Synced: ${backupLastSync}` : ""}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div className="p-3 rounded-[4px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1.5">
+                          <div className="text-[10px] font-mono uppercase font-bold text-emerald-500">MongoDB (v7.0.48)</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(backupData.covered_databases?.mongodb || []).map((dbName: string) => (
+                              <span key={dbName} className="px-2 py-0.5 rounded-[4px] text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                {dbName}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="p-3 rounded-[4px] bg-slate-50 dark:bg-black/30 border border-slate-200/80 dark:border-white/10 space-y-1.5">
+                          <div className="text-[10px] font-mono uppercase font-bold text-cyan-500">MariaDB (10.6.23)</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(backupData.covered_databases?.mariadb || []).map((dbName: string) => (
+                              <span key={dbName} className="px-2 py-0.5 rounded-[4px] text-[10px] font-mono bg-cyan-500/10 text-cyan-500 border border-cyan-500/20">
+                                {dbName}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Security & Latest Staging Recovery Card */}
+                    <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-2.5">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-white/5 pb-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Security &amp; Last Recovery Test</span>
+                      </div>
+                      <div className="space-y-1.5 text-[11px] font-mono">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Encryption:</span>
+                          <span className="text-slate-900 dark:text-white font-semibold">{backupData.security?.encryption}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Remote Sync:</span>
+                          <span className={backupData.health?.remote_configured ? "text-emerald-500 font-semibold" : "text-amber-500 font-semibold"}>
+                            {backupData.health?.remote_configured ? "ACTIVE" : "LOCAL ONLY"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Deploy Snaps:</span>
+                          <span className="text-slate-900 dark:text-white font-semibold">{backupData.tiers?.deploy_snapshots?.count ?? 0} saved</span>
+                        </div>
+                      </div>
+                      {backupData.last_staging_test && (
+                        <div className="p-2.5 rounded-[4px] bg-emerald-500/5 border border-emerald-500/20 text-[10px] space-y-0.5">
+                          <div className="font-bold text-emerald-500 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Staging Test: {backupData.last_staging_test.status}</span>
+                          </div>
+                          <div className="text-slate-500 dark:text-slate-400">{backupData.last_staging_test.message}</div>
+                          <div className="text-slate-400 font-mono">
+                            {backupData.last_staging_test.timestamp ? new Date(backupData.last_staging_test.timestamp).toLocaleString() : ""}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Live Audit Stream of Backup Executions */}
+                  <div className="p-4 rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-orange-500" />
+                        <span>Live Backup &amp; Verification Stream (Last 30 Events)</span>
+                      </h3>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Feed Generated: {backupData.generated_at_utc ? new Date(backupData.generated_at_utc).toLocaleString() : "—"}
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs font-mono">
+                        <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
+                          <tr>
+                            <th className="py-2 px-3">Time</th>
+                            <th className="py-2 px-3">Event Type</th>
+                            <th className="py-2 px-3">Archive File</th>
+                            <th className="py-2 px-3">Size</th>
+                            <th className="py-2 px-3">SHA-256</th>
+                            <th className="py-2 px-3">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                          {(backupData.recent_events || []).map((ev: any, idx: number) => (
+                            <tr key={`${ev.timestamp}-${idx}`} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
+                              <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
+                                {ev.timestamp ? new Date(ev.timestamp).toLocaleString() : "—"}
+                              </td>
+                              <td className="py-2 px-3 font-bold text-slate-900 dark:text-white whitespace-nowrap">{ev.event}</td>
+                              <td className="py-2 px-3 text-slate-600 dark:text-slate-300 max-w-[240px] truncate" title={ev.message}>
+                                {ev.file_name || ev.message}
+                              </td>
+                              <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
+                                {ev.size_bytes > 0
+                                  ? ev.size_bytes > 1048576
+                                    ? `${(ev.size_bytes / 1048576).toFixed(1)} MB`
+                                    : `${(ev.size_bytes / 1024).toFixed(0)} KB`
+                                  : "—"}
+                              </td>
+                              <td className="py-2 px-3 text-slate-400 whitespace-nowrap">
+                                {ev.sha256 ? `${ev.sha256.slice(0, 12)}...` : "—"}
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap">
+                                <span
+                                  className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold ${
+                                    ev.status === "SUCCESS"
+                                      ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                      : ev.status === "SKIPPED_UNCONFIGURED"
+                                      ? "bg-slate-500/10 text-slate-400 border border-slate-500/20"
+                                      : "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                  }`}
+                                >
+                                  {ev.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
