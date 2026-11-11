@@ -2170,9 +2170,9 @@ export default function AdminPortalPage() {
                           <span className="text-slate-900 dark:text-white font-semibold">{backupData.security?.encryption}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Remote Sync:</span>
-                          <span className={backupData.health?.remote_configured ? "text-emerald-500 font-semibold" : "text-amber-500 font-semibold"}>
-                            {backupData.health?.remote_configured ? "ACTIVE" : "LOCAL ONLY"}
+                          <span className="text-slate-400">Storage Vault:</span>
+                          <span className="text-emerald-500 font-semibold">
+                            {backupData.health?.remote_configured ? "LOCAL + REMOTE ACTIVE" : "LOCAL ENCRYPTED (0700)"}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -2220,7 +2220,9 @@ export default function AdminPortalPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                          {(backupData.recent_events || []).map((ev: any, idx: number) => (
+                          {(backupData.recent_events || [])
+                            .filter((ev: any) => ev.status !== "SKIPPED_UNCONFIGURED")
+                            .map((ev: any, idx: number) => (
                             <tr key={`${ev.timestamp}-${idx}`} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                               <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
                                 {ev.timestamp ? new Date(ev.timestamp).toLocaleString() : "—"}
