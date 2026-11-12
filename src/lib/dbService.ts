@@ -156,6 +156,7 @@ export async function getStaffPermissions(): Promise<StaffPermission[]> {
         return perms.map(p => ({
           staffId: p.staffId,
           staffName: p.staffName,
+          role: p.role || "staff",
           canViewUsers: !!p.canViewUsers,
           canApproveKYC: !!p.canApproveKYC,
           canFreezeAccounts: !!p.canFreezeAccounts,
@@ -164,6 +165,7 @@ export async function getStaffPermissions(): Promise<StaffPermission[]> {
           canWriteInternalNotes: !!p.canWriteInternalNotes,
           canViewAuditLogs: !!p.canViewAuditLogs,
           canExecuteReimbursements: !!p.canExecuteReimbursements,
+          sectionPermissions: p.sectionPermissions || undefined,
           lastUpdatedBy: p.lastUpdatedBy || "Master Admin",
           updatedAt: p.updatedAt || new Date().toISOString()
         }));
@@ -176,8 +178,10 @@ export async function getStaffPermissions(): Promise<StaffPermission[]> {
 }
 
 export async function updateStaffPermission(staffId: string, perms: Partial<StaffPermission>, updatedBy: string): Promise<boolean> {
+  const { ...cleanPerms } = perms;
   const payload = {
-    ...perms,
+    ...cleanPerms,
+    staffId,
     updatedAt: new Date().toISOString(),
     lastUpdatedBy: updatedBy
   };
@@ -193,7 +197,12 @@ export async function updateStaffPermission(staffId: string, perms: Partial<Staf
   } catch (err) {
     console.warn("DB fallback updateStaffPermission", err);
   }
-  memoryPermissions = memoryPermissions.map(p => p.staffId === staffId ? { ...p, ...payload } : p);
+  const exists = memoryPermissions.some(p => p.staffId === staffId);
+  if (exists) {
+    memoryPermissions = memoryPermissions.map(p => p.staffId === staffId ? { ...p, ...payload } : p);
+  } else {
+    memoryPermissions = [...memoryPermissions, payload as StaffPermission];
+  }
   return true;
 }
 

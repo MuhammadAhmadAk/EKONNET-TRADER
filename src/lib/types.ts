@@ -1,4 +1,5 @@
 // Ekonnet Platform Core Types & Interfaces
+import type { SectionPermissionsMap } from "./permissionRegistry";
 
 export type UserRole = 'master_admin' | 'management' | 'staff' | 'user' | 'visitor';
 
@@ -38,6 +39,7 @@ export interface User {
 export interface StaffPermission {
   staffId: string;
   staffName: string;
+  role?: 'management' | 'staff';
   canViewUsers: boolean;
   canApproveKYC: boolean;
   canFreezeAccounts: boolean;
@@ -46,6 +48,7 @@ export interface StaffPermission {
   canWriteInternalNotes: boolean;
   canViewAuditLogs: boolean;
   canExecuteReimbursements: boolean;
+  sectionPermissions?: SectionPermissionsMap;
   lastUpdatedBy: string;
   updatedAt: string;
 }

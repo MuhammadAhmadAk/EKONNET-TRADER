@@ -57,6 +57,7 @@ import {
 import { MOCK_USERS, MOCK_SUPPORT_TICKETS, MOCK_AUDIT_LOGS, MOCK_STAFF_PERMISSIONS } from "@/lib/mockData";
 import { User, SupportTicket, AuditLogItem, StaffPermission } from "@/lib/types";
 import { TradingPlatformStatus, INITIAL_PLATFORM_STATUSES, getPlatformStatus, setPlatformStatus } from "@/lib/systemStatus";
+import SectionPermissionsMatrix from "@/components/admin/SectionPermissionsMatrix";
 
 // Navigation Item Keys matching enterprise SE-Platform design
 type NavKey = 
@@ -1643,182 +1644,15 @@ export default function AdminPortalPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 6: STAFF PERMISSION MATRIX  */}
+          {/* TAB 6: SECTION-WISE STAFF & MANAGEMENT PERMISSION MATRIX  */}
           {/* ========================================================================= */}
           {activeNav === "permissions" && (
-            <div className="space-y-6 max-w-7xl mx-auto">
-              {/* Header and 4-Tier Badges */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[4px] bg-white/[0.02] dark:bg-slate-900/40 border border-white/10 backdrop-blur-xl">
-                <div>
-                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-[4px] bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold mb-2">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>4-TIER ROLE ACCESS DELEGATION</span>
-                  </div>
-                  <h2 className="text-base font-bold text-slate-900 dark:text-white">Staff Operational Permissions Matrix</h2>
-                  <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-                    Click on any staff member to open their individual account drawer and assign specific jobs by ticking boxes.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleSaveStaffPermissions()}
-                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-blue-500 hover:to-indigo-500 text-white rounded-[4px] text-xs font-bold shadow-lg shadow-orange-500/25 transition flex items-center space-x-2"
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>Save All to MongoDB</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 4-Tier Account Hierarchy Metric Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-4 rounded-[4px] bg-purple-950/20 border border-purple-800/30">
-                  <span className="text-[10px] text-purple-400 uppercase font-bold tracking-wider block">Tier 1: Master Admin</span>
-                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Account</div>
-                  <span className="text-[11px] text-purple-300 font-mono">EKON-000001 (Root)</span>
-                </div>
-                <div className="p-4 rounded-[4px] bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20">
-                  <span className="text-[10px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider block">Tier 2: Management</span>
-                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">1 Sub-Admin</div>
-                  <span className="text-[11px] text-orange-600 dark:text-orange-400 font-mono">EKON-749201</span>
-                </div>
-                <div className="p-4 rounded-[4px] bg-cyan-950/20 border border-cyan-800/30">
-                  <span className="text-[10px] text-cyan-400 uppercase font-bold tracking-wider block">Tier 3: Employee Staff</span>
-                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{permissions.length} Staff</div>
-                  <span className="text-[11px] text-cyan-300 font-mono">Compliance & Support</span>
-                </div>
-                <div className="p-4 rounded-[4px] bg-emerald-950/20 border border-emerald-800/30">
-                  <span className="text-[10px] text-emerald-400 uppercase font-bold tracking-wider block">Tier 4: Traders / Users</span>
-                  <div className="text-lg font-black text-slate-900 dark:text-white mt-1">{users.filter(u => u.role === 'user').length} Registered</div>
-                  <span className="text-[11px] text-emerald-300 font-mono">Active On-Chain</span>
-                </div>
-              </div>
-
-              {/* Staff Accounts Table with Row-Click Drawer Opening */}
-              <div className="rounded-[4px] bg-white dark:bg-[#0c1222]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl overflow-hidden shadow-2xl">
-                <div className="p-4 border-b border-white/10 flex items-center justify-between text-xs text-slate-400">
-                  <span>💡 Tip: Click any row or &quot;Inspect Account&quot; to open the dedicated permission drawer.</span>
-                  <span className="font-mono text-emerald-400 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live MongoDB Sync
-                  </span>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-slate-100 dark:bg-black/30 text-slate-600 dark:text-slate-400 uppercase text-[10px] border-b border-slate-200 dark:border-white/10">
-                      <tr>
-                        <th className="py-3.5 px-4 font-sans">Staff Member & ID</th>
-                        <th className="py-3.5 px-2 text-center">Users</th>
-                        <th className="py-3.5 px-2 text-center">KYC</th>
-                        <th className="py-3.5 px-2 text-center">Freeze</th>
-                        <th className="py-3.5 px-2 text-center">Tickets</th>
-                        <th className="py-3.5 px-2 text-center">Live Chat</th>
-                        <th className="py-3.5 px-2 text-center">Notes</th>
-                        <th className="py-3.5 px-2 text-center">Audit</th>
-                        <th className="py-3.5 px-2 text-center">Refunds</th>
-                        <th className="py-3.5 px-4 text-right font-sans">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                      {permissions.map((p) => (
-                        <tr 
-                          key={p.staffId} 
-                          className="hover:bg-orange-500/10 cursor-pointer transition-colors"
-                          onClick={() => setSelectedStaffForModal(p)}
-                        >
-                          <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white font-sans">
-                            <div className="flex items-center space-x-2">
-                              <span className="w-7 h-7 rounded-[4px] bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs">
-                                {p.staffName.charAt(0)}
-                              </span>
-                              <div>
-                                <div className="text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition">{p.staffName}</div>
-                                <div className="text-[10px] text-slate-400 font-mono">{p.staffId}</div>
-                              </div>
-                            </div>
-                          </td>
-
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canViewUsers} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canViewUsers")} 
-                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canApproveKYC} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canApproveKYC")} 
-                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canFreezeAccounts} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canFreezeAccounts")} 
-                              className="rounded accent-rose-600 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canManageTickets} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canManageTickets")} 
-                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canAccessLiveChat} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canAccessLiveChat")} 
-                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canWriteInternalNotes} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canWriteInternalNotes")} 
-                              className="rounded accent-purple-600 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canViewAuditLogs} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canViewAuditLogs")} 
-                              className="rounded accent-orange-500 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-                          <td className="py-3.5 px-2 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={p.canExecuteReimbursements} 
-                              onChange={() => handleToggleStaffPermission(p.staffId, "canExecuteReimbursements")} 
-                              className="rounded accent-emerald-600 cursor-pointer w-4 h-4" 
-                            />
-                          </td>
-
-                          <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                            <button
-                              onClick={() => setSelectedStaffForModal(p)}
-                              className="px-2.5 py-1 rounded-[4px] bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 text-[11px] font-sans font-semibold transition"
-                            >
-                              Inspect Account &rarr;
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <SectionPermissionsMatrix
+              permissions={permissions}
+              registeredUsersCount={users.filter((u) => u.role === "user").length}
+              onUpdatePermissions={setPermissions}
+              showToast={showToast}
+            />
           )}
 
           {/* ========================================================================= */}

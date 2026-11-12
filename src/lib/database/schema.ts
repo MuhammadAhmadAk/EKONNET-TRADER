@@ -59,6 +59,7 @@ export interface StaffPermissionRecord {
   canWriteInternalNotes: boolean;
   canViewAuditLogs: boolean;
   canExecuteReimbursements: boolean;
+  sectionPermissions?: Record<string, Record<string, boolean>>;
   lastUpdatedBy: string;
   updatedAt: string;
 }
